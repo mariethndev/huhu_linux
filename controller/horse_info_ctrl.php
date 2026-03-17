@@ -15,8 +15,7 @@ $auctionStatus = 'indisponible';
 
 try {
 
-    // récupérer le cheval
-    $stmt = $pdo->prepare("
+$stmt = $pdo->prepare("
         SELECT *
         FROM horses
         WHERE id_horse = ?
@@ -30,7 +29,6 @@ try {
         exit;
     }
 
-    // récupérer l'enchère
     $stmt = $pdo->prepare("
         SELECT *
         FROM auctions
@@ -43,7 +41,6 @@ try {
         $auctionStatus = $auction['auction_status'];
     }
 
-    // récupérer le prix actuel
     $stmt = $pdo->prepare("
         SELECT MAX(bid_amount)
         FROM bids
@@ -55,7 +52,6 @@ try {
     $currentPrice =
         $lastBid ?: ($auction['auction_starting_price'] ?? 0);
 
-    // nombre d'enchérisseurs
     $stmt = $pdo->prepare("
         SELECT COUNT(DISTINCT user_id_fk)
         FROM bids

@@ -4,7 +4,7 @@
     <div class="footer-container">
 
         <div class="footer-section">
-            <img src="/huhu/huhu/img/huhulogowhite.png" 
+            <img src="/huhu/huhu_linux/img/huhulogowhite.png" 
                  alt="Logo Huhu - plateforme d'enchères de chevaux">
             <p>La plateforme en ligne des enchères aux chevaux !</p>
         </div>
@@ -31,9 +31,7 @@
         <div class="footer-section">
             <h4>Autres</h4>
             <ul class="footer-links">
-                <li><a href="#">Préférences cookies</a></li>
-                <li><a href="#">CGU/CGV</a></li>
-                <li><a href="#">Politiques de confidentialité</a></li>
+                 <li><a href="#">Mentions légales</a></li>
             </ul>
         </div>
 

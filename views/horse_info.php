@@ -172,9 +172,7 @@ if (!empty($horse['horse_birthdate'])) {
                 </p>
 
             </div>
-
         </div>
-
 
         <div class="cta-horse-info">
 
@@ -183,7 +181,7 @@ if (!empty($horse['horse_birthdate'])) {
                 <p>Inscription requise pour participer.</p>
 
                 <a
-                    href="/huhu/huhu/views/register_form.php"
+                    href="/huhu/huhu_linux/views/register_form.php"
                     class="btn-horse-info"
                 >
                     S'inscrire
@@ -228,7 +226,7 @@ if (!empty($horse['horse_birthdate'])) {
 
 
             <form
-                action="/huhu/huhu/controller/bid_ctrl.php"
+                action="/huhu/huhu_linux/controller/bid_ctrl.php"
                 method="POST"
             >
 
