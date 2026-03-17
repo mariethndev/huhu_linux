@@ -133,20 +133,12 @@ $price_max  = $_GET['price_max'] ?? '';
                         <?= htmlentities($horse['horse_discipline'] ?? '—') ?>
                     </div>
 
-                    <div class="bah-price-value">
-                        <?= number_format($horse['current_price'] ?? 0, 0, ',', ' ') ?> €
+                    <div>
+                        <p><strong>Prix de départ :</strong>
+                            <?= number_format($horse['current_price'] ?? 0, 0, ',', ' ') ?> €
+                        </p>
                     </div>
-
-                    <div class="bah-dates">
-                        <strong>Début :</strong>
-                        <?= htmlentities($horse['auction_start_date'] ?? '—') ?>
-                    </div>
-
-                    <div class="bah-dates">
-                        <strong>Fin :</strong>
-                        <?= htmlentities($horse['auction_end_date'] ?? '—') ?>
-                    </div>
-
+                  
                 </div>
 
                 <div class="bah-card-footer">

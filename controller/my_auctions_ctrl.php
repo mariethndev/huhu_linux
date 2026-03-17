@@ -5,13 +5,20 @@ if (empty($_SESSION['user_id'])) {
     header("Location: ../views/login_form.php");
     exit;
 }
-
 $userId = $_SESSION['user_id'];
-$auctions = [];
+
+$groupedAuctions = [
+    "en_cours" => [],
+    "annulees" => [],
+    "terminees" => [],
+    "remportees" => []
+];
 
 try {
 
-    // récupérer les chevaux sur lesquels l'utilisateur a enchéri
+    // DEBUG USER
+     // var_dump($userId);
+
     $stmt = $pdo->prepare("
         SELECT DISTINCT horse_id_fk
         FROM bids
@@ -20,11 +27,13 @@ try {
     $stmt->execute([$userId]);
     $bids = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    //  DEBUG BIDS
+     // var_dump($bids); die();
+
     foreach ($bids as $bid) {
 
         $horseId = $bid['horse_id_fk'];
 
-        // récupérer cheval
         $stmtHorse = $pdo->prepare("
             SELECT horse_name
             FROM horses
@@ -35,7 +44,6 @@ try {
 
         if (!$horse) continue;
 
-        // récupérer enchère
         $stmtAuction = $pdo->prepare("
             SELECT auction_status, auction_end_date, auction_starting_price
             FROM auctions
@@ -46,7 +54,6 @@ try {
 
         if (!$auction) continue;
 
-        // prix actuel
         $stmtPrice = $pdo->prepare("
             SELECT MAX(bid_amount)
             FROM bids
@@ -55,10 +62,8 @@ try {
         $stmtPrice->execute([$horseId]);
         $lastBid = $stmtPrice->fetchColumn();
 
-        $currentPrice =
-            $lastBid ?: $auction['auction_starting_price'];
+        $currentPrice = $lastBid ?: $auction['auction_starting_price'];
 
-        // nombre participants
         $stmtCount = $pdo->prepare("
             SELECT COUNT(DISTINCT user_id_fk)
             FROM bids
@@ -67,16 +72,61 @@ try {
         $stmtCount->execute([$horseId]);
         $participants = (int)$stmtCount->fetchColumn();
 
-        $auctions[] = [
+        $data = [
             "id_horse" => $horseId,
             "horse_name" => $horse['horse_name'],
-            "auction_status" => $auction['auction_status'],
             "auction_end_date" => $auction['auction_end_date'],
             "last_price" => $currentPrice,
             "participants" => $participants
         ];
+
+        switch ($auction['auction_status']) {
+
+            case 'active':
+                $groupedAuctions["en_cours"][] = $data;
+                break;
+
+            case 'cancelled':
+                $groupedAuctions["annulees"][] = $data;
+                break;
+
+            case 'finished':
+
+                $stmtWinner = $pdo->prepare("
+                    SELECT user_id_fk
+                    FROM bids
+                    WHERE horse_id_fk = ?
+                    ORDER BY bid_amount DESC
+                    LIMIT 1
+                ");
+                $stmtWinner->execute([$horseId]);
+                $winnerId = $stmtWinner->fetchColumn();
+
+                if ($winnerId == $userId) {
+                    $groupedAuctions["remportees"][] = $data;
+                } else {
+                    $groupedAuctions["terminees"][] = $data;
+                }
+
+                break;
+        }
     }
 
+    $stmtOutbid = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM outbid 
+        WHERE user_id_fk = ?
+    ");
+    $stmtOutbid->execute([$userId]);
+    $outbidCount = $stmtOutbid->fetchColumn();
+
 } catch (PDOException $e) {
-    $auctions = [];
+
+    $groupedAuctions = [
+        "en_cours" => [],
+        "annulees" => [],
+        "terminees" => [],
+        "remportees" => []
+    ];
+    $outbidCount = 0;
 }

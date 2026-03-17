@@ -1,6 +1,5 @@
 <?php
-session_start();
-require_once '../controller/horse_info_ctrl.php';
+ require_once '../controller/horse_info_ctrl.php';
 require_once '../head.php';
 
 $defaultImage = "/huhu/huhu_linux/uploads/horses/horse_default.png";
@@ -39,33 +38,15 @@ if (!empty($horse['horse_birthdate'])) {
     <div class="right-card-horse">
 
         <div class="infos">
+
+            <!-- toutes tes cards inchangées -->
             <div class="card-info">
                 <h3>DÉTAILS</h3>
-
-                <p>
-                    Numéro :
-                    <?= htmlentities($horse['horse_id_number'] ?? '—') ?>
-                </p>
-
-                <p>
-                    Naissance :
-                    <?= $birthdateFormatted ?>
-                </p>
-
-                <p>
-                    Discipline :
-                    <strong>
-                        <?= htmlentities($horse['horse_discipline'] ?? '—') ?>
-                    </strong>
-                </p>
-
-                <p>
-                    Lieu :
-                    <?= htmlentities($horse['horse_location'] ?? '—') ?>
-                </p>
-
-                <p>
-                    Date d'enregistrement :
+                <p>Numéro : <?= htmlentities($horse['horse_id_number'] ?? '—') ?></p>
+                <p>Naissance : <?= $birthdateFormatted ?></p>
+                <p>Discipline : <strong><?= htmlentities($horse['horse_discipline'] ?? '—') ?></strong></p>
+                <p>Lieu : <?= htmlentities($horse['horse_location'] ?? '—') ?></p>
+                <p>Date d'enregistrement :
                     <?= !empty($horse['horse_register_date'])
                         ? date('d/m/Y', strtotime($horse['horse_register_date']))
                         : '—' ?>
@@ -74,57 +55,30 @@ if (!empty($horse['horse_birthdate'])) {
 
             <div class="card-info">
                 <h3>MORPHOLOGIE</h3>
-
-                <p>
-                    Robe :
-                    <?= htmlentities($horse['horse_coat'] ?? '—') ?>
-                </p>
-
-                <p>
-                    Taille :
+                <p>Robe : <?= htmlentities($horse['horse_coat'] ?? '—') ?></p>
+                <p>Taille :
                     <?= !empty($horse['horse_height'])
                         ? htmlentities($horse['horse_height']) . ' cm'
                         : 'NC' ?>
                 </p>
-
-                <p>
-                    Poids :
+                <p>Poids :
                     <?= !empty($horse['horse_weight'])
                         ? htmlentities($horse['horse_weight']) . ' kg'
                         : 'NC' ?>
                 </p>
-
-                <p>
-                    Sexe :
-                    <?= htmlentities($horse['horse_sex'] ?? '—') ?>
-                </p>
+                <p>Sexe : <?= htmlentities($horse['horse_sex'] ?? '—') ?></p>
             </div>
 
             <div class="card-info">
                 <h3>RACE</h3>
-
-                <p>
-                    <?= htmlentities($horse['horse_breed'] ?? '—') ?>
-                </p>
-
-                <p>
-                    Numéro UELN :
-                    <?= htmlentities($horse['horse_nb_ueln'] ?? '—') ?>
-                </p>
+                <p><?= htmlentities($horse['horse_breed'] ?? '—') ?></p>
+                <p>Numéro UELN : <?= htmlentities($horse['horse_nb_ueln'] ?? '—') ?></p>
             </div>
 
             <div class="card-info">
                 <h3>PARENTS</h3>
-
-                <p>
-                    Mère :
-                    <?= htmlentities($horse['horse_mother'] ?? '—') ?>
-                </p>
-
-                <p>
-                    Père :
-                    <?= htmlentities($horse['horse_father'] ?? '—') ?>
-                </p>
+                <p>Mère : <?= htmlentities($horse['horse_mother'] ?? '—') ?></p>
+                <p>Père : <?= htmlentities($horse['horse_father'] ?? '—') ?></p>
             </div>
 
             <div class="card-info">
@@ -132,7 +86,6 @@ if (!empty($horse['horse_birthdate'])) {
                 <p>
                     <?php
                     $description = trim($horse['horse_description'] ?? '');
-
                     echo ($description === '' || $description === '...')
                         ? 'Aucune description disponible.'
                         : nl2br(htmlentities($description));
@@ -140,35 +93,25 @@ if (!empty($horse['horse_birthdate'])) {
                 </p>
             </div>
 
-
             <div class="card-info">
                 <h3>ENCHÈRE</h3>
 
                 <p>
                     Statut :
-                    <?php if (($auctionStatus ?? '') === 'disponible'): ?>
-                        <span class="badge bg-success">
-                            Disponible
-                        </span>
+                    <?php if (($auctionStatus ?? '') === 'active'): ?>
+                        <span class="badge bg-success">En cours</span>
                     <?php else: ?>
-                        <span class="badge bg-danger">
-                            Clôturée
-                        </span>
+                        <span class="badge bg-danger">Clôturée</span>
                     <?php endif; ?>
                 </p>
 
                 <p>
                     Prix actuel :
-                    <strong>
-                        <?= number_format((float)($currentPrice ?? 0), 0, ',', ' ') ?> €
-                    </strong>
+                    <strong><?= number_format((float)($currentPrice ?? 0), 0, ',', ' ') ?> €</strong>
                 </p>
 
- 
-
                 <p class="voters-info btn btn-secondary p-2">
-                    <?= $horse['voters'] ?? 0 ?>
-                    participant(s)
+                    <?= $horse['voters'] ?? 0 ?> participant(s)
                 </p>
 
             </div>
@@ -180,14 +123,29 @@ if (!empty($horse['horse_birthdate'])) {
 
                 <p>Inscription requise pour participer.</p>
 
-                <a
-                    href="/huhu/huhu_linux/views/register_form.php"
-                    class="btn-horse-info"
-                >
+                <a href="/huhu/huhu_linux/views/register_form.php" class="btn-horse-info">
                     S'inscrire
                 </a>
 
             <?php else: ?>
+
+                <?php if (!empty($auctionId)): ?>
+
+                    <?php if ($isFollowing): ?>
+                        <form method="post">
+                            <button class="btn btn-warning" name="unfollow">
+                                Ne plus suivre 
+                            </button>
+                        </form>
+                    <?php else: ?>
+                        <form method="post">
+                            <button class="btn btn-success" name="follow">
+                                Suivre
+                            </button>
+                        </form>
+                    <?php endif; ?>
+
+                <?php endif; ?>
 
                 <button
                     class="btn-bid"
@@ -205,18 +163,13 @@ if (!empty($horse['horse_birthdate'])) {
 </div>
 
 <div id="bidModal" class="custom-modal hidden">
-
     <div class="modal-card">
         <div class="modal-image">
             <img src="" alt="">
-            <span class="modal-close">
-                &times;
-            </span>
+            <span class="modal-close">&times;</span>
         </div>
 
-
         <div class="modal-body">
-
             <h2 id="modalHorseName"></h2>
 
             <p>
@@ -224,40 +177,19 @@ if (!empty($horse['horse_birthdate'])) {
                 <strong id="modalCurrentPrice"></strong>
             </p>
 
+            <form action="/huhu/huhu_linux/controller/bid_ctrl.php" method="POST">
 
-            <form
-                action="/huhu/huhu_linux/controller/bid_ctrl.php"
-                method="POST"
-            >
-
-                <input
-                    type="hidden"
-                    name="horse_id"
-                    id="modalHorseId"
-                >
-
+                <input type="hidden" name="horse_id" id="modalHorseId">
 
                 <div class="bid-input">
-                    <button type="button" id="bidMinus">
-                        -
-                    </button>
+                    <button type="button" id="bidMinus">-</button>
 
-                    <input
-                        type="number"
-                        name="bid_amount"
-                        id="bidAmount"
-                        required
-                    >
+                    <input type="number" name="bid_amount" id="bidAmount" required>
 
-                    <button type="button" id="bidPlus">
-                        +
-                    </button>
+                    <button type="button" id="bidPlus">+</button>
                 </div>
 
-                <button
-                    type="submit"
-                    class="btn-bid-now"
-                >
+                <button type="submit" class="btn-bid-now">
                     Enchérir
                 </button>
 

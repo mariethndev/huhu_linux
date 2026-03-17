@@ -31,7 +31,8 @@
         <div class="footer-section">
             <h4>Autres</h4>
             <ul class="footer-links">
-                 <li><a href="#">Mentions légales</a></li>
+                <li><a href="#">Mentions légales</a></li>
+                <li><a href="#">CGU/CGV</a></li>
             </ul>
         </div>
 
