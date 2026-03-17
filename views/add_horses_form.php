@@ -88,7 +88,13 @@ require_once '../head.php';
 
                 <div class="af-field">
                     <label>Discipline</label>
-                    <input type="text" name="horse_discipline">
+                    <select name="horse_discipline">
+                        <option value="">Choisir</option>
+                        <option value="CSO">CSO</option>
+                        <option value="Dressage">Dressage</option>
+                        <option value="Endurance">Endurance</option>
+                        <option value="Complet">Complet</option>
+                    </select>
                 </div>
 
                 <div class="af-field">
@@ -160,5 +166,5 @@ require_once '../head.php';
     </div>
 
 </div>
-
+ 
 <?php require_once '../footer.php'; ?>

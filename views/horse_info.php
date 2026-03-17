@@ -269,4 +269,3 @@ if (!empty($horse['horse_birthdate'])) {
 </div>
 
 <?php require_once '../footer.php'; ?>
-

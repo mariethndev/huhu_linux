@@ -12,64 +12,44 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-if (
-    empty($_POST['csrf_token']) ||
-    empty($_SESSION['csrf_token']) ||
-    $_POST['csrf_token'] !== $_SESSION['csrf_token']
-) {
-    header("Location: ../views/update_profile.php?status=danger");
-    exit;
-}
-
 $userId    = (int) $_SESSION['user_id'];
 $userName  = trim($_POST['user_name'] ?? '');
 $userEmail = trim($_POST['user_email'] ?? '');
 
-
-if (empty($userName) || empty($userEmail)) {
-    header("Location: ../views/update_profile.php?status=danger");
-    exit;
-}
-
-if (!filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
-    header("Location: ../views/update_profile.php?status=danger");
+if (!$userName || !$userEmail) {
+    header("Location: ../views/update_profile.php");
     exit;
 }
 
 try {
+
+    // vérifier email unique
     $stmt = $pdo->prepare("
         SELECT id_user
         FROM users
         WHERE user_email = ?
         AND id_user != ?
     ");
-
-    $stmt->execute([
-        $userEmail,
-        $userId
-    ]);
+    $stmt->execute([$userEmail, $userId]);
 
     if ($stmt->fetch()) {
-        header("Location: ../views/update_profile.php?status=danger&message=Email déjà utilisé");
+        header("Location: ../views/update_profile.php");
         exit;
     }
 
+    // update profil
     $stmt = $pdo->prepare("
         UPDATE users
         SET user_name = ?, user_email = ?
         WHERE id_user = ?
     ");
+    $stmt->execute([$userName, $userEmail, $userId]);
 
-    $stmt->execute([
-        $userName,
-        $userEmail,
-        $userId
-    ]);
-
-    header("Location: ../views/update_profile.php?status=success");
+    header("Location: ../views/update_profile.php");
     exit;
 
 } catch (PDOException $e) {
-    header("Location: ../views/update_profile.php?status=danger&message=Erreur serveur");
+
+    header("Location: ../views/update_profile.php");
     exit;
 }

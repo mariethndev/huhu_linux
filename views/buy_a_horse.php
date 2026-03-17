@@ -113,7 +113,7 @@ $price_max  = $_GET['price_max'] ?? '';
                     <div class="bah-card-meta">
                         <?= htmlentities($horse['horse_breed'] ?? 'Non renseigné') ?>
                     </div>
- 
+
                     <div>
                         Sexe :
                         <?php
@@ -141,7 +141,7 @@ $price_max  = $_GET['price_max'] ?? '';
                         <strong>Début :</strong>
                         <?= htmlentities($horse['auction_start_date'] ?? '—') ?>
                     </div>
-                    
+
                     <div class="bah-dates">
                         <strong>Fin :</strong>
                         <?= htmlentities($horse['auction_end_date'] ?? '—') ?>

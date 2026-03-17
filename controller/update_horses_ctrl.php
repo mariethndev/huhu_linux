@@ -4,7 +4,7 @@ require_once "../model/config.php";
 
 if (
     empty($_SESSION['user_id']) ||
-    ($_SESSION['role'] ?? '') !== 'organisateur'
+    $_SESSION['role'] !== 'organisateur'
 ) {
     header("Location: ../views/homepage.php");
     exit;
@@ -24,8 +24,8 @@ $breed       = trim($_POST['race'] ?? '');
 $discipline  = trim($_POST['discipline'] ?? '');
 $status      = $_POST['horse_status'] ?? '';
 
-$height      = !empty($_POST['height']) ? $_POST['height'] : null;
-$weight      = !empty($_POST['weight']) ? $_POST['weight'] : null;
+$height      = $_POST['height'] ?: null;
+$weight      = $_POST['weight'] ?: null;
 
 $coat        = trim($_POST['coat'] ?? '');
 $location    = trim($_POST['location'] ?? '');
@@ -37,16 +37,9 @@ $ueln        = trim($_POST['ueln'] ?? '');
 
 $price = (float)($_POST['price_starter'] ?? 0);
 
-$winnerId = !empty($_POST['auction_winner_id'])
-    ? (int)$_POST['auction_winner_id']
-    : null;
-
 $imageName = null;
 
-if (
-    !empty($_FILES['horse_image']['name']) &&
-    $_FILES['horse_image']['error'] === 0
-) {
+if (!empty($_FILES['horse_image']['name']) && $_FILES['horse_image']['error'] === 0) {
 
     $imageName = time() . "_" . basename($_FILES['horse_image']['name']);
 
@@ -58,6 +51,7 @@ if (
 
 try {
 
+    // UPDATE cheval
     if ($imageName) {
 
         $stmt = $pdo->prepare("
@@ -72,23 +66,12 @@ try {
         ");
 
         $stmt->execute([
-            $name,
-            $sex,
-            $birthdate,
-            $breed,
-            $discipline,
-            $status,
-            $coat,
-            $height,
-            $weight,
-            $location,
-            $father,
-            $mother,
-            $description,
-            $idNumber,
-            $ueln,
-            $imageName,
-            $horseId
+            $name, $sex, $birthdate,
+            $breed, $discipline, $status,
+            $coat, $height, $weight,
+            $location, $father, $mother,
+            $description, $idNumber, $ueln,
+            $imageName, $horseId
         ]);
 
     } else {
@@ -104,74 +87,26 @@ try {
         ");
 
         $stmt->execute([
-            $name,
-            $sex,
-            $birthdate,
-            $breed,
-            $discipline,
-            $status,
-            $coat,
-            $height,
-            $weight,
-            $location,
-            $father,
-            $mother,
-            $description,
-            $idNumber,
-            $ueln,
+            $name, $sex, $birthdate,
+            $breed, $discipline, $status,
+            $coat, $height, $weight,
+            $location, $father, $mother,
+            $description, $idNumber, $ueln,
             $horseId
         ]);
     }
 
-    $stmt = $pdo->prepare("
-        SELECT id_auction
-        FROM auctions
-        WHERE horse_id_fk = ?
-        AND auction_status = 'disponible'
-        AND auction_end_date <= NOW()
-    ");
-
-    $stmt->execute([$horseId]);
-    $auction = $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-    if ($auction) {
-
-        $auctionId = $auction['id_auction'];
-
-    
-        $stmt = $pdo->prepare("
-            SELECT user_id_fk
-            FROM bids
-            WHERE auction_id_fk = ?
-            ORDER BY bid_amount DESC
-            LIMIT 1
-        ");
-
-        $stmt->execute([$auctionId]);
-        $winner = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        $winnerId = $winner['user_id_fk'] ?? null;
-
-        $status = "remporté";
-    }
-     
-    if ($status !== "remporté") {
-        $winnerId = null;
-    }
-
+    // UPDATE enchère
     $stmt = $pdo->prepare("
         UPDATE auctions
         SET auction_starting_price=?,
-            auction_status=?,
-            auction_winner_id=?
+            auction_status=?
         WHERE horse_id_fk=?
     ");
 
     $stmt->execute([
         $price,
         $status,
-        $winnerId,
         $horseId
     ]);
 

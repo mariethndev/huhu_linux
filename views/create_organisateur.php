@@ -33,6 +33,7 @@ require_once '../head.php';
 
         <form method="post" action="../controller/create_organisateur_ctrl.php">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+
             <div class="co-field">
                 <label class="co-label" for="co_name">Nom complet</label>
                 <input type="text"

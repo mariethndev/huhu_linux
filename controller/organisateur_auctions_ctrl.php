@@ -8,76 +8,78 @@ $annulees   = [];
 
 try {
 
-    $stmt = $pdo->prepare("
+    $stmt = $pdo->query("
         SELECT *
         FROM auctions
         ORDER BY auction_start_date DESC
     ");
 
-    $stmt->execute();
     $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($auctions as &$auction) {
 
-        if (empty($auction['horse_id'])) {
+        if (empty($auction['horse_id_fk'])) {
             continue;
         }
 
-        $horseId = $auction['horse_id'];
+        $horseId = $auction['horse_id_fk'];
 
-        $stmt = $pdo->prepare("
+        // récupérer nom cheval
+        $stmtHorse = $pdo->prepare("
             SELECT horse_name
             FROM horses
             WHERE id_horse = ?
         ");
-        $stmt->execute([$horseId]);
-        $horse = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmtHorse->execute([$horseId]);
+        $horse = $stmtHorse->fetch(PDO::FETCH_ASSOC);
 
         $auction['horse_name'] = $horse['horse_name'] ?? '—';
 
-        $stmt = $pdo->prepare("
-            SELECT bid_amount, user_id
+        // récupérer dernière enchère
+        $stmtBid = $pdo->prepare("
+            SELECT bid_amount, user_id_fk
             FROM bids
-            WHERE horse_id = ?
+            WHERE horse_id_fk = ?
             ORDER BY bid_amount DESC
             LIMIT 1
         ");
-        $stmt->execute([$horseId]);
-        $lastBid = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmtBid->execute([$horseId]);
+        $lastBid = $stmtBid->fetch(PDO::FETCH_ASSOC);
 
         if ($lastBid) {
             $auction['last_bid']    = $lastBid['bid_amount'];
-            $auction['last_bidder'] = $lastBid['user_id'];
+            $auction['last_bidder'] = $lastBid['user_id_fk'];
         } else {
-            $auction['last_bid']    = 0;
+            $auction['last_bid']    = $auction['auction_starting_price'];
             $auction['last_bidder'] = null;
         }
 
-        $status = 'disponible';
+        // calcul statut simple
+        if (!empty($auction['auction_end_date']) &&
+            strtotime($auction['auction_end_date']) < time()) {
 
-        if (!empty($auction['auction_end_date'])) {
-            if (strtotime($auction['auction_end_date']) < time()) {
-                $status = 'terminé';
-            }
-        }
+            $auction['auction_status'] = 'terminé';
 
-        $auction['auction_status'] = $status;
+        } elseif ($auction['auction_status'] === 'annulé') {
 
-        $auction['auction_end_date'] = $auction['auction_end_date'] ?? null;
-    }
-
-    foreach ($auctions as $auction) {
-
-        if ($auction['auction_status'] === "disponible") {
-
-            $enCours[] = $auction;
-
-        } elseif ($auction['auction_status'] === "terminé") {
-
-            $terminees[] = $auction;
+            $auction['auction_status'] = 'annulé';
 
         } else {
 
+            $auction['auction_status'] = 'disponible';
+        }
+    }
+
+    // tri par statut
+    foreach ($auctions as $auction) {
+
+        if ($auction['auction_status'] === "disponible") {
+            $enCours[] = $auction;
+
+        } elseif ($auction['auction_status'] === "terminé") {
+            $terminees[] = $auction;
+
+        } else {
             $annulees[] = $auction;
         }
     }

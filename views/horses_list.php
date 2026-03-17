@@ -164,7 +164,6 @@ $auction_status = $_GET['auction_status'] ?? '';
 
                         <div class="hl-actions">
 
-                            <!-- VOIR -->
                             <a
                                 href="/huhu/huhu_linux/views/horse_info.php?id=<?= (int)$horse['id_horse'] ?>"
                                 class="hl-action-btn"
@@ -173,8 +172,6 @@ $auction_status = $_GET['auction_status'] ?? '';
                                 <i class="bi bi-eye"></i>
                             </a>
 
-
-                            <!-- MODIFIER -->
                             <a
                                 href="/huhu/huhu_linux/views/update_horses_form.php?id=<?= (int)$horse['id_horse'] ?>"
                                 class="hl-action-btn"
@@ -183,8 +180,6 @@ $auction_status = $_GET['auction_status'] ?? '';
                                 <i class="bi bi-pencil"></i>
                             </a>
 
-
-                            <!-- SUPPRIMER -->
                             <button
                                 type="button"
                                 class="hl-action-btn hl-action-btn--danger btn-delete-horse"
@@ -214,9 +209,6 @@ $auction_status = $_GET['auction_status'] ?? '';
     </div>
 
 </div>
-
-
-<!-- DELETE MODAL -->
 
 <div id="deleteModal" class="custom-modal hidden">
 

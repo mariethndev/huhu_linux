@@ -13,9 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $horseId = (int)($_POST['horse_id'] ?? 0);
-
 $bidAmount = (float)($_POST['bid_amount'] ?? 0);
-
 $userId = (int)$_SESSION['user_id'];
 
 if ($horseId <= 0 || $bidAmount <= 0) {
@@ -53,21 +51,17 @@ try {
     ");
 
     $stmt->execute([$horseId]);
-
     $lastBid = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($lastBid) {
 
         $currentPrice  = (float)$lastBid['bid_amount'];
-
         $previousUser  = (int)$lastBid['user_id_fk'];
-
         $previousBidId = (int)$lastBid['id_bid'];
 
     } else {
 
         $currentPrice  = (float)$auction['auction_starting_price'];
-
         $previousUser  = null;
         $previousBidId = null;
     }
@@ -100,7 +94,7 @@ try {
             $previousUser
         ]);
     }
-    
+
     $stmtUpdate = $pdo->prepare("
         UPDATE auctions
         SET auction_final_price = ?
@@ -111,7 +105,7 @@ try {
         $bidAmount,
         $horseId
     ]);
-    
+
     header("Location: ../views/horse_info.php?id=$horseId");
     exit;
 

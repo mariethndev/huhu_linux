@@ -2,58 +2,55 @@
 require_once "../model/config.php";
 
 $horses = [];
-$count  = 0;
 
 try {
-    $stmt = $pdo->prepare("
+
+    // récupérer les 6 dernières enchères actives
+    $stmt = $pdo->query("
         SELECT *
         FROM auctions
         WHERE auction_status = 'disponible'
-        AND (auction_end_date IS NULL OR auction_end_date > NOW())
         ORDER BY auction_start_date DESC
         LIMIT 6
     ");
-    $stmt->execute();
 
     $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($auctions as $auction) {
 
-        $stmt = $pdo->prepare("
+        // récupérer le cheval lié
+        $stmtHorse = $pdo->prepare("
             SELECT *
             FROM horses
             WHERE id_horse = ?
             AND horse_is_deleted = 0
         ");
-        $stmt->execute([$auction['horse_id']]);
+        $stmtHorse->execute([$auction['horse_id_fk']]);
+        $horse = $stmtHorse->fetch(PDO::FETCH_ASSOC);
 
-        $horse = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$horse) continue;
 
-        if (!$horse) {
-            continue;
-        }
-
-        $stmt = $pdo->prepare("
+        // récupérer le prix actuel
+        $stmtPrice = $pdo->prepare("
             SELECT MAX(bid_amount)
             FROM bids
-            WHERE horse_id = ?
+            WHERE horse_id_fk = ?
         ");
-        $stmt->execute([$horse['id_horse']]);
+        $stmtPrice->execute([$horse['id_horse']]);
+        $lastBid = $stmtPrice->fetchColumn();
 
-        $lastBid = $stmt->fetchColumn();
+        $horse['current_price'] =
+            $lastBid ?: $auction['auction_starting_price'];
 
-        $horse['current_price'] = $lastBid ?: $auction['auction_starting_price'];
-        $horse['auction_status']     = $auction['auction_status'];
         $horse['auction_start_date'] = $auction['auction_start_date'];
         $horse['auction_end_date']   = $auction['auction_end_date'];
 
         $horses[] = $horse;
     }
 
-    $count = count($horses);
-
 } catch (PDOException $e) {
 
     $horses = [];
-    $count  = 0;
 }
+
+$count = count($horses);

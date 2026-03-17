@@ -37,7 +37,6 @@ $auction_price = !empty($_POST['auction_starting_price'])
 $user_id = $_SESSION['user_id'];
 
 $imageName = "horse_default.png";
-
 $uploadDir = __DIR__ . "/../uploads/horses/";
 
 if (!is_dir($uploadDir)) {
@@ -49,20 +48,23 @@ if (
     $_FILES['horse_image']['error'] === 0
 ) {
 
-    $ext = strtolower(pathinfo($_FILES['horse_image']['name'], PATHINFO_EXTENSION));
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $_FILES['horse_image']['tmp_name']);
 
-    if ($ext == "jpg" || $ext == "jpeg" || $ext == "png" || $ext == "webp") {
+    $allowed = [
+        'image/jpeg',
+        'image/png',
+        'image/webp'
+    ];
 
-        $imageName = time() . '_' . basename($_FILES['horse_image']['name']);
-        $destination = $uploadDir . $imageName;
-
-        if (!move_uploaded_file($_FILES['horse_image']['tmp_name'], $destination)) {
-            die("Erreur upload image (permissions)");
-        }
-
-    } else {
-        die("Format non autorisé");
+    if (!in_array($mime, $allowed)) {
+        die("Format image interdit");
     }
+
+    $imageName = uniqid() . ".webp";
+    $destination = $uploadDir . $imageName;
+
+    move_uploaded_file($_FILES['horse_image']['tmp_name'], $destination);
 }
 
 if (
@@ -106,11 +108,10 @@ try {
             horse_id_number,
             horse_nb_ueln,
             horse_description,
-            user_id,
-            horse_image,
-            horse_register_date
+            user_id_fk,
+            horse_image
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     $stmt->execute([
@@ -142,7 +143,7 @@ try {
                 auction_starting_price,
                 auction_start_date,
                 auction_end_date,
-                horse_id,
+                horse_id_fk,
                 auction_status
             )
             VALUES (?, NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY), ?, 'disponible')

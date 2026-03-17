@@ -1,13 +1,6 @@
-// Attend que tout le HTML de la page soit chargé avant d'exécuter le script
 document.addEventListener("DOMContentLoaded", function () {
-
-    // Récupère l'input de type file qui permet de sélectionner une image
     const input = document.getElementById("horseImageInput");
-
-    // Récupère l'élément <img> qui servira à afficher l'aperçu de l'image
     const preview = document.getElementById("horsePreview");
-
-    // Si l'un des deux éléments n'existe pas dans la page, on arrête le script
     if (!input || !preview) return;
 
     // Écoute l'événement "change" qui se déclenche quand l'utilisateur sélectionne un fichier

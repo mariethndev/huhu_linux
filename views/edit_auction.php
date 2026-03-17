@@ -1,13 +1,6 @@
 <?php
 session_start();
-
-// Redirige les utilisateurs non organisateurs vers la page d'accueil
-// Si l'utilisateur n'est pas connecté ou n'est pas un organisateur, redirige vers la page d'accueil
-// Cette vérification empêche les utilisateurs non autorisés d'accéder à la page de modification des enchères
-// L'utilisation de $_SESSION['role'] permet de vérifier le rôle de l'utilisateur connecté
-//  Si l'utilisateur n'est pas un organisateur, il est redirigé vers "homepage.php" et le script s'arrête avec exit
-// Cela garantit que seuls les organisateurs peuvent accéder à cette page et effectuer des modifications sur les enchères
-
+ 
 if (($_SESSION['role'] ?? '') !== 'organisateur') {
     header("Location: homepage.php");
     exit;
