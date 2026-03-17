@@ -19,7 +19,7 @@ $horse_name      = trim($_POST['horse_name'] ?? '');
 $horse_breed     = trim($_POST['horse_breed'] ?? '');
 $horse_sex       = $_POST['horse_sex'] ?? '';
 $horse_birthdate = $_POST['horse_birthdate'] ?? '';
-$horse_status    = $_POST['horse_status'] ?? 'disponible';
+$horse_status    = $_POST['horse_status'] ?? 'active'; // 🔥 cohérent
 $horse_discipline = trim($_POST['horse_discipline'] ?? '');
 $horse_coat       = trim($_POST['horse_coat'] ?? '');
 $horse_height     = $_POST['horse_height'] ?? null;
@@ -38,11 +38,7 @@ $user_id = $_SESSION['user_id'];
 
 $imageName = "horse_default.png";
 $uploadDir = __DIR__ . "/../uploads/horses/";
-
-if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
-}
-
+  
 if (
     isset($_FILES['horse_image']) &&
     $_FILES['horse_image']['error'] === 0
@@ -51,14 +47,12 @@ if (
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime = finfo_file($finfo, $_FILES['horse_image']['tmp_name']);
 
-    $allowed = [
-        'image/jpeg',
-        'image/png',
-        'image/webp'
-    ];
-
-    if (!in_array($mime, $allowed)) {
-        die("Format image interdit");
+     if (
+        $mime !== 'image/jpeg' &&
+        $mime !== 'image/png' &&
+        $mime !== 'image/webp'
+    ) {
+        exit("Format image interdit");
     }
 
     $imageName = uniqid() . ".webp";
@@ -135,7 +129,7 @@ try {
 
     $horse_id = $pdo->lastInsertId();
 
-    if ($horse_status === 'disponible') {
+    if ($horse_status === 'active') {
 
         $stmtAuction = $pdo->prepare("
             INSERT INTO auctions
@@ -146,7 +140,7 @@ try {
                 horse_id_fk,
                 auction_status
             )
-            VALUES (?, NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY), ?, 'disponible')
+            VALUES (?, NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY), ?, 'active')
         ");
 
         $stmtAuction->execute([
@@ -159,7 +153,6 @@ try {
     exit;
 
 } catch (PDOException $e) {
-
     echo $e->getMessage();
     exit;
 }
