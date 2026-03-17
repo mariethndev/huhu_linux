@@ -23,7 +23,6 @@ if ($horseId <= 0 || $bidAmount <= 0) {
     exit;
 }
 
-
 try {
 
     $stmtAuction = $pdo->prepare("

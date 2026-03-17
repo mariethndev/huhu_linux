@@ -29,14 +29,15 @@ require_once '../head.php';
 
     <?php if (isset($_GET['status']) && $_GET['status'] == 'danger') { ?>
         <div class="af-alert af-alert--danger">
-            Veuillez remplir tous les champs obligatoires.
+            Veuillez remplir tous les champs obligatoires ou fichier invalide.
         </div>
     <?php } ?>
 
-
     <div class="af-card">
 
-        <form action="../controller/add_horses_ctrl.php" method="post" enctype="multipart/form-data">
+        <form action="../controller/add_horses_ctrl.php"
+              method="post"
+              enctype="multipart/form-data">
 
             <div class="af-grid-2">
 
@@ -47,7 +48,7 @@ require_once '../head.php';
                     <div style="margin-bottom:10px">
                         <img
                             id="horsePreview"
-                            src="/huhu/huhu/uploads/horses/horse_default.png"
+                            src="/huhu/huhu_linux/uploads/horses/horse_default.png"
                             style="max-width:250px;border-radius:8px;"
                         >
                     </div>
@@ -56,7 +57,7 @@ require_once '../head.php';
                         type="file"
                         name="horse_image"
                         id="horseImageInput"
-                        accept="image/*"
+                        accept=".jpg,.jpeg,.png,.webp"
                     >
 
                 </div>

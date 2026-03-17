@@ -101,7 +101,7 @@ $price_max  = $_GET['price_max'] ?? '';
             <div class="bah-card">
 
                 <div class="bah-card-image">
-                    <img src="/huhu/huhu/uploads/horses/<?= htmlentities($horse['horse_image'] ?? 'horse_default.png') ?>">
+                    <img src="/huhu/huhu_linux/uploads/horses/<?= htmlentities($horse['horse_image'] ?? 'horse_default.png') ?>">
                 </div>
 
                 <div class="bah-card-body">
@@ -113,8 +113,7 @@ $price_max  = $_GET['price_max'] ?? '';
                     <div class="bah-card-meta">
                         <?= htmlentities($horse['horse_breed'] ?? 'Non renseigné') ?>
                     </div>
-
-                    <!-- 🔥 SEXE AJOUTÉ -->
+ 
                     <div>
                         Sexe :
                         <?php

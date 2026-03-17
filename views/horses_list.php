@@ -20,7 +20,6 @@ $auction_status = $_GET['auction_status'] ?? '';
 
 <div class="hl-page">
 
-    <!-- HEADER -->
     <div class="hl-header">
         <div>
             <h1 class="hl-title">Liste des chevaux</h1>
@@ -42,8 +41,6 @@ $auction_status = $_GET['auction_status'] ?? '';
         </form>
     </div>
 
-
-    <!-- TABLE -->
     <div class="hl-container">
 
         <div class="hl-table-wrapper">
@@ -97,7 +94,7 @@ $auction_status = $_GET['auction_status'] ?? '';
                         <div class="hl-horse-cell">
 
                             <img
-                                src="/huhu/huhu/uploads/horses/<?= afficherTexteSecurise($horse['horse_image'] ?? 'horse_default.png') ?>"
+                                src="/huhu/huhu_linux/uploads/horses/<?= afficherTexteSecurise($horse['horse_image'] ?? 'horse_default.png') ?>"
                                 class="hl-horse-avatar"
                                 width="38"
                                 height="38"
@@ -169,7 +166,7 @@ $auction_status = $_GET['auction_status'] ?? '';
 
                             <!-- VOIR -->
                             <a
-                                href="/huhu/huhu/views/horse_info.php?id=<?= (int)$horse['id_horse'] ?>"
+                                href="/huhu/huhu_linux/views/horse_info.php?id=<?= (int)$horse['id_horse'] ?>"
                                 class="hl-action-btn"
                                 title="Voir la fiche"
                             >
@@ -179,7 +176,7 @@ $auction_status = $_GET['auction_status'] ?? '';
 
                             <!-- MODIFIER -->
                             <a
-                                href="/huhu/huhu/views/update_horses_form.php?id=<?= (int)$horse['id_horse'] ?>"
+                                href="/huhu/huhu_linux/views/update_horses_form.php?id=<?= (int)$horse['id_horse'] ?>"
                                 class="hl-action-btn"
                                 title="Modifier"
                             >
@@ -232,7 +229,7 @@ $auction_status = $_GET['auction_status'] ?? '';
                 <strong id="deleteHorseName"></strong> ?
             </p>
 
-            <form action="/huhu/huhu/controller/delete_horses_ctrl.php" method="POST">
+            <form action="/huhu/huhu_linux/controller/delete_horses_ctrl.php" method="POST">
 
                 <input type="hidden" name="horse_id" id="deleteHorseId">
 

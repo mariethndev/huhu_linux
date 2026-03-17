@@ -71,7 +71,7 @@ $initials = strtoupper(string: mb_substr($user['user_name'], 0, 1, 'UTF-8'));
             </div>
 
             <div class="pr-card-footer up-actions">
-                <a href="/huhu/huhu/views/profile.php" class="up-btn-cancel">
+                <a href="/huhu/huhu_linux/views/profile.php" class="up-btn-cancel">
                     Annuler
                 </a>
                 <button type="submit" class="co-btn-submit">

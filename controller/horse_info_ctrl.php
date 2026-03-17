@@ -4,7 +4,7 @@ require_once "../model/config.php";
 $horseId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($horseId <= 0) {
-    header("Location: /huhu/huhu/views/buy_a_horse.php");
+    header("Location: /huhu/huhu_linux/views/buy_a_horse.php");
     exit;
 }
 
@@ -27,7 +27,7 @@ try {
     $horse = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$horse) {
-        header("Location: /huhu/huhu/views/buy_a_horse.php");
+        header("Location: //huhu/huhu_linux/views/buy_a_horse.php");
         exit;
     }
 

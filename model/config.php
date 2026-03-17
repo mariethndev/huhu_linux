@@ -1,6 +1,9 @@
 <?php
 
-if (session_status() === PHP_SESSION_NONE){
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
@@ -12,7 +15,7 @@ try {
         "1234"
     );
 
-    // afficher les erreurs SQL
+    // Activer les erreurs SQL
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 } catch (PDOException $e) {

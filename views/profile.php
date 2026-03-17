@@ -61,7 +61,7 @@ $initials = strtoupper(substr($user['user_name'], 0, 1));
         </div>
 
         <div class="pr-card-footer">
-            <a href="/huhu/huhu/views/update_profile.php" class="pr-btn-edit">
+            <a href="/huhu/huhu_linux/views/update_profile.php" class="pr-btn-edit">
                 <i class="bi bi-pencil"></i>
                 Modifier mes informations
             </a>

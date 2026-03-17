@@ -28,8 +28,8 @@ if (!$horse) {
 }
 
 $imagePath = !empty($horse['horse_image'])
-    ? "/huhu/huhu/uploads/horses/" . htmlentities($horse['horse_image'])
-    : "/huhu/huhu/uploads/horses/horse_default.png";
+    ? "/huhu/huhu_linux/uploads/horses/" . htmlentities($horse['horse_image'])
+    : "/huhu/huhu_linux/uploads/horses/horse_default.png";
 
 require_once '../head.php';
 ?>

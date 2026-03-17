@@ -2,9 +2,6 @@
 session_start();
 require_once "../model/config.php";
 
-/* =========================
-   Vérification utilisateur
-========================= */
 if (
     empty($_SESSION['user_id']) ||
     ($_SESSION['role'] ?? '') !== 'organisateur'
@@ -13,17 +10,11 @@ if (
     exit;
 }
 
-/* =========================
-   Vérification POST
-========================= */
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/add_horses_form.php");
     exit;
 }
 
-/* =========================
-   Récupération données
-========================= */
 $horse_name      = trim($_POST['horse_name'] ?? '');
 $horse_breed     = trim($_POST['horse_breed'] ?? '');
 $horse_sex       = $_POST['horse_sex'] ?? '';
@@ -45,9 +36,6 @@ $auction_price = !empty($_POST['auction_starting_price'])
 
 $user_id = $_SESSION['user_id'];
 
-/* =========================
-   UPLOAD IMAGE
-========================= */
 $imageName = "horse_default.png";
 
 $uploadDir = __DIR__ . "/../uploads/horses/";
@@ -77,9 +65,6 @@ if (
     }
 }
 
-/* =========================
-   Vérifications
-========================= */
 if (
     empty($horse_name) ||
     empty($horse_breed) ||
@@ -102,9 +87,6 @@ if ($stmt->fetch()) {
     exit;
 }
 
-/* =========================
-   INSERT CHEVAL
-========================= */
 try {
 
     $stmt = $pdo->prepare("
@@ -152,9 +134,6 @@ try {
 
     $horse_id = $pdo->lastInsertId();
 
-    /* =========================
-       CRÉER ENCHÈRE
-    ========================= */
     if ($horse_status === 'disponible') {
 
         $stmtAuction = $pdo->prepare("

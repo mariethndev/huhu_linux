@@ -3,10 +3,10 @@ session_start();
 require_once '../controller/horse_info_ctrl.php';
 require_once '../head.php';
 
-$defaultImage = "/huhu/huhu/uploads/horses/horse_default.png";
+$defaultImage = "/huhu/huhu_linux/uploads/horses/horse_default.png";
 
 $imagePath = !empty($horse['horse_image'])
-    ? "/huhu/huhu/uploads/horses/" . htmlentities($horse['horse_image'])
+    ? "/huhu/huhu_linux/uploads/horses/" . htmlentities($horse['horse_image'])
     : $defaultImage;
 
 $birthdateFormatted = '—';
@@ -28,7 +28,7 @@ if (!empty($horse['horse_birthdate'])) {
         </div>
 
         <div class="horse-details-container">
-            <a href="/huhu/huhu/views/buy_a_horse.php" class="back-horse-info">
+            <a href="/huhu/huhu_linux/views/buy_a_horse.php" class="back-horse-info">
                 RETOUR
             </a>
         </div>

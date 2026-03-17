@@ -82,7 +82,7 @@ require_once '../head.php';
 
         </form>
 
-        <a href="/huhu/huhu/views/organisateur_dashboard.php" class="co-back">
+        <a href="/huhu/huhu_linux/views/organisateur_dashboard.php" class="co-back">
             Retour au tableau de bord
         </a>
 

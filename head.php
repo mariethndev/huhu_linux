@@ -12,8 +12,8 @@ if (session_status() === PHP_SESSION_NONE) {
   <title>Huhu - Plateforme d'enchères de chevaux</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/huhu/huhu/assets/style.css">
-  <link rel="icon" type="image/png" href="/huhu/huhu/img/favicon.png">
+  <link rel="stylesheet" href="/huhu/huhu_linux/assets/style.css">
+  <link rel="icon" type="image/png" href="/huhu/huhu_linux//img/favicon.png">
 </head>
 
 <body>
@@ -27,17 +27,17 @@ if (session_status() === PHP_SESSION_NONE) {
   </div>
 
   <div class="logo">
-    <a href="/huhu/huhu/views/homepage.php">
-      <img src="/huhu/huhu/img/huhulogo.png" alt="Logo Huhu">
+    <a href="/huhu/huhu_linux/views/homepage.php">
+      <img src="/huhu/huhu_linux/img/huhulogo.png" alt="Logo Huhu">
     </a>
   </div>
 
   <nav class="desktop-nav">
-    <a href="/huhu/huhu/views/homepage.php">Accueil</a>
-    <a href="/huhu/huhu/views/buy_a_horse.php">Enchères</a>
+    <a href="/huhu/huhu_linux/views/homepage.php">Accueil</a>
+    <a href="/huhu/huhu_linux/views/buy_a_horse.php">Enchères</a>
 
   <?php if (trim(strtolower($_SESSION['role'] ?? '')) === 'organisateur'): ?>
-      <a href="/huhu/huhu/views/organisateur_dashboard.php">Gérer</a>
+      <a href="/huhu/huhu_linux/views/organisateur_dashboard.php">Gérer</a>
   <?php endif; ?>
 
   </nav>
@@ -52,10 +52,10 @@ if (session_status() === PHP_SESSION_NONE) {
         </span>
 
         <div class="account-menu">
-          <a href="/huhu/huhu/views/profile.php">Profil</a>
-          <a href="/huhu/huhu/views/my_auctions.php">Mes enchères</a>
+          <a href="/huhu/huhu_linux/views/profile.php">Profil</a>
+          <a href="/huhu/huhu_linux/views/my_auctions.php">Mes enchères</a>
 
-          <form action="/huhu/huhu/controller/logout.php" method="post">
+          <form action="/huhu/huhu_linux/controller/logout.php" method="post">
             <button type="submit" class="dropdown-logout">
               Se déconnecter
             </button>
@@ -67,10 +67,10 @@ if (session_status() === PHP_SESSION_NONE) {
     <?php else: ?>
 
       <div class="account-actions">
-        <a href="/huhu/huhu/views/register_form.php" class="btn-outline">
+        <a href="/huhu/huhu_linux/views/register_form.php" class="btn-outline">
           S'inscrire
         </a>
-        <a href="/huhu/huhu/views/login_form.php" class="connect-btn">
+        <a href="/huhu/huhu_linux/views/login_form.php" class="connect-btn">
           Se connecter
         </a>
       </div>
@@ -88,19 +88,19 @@ if (session_status() === PHP_SESSION_NONE) {
     <span class="close-menu" id="closeMenu">&times;</span>
   </div>
 
-  <a href="/huhu/huhu/views/homepage.php">Accueil</a>
-  <a href="/huhu/huhu/views/buy_a_horse.php">Enchères</a>
+  <a href="/huhu/huhu_linux/views/homepage.php">Accueil</a>
+  <a href="/huhu/huhu_linux/views/buy_a_horse.php">Enchères</a>
 
   <?php if (($_SESSION['role'] ?? '') === 'organisateur'): ?>
-    <a href="/huhu/huhu/views/organisateur_dashboard.php">Gérer</a>
+    <a href="/huhu/huhu_linux/views/organisateur_dashboard.php">Gérer</a>
   <?php endif; ?>
 
   <?php if (!empty($_SESSION['user_id'])): ?>
 
-    <a href="/huhu/huhu/views/profile.php">Mon compte</a>
-    <a href="/huhu/huhu/views/my_auctions.php">Mes enchères</a>
+    <a href="/huhu/huhu_linux/views/profile.php">Mon compte</a>
+    <a href="/huhu/huhu_linux/views/my_auctions.php">Mes enchères</a>
 
-    <form action="/huhu/huhu/controller/logout.php" method="post">
+    <form action="/huhu/huhu_linux/controller/logout.php" method="post">
       <button type="submit" class="mobile-logout">
         Se déconnecter
       </button>
@@ -108,8 +108,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
   <?php else: ?>
 
-    <a href="/huhu/huhu/views/register_form.php">S'inscrire</a>
-    <a href="/huhu/huhu/views/login_form.php">Se connecter</a>
+    <a href="/huhu/huhu_linux/views/register_form.php">S'inscrire</a>
+    <a href="/huhu/huhu_linux/views/login_form.php">Se connecter</a>
 
   <?php endif; ?>
 

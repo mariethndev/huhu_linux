@@ -24,7 +24,7 @@ $count  = $count ?? count($horses);
         <div class="collection-grid">
 
             <?php foreach ($horses as $horse):
-                $imagePath = "/huhu/huhu/uploads/horses/" .
+                $imagePath = "/huhu/huhu_linux/uploads/horses/" .
                     (!empty($horse['horse_image'])
                         ? htmlentities($horse['horse_image'])
                         : "horse_default.png");
