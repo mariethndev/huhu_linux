@@ -6,7 +6,6 @@ $statusFilter = $_GET['auction_status'] ?? '';
 
 try {
 
-    // 🔥 1. mise à jour des enchères expirées
     $pdo->query("
         UPDATE auctions
         SET auction_status = 'terminé'
@@ -14,7 +13,6 @@ try {
         AND auction_end_date <= NOW()
     ");
 
-    // 🔥 2. récupérer chevaux + enchères DIRECTEMENT
     $stmt = $pdo->query("
         SELECT horses.*, auctions.auction_status, auctions.auction_end_date
         FROM horses
@@ -27,15 +25,16 @@ try {
 
     foreach ($results as $row) {
 
-        // 🔎 filtre statut
-        if ($statusFilter && $row['auction_status'] != $statusFilter) {
+        $status = $row['auction_status'] ?? 'indisponible';
+
+        if ($statusFilter && $status != $statusFilter) {
             continue;
         }
 
+        $row['auction_status'] = $status;
         $row['winner_name'] = '—';
 
-        // 🏆 si terminé → chercher gagnant
-        if ($row['auction_status'] === 'terminé') {
+        if ($status === 'terminé') {
 
             $stmtBest = $pdo->prepare("
                 SELECT user_id_fk

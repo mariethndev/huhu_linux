@@ -32,7 +32,7 @@ $auction_status = $_GET['auction_status'] ?? '';
                 <option value="disponible" <?= $auction_status === 'disponible' ? 'selected' : '' ?>>Disponible</option>
                 <option value="terminé" <?= $auction_status === 'terminé' ? 'selected' : '' ?>>Terminé</option>
                 <option value="annulé" <?= $auction_status === 'annulé' ? 'selected' : '' ?>>Annulé</option>
-                <option value="remporté" <?= $auction_status === 'remporté' ? 'selected' : '' ?>>Remporté</option>
+                <option value="indisponible" <?= $auction_status === 'indisponible' ? 'selected' : '' ?>>Indisponible</option>
             </select>
 
             <button type="submit" class="hl-btn-filter">
@@ -77,10 +77,10 @@ $auction_status = $_GET['auction_status'] ?? '';
                     $status = $horse['auction_status'] ?? 'indisponible';
 
                     $badgeMap = [
-                        'disponible' => ['hl-badge--disponible', 'Disponible'],
-                        'terminé'    => ['hl-badge--termine', 'Terminé'],
-                        'annulé'     => ['hl-badge--annule', 'Annulé'],
-                        'remporté'   => ['hl-badge--remporte', 'Remporté'],
+                        'disponible'   => ['hl-badge--disponible', 'Disponible'],
+                        'terminé'      => ['hl-badge--termine', 'Terminé'],
+                        'annulé'       => ['hl-badge--annule', 'Annulé'],
+                        'indisponible' => ['hl-badge--indisponible', 'Indisponible'],
                     ];
 
                     [$badgeClass, $label] =
@@ -110,7 +110,7 @@ $auction_status = $_GET['auction_status'] ?? '';
                     </td>
 
                     <td data-label="Sexe">
-                        <?= $horse['horse_sex'] === 'M' ? 'Mâle' : 'Femelle' ?>
+                        <?= ($horse['horse_sex'] ?? '') === 'M' ? 'Mâle' : 'Femelle' ?>
                     </td>
 
                     <td data-label="Race">
@@ -125,7 +125,6 @@ $auction_status = $_GET['auction_status'] ?? '';
                         <?= afficherTexteSecurise($horse['horse_discipline']) ?>
                     </td>
 
-
                     <td data-label="Statut">
 
                         <span class="hl-badge <?= $badgeClass ?>">
@@ -133,7 +132,6 @@ $auction_status = $_GET['auction_status'] ?? '';
                         </span>
 
                     </td>
-
 
                     <td data-label="Gagnant">
 
@@ -158,7 +156,6 @@ $auction_status = $_GET['auction_status'] ?? '';
                         <?php endif; ?>
 
                     </td>
-
 
                     <td data-label="Actions">
 

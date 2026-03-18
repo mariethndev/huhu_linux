@@ -46,5 +46,7 @@
 <script src="/huhu/huhu_linux/assets/src/burgerMenu.js"></script>
 <script src="/huhu/huhu_linux/assets/src/horseImagePreview.js"></script>
 <script src="/huhu/huhu_linux/assets/src/lives-prices.js"></script>
+<script src="/huhu/huhu_linux/assets/src/deleteAuction.js"></script>
+
 </body>
 </html>
