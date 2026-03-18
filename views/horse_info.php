@@ -8,7 +8,6 @@ $userLogged = $userLogged ?? false;
 
 $auction['is_active'] = $auction['is_active'] ?? false;
 $auction['is_last_user'] = $auction['is_last_user'] ?? false;
-$auction['is_following'] = $auction['is_following'] ?? false;
 
 $imagePath = !empty($horse['horse_image'])
     ? "/huhu/huhu_linux/uploads/horses/" . $horse['horse_image']
@@ -16,9 +15,7 @@ $imagePath = !empty($horse['horse_image'])
 ?>
 
 <div class="container-info-horse">
-
     <div class="left-card-horse">
-
         <h1 class="horse-title">
             Fiche de <?= htmlentities($horse['horse_name'] ?? '—') ?>
         </h1>
@@ -32,11 +29,9 @@ $imagePath = !empty($horse['horse_image'])
                 RETOUR
             </a>
         </div>
-
     </div>
 
     <div class="right-card-horse">
-
         <div class="infos">
             <div class="card-info">
                 <h3>DÉTAILS</h3>
@@ -129,16 +124,12 @@ $imagePath = !empty($horse['horse_image'])
         </div>
 
         <div class="cta-horse-info">
-
             <?php if (!$userLogged): ?>
-
                 <p>Inscription requise pour participer.</p>
                 <a href="/huhu/huhu_linux/views/register_form.php" class="btn-horse-info">
                     S'inscrire
                 </a>
-
             <?php else: ?>
-
                 <p id="bidMessage"
                 data-is-last-user="<?= $auction['is_last_user'] ? '1' : '0' ?>">
                 </p>
@@ -152,9 +143,7 @@ $imagePath = !empty($horse['horse_image'])
                     <?= $auction['is_active'] ? '' : 'disabled' ?>>
                     Faire une offre
                 </button>
-
             <?php endif; ?>
-
         </div>
     </div>
 </div>

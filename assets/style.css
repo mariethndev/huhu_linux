@@ -735,6 +735,7 @@ padding:18px;
   color: #28a745;
   background: #e6ffed;
 }
+
 /* BADGE ENTETE SUR BUY A HORSE */
 
 .leader-badge{
@@ -2363,6 +2364,7 @@ margin-top:16px;
 }
 
 /* responsive */
+
 @media (max-width:480px){
 
   .bah-page{
@@ -2380,8 +2382,7 @@ margin-top:16px;
   padding:16px;
   }
 
-  /* Filtre : une colonne, simple et lisible */
-  .bah-filter-form{
+   .bah-filter-form{
   gap:10px;
   }
 
@@ -2400,8 +2401,7 @@ margin-top:16px;
   text-align:center;
   }
 
-  /* Grille : les cartes prennent toute la largeur */
-  .bah-grid{
+   .bah-grid{
   flex-direction:column;
   gap:20px;
   padding:0 12px;

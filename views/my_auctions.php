@@ -66,9 +66,9 @@ $hasAuctions =
 
                             <td>
                                 <?php if (!empty($a['is_outbid'])): ?>
-                                    <span class="status outbid">🔴 Surenchéri</span>
+                                    <span class="status outbid">Surenchéri</span>
                                 <?php else: ?>
-                                    <span class="status leading">🟢 En tête</span>
+                                    <span class="status leading">En tête</span>
                                 <?php endif; ?>
                             </td>
 

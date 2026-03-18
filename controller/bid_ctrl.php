@@ -60,7 +60,7 @@ try {
         $previousBidId = null;
     }
 
-     $increment = 50;
+    $increment = 50;
     $bidAmount = $currentPrice + $increment;
 
      if ($previousUser !== null && $previousUser === $userId) {
