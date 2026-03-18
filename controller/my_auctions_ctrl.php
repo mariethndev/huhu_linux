@@ -15,112 +15,109 @@ $groupedAuctions = [
     "remportees" => []
 ];
 
-$outbids = [];
-$outbidCount = 0;
-
-try {
-
-    // ===============================
-    // 🔔 OUTBIDS (SANS ALIAS)
-    // ===============================
-    $stmt = $pdo->prepare("
+try { 
+    $stmtOutbidList = $pdo->prepare("
         SELECT DISTINCT bids.horse_id_fk, horses.horse_name
         FROM outbid
         JOIN bids ON outbid.bid_id_fk = bids.id_bid
         JOIN horses ON bids.horse_id_fk = horses.id_horse
         WHERE outbid.user_id_fk = ? AND outbid.seen = 0
     ");
-    $stmt->execute([$userId]);
-    $outbids = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmtOutbidList->execute([$userId]);
+    $outbids = $stmtOutbidList->fetchAll(PDO::FETCH_ASSOC);
 
     $outbidCount = count($outbids);
-
-    // ===============================
-    // 🔎 CHEVAUX SUR LESQUELS J'AI MISÉ
-    // ===============================
+ 
     $stmt = $pdo->prepare("
         SELECT DISTINCT horse_id_fk
         FROM bids
         WHERE user_id_fk = ?
     ");
     $stmt->execute([$userId]);
-    $horses = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $bids = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($horses as $horseId) {
+    foreach ($bids as $bid) {
 
-        // CHEVAL
-        $stmt = $pdo->prepare("
+        $horseId = (int)$bid['horse_id_fk'];
+
+         $stmtHorse = $pdo->prepare("
             SELECT horse_name
             FROM horses
             WHERE id_horse = ?
         ");
-        $stmt->execute([$horseId]);
-        $horse = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmtHorse->execute([$horseId]);
+        $horse = $stmtHorse->fetch(PDO::FETCH_ASSOC);
         if (!$horse) continue;
 
-        // AUCTION
-        $stmt = $pdo->prepare("
-            SELECT auction_status, auction_end_date, auction_starting_price
+         $stmtAuction = $pdo->prepare("
+            SELECT id_auction, auction_status, auction_end_date, auction_starting_price
             FROM auctions
             WHERE horse_id_fk = ?
         ");
-        $stmt->execute([$horseId]);
-        $auction = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmtAuction->execute([$horseId]);
+        $auction = $stmtAuction->fetch(PDO::FETCH_ASSOC);
         if (!$auction) continue;
 
-        // PRIX ACTUEL
-        $stmt = $pdo->prepare("
+        $auctionId = $auction['id_auction'];
+
+         $stmtFollow = $pdo->prepare("
+            SELECT COUNT(*)
+            FROM to_bid
+            WHERE id_user = ? AND id_auction = ?
+        ");
+        $stmtFollow->execute([$userId, $auctionId]);
+        $isFollowing = $stmtFollow->fetchColumn() > 0;
+
+         $stmtPrice = $pdo->prepare("
             SELECT MAX(bid_amount)
             FROM bids
             WHERE horse_id_fk = ?
         ");
-        $stmt->execute([$horseId]);
-        $currentPrice = $stmt->fetchColumn() ?: $auction['auction_starting_price'];
+        $stmtPrice->execute([$horseId]);
+        $lastBid = $stmtPrice->fetchColumn();
+        $currentPrice = $lastBid ?: $auction['auction_starting_price'];
 
-        // MON ENCHÈRE
-        $stmt = $pdo->prepare("
+         $stmtMyBid = $pdo->prepare("
             SELECT MAX(bid_amount)
             FROM bids
             WHERE horse_id_fk = ? AND user_id_fk = ?
         ");
-        $stmt->execute([$horseId, $userId]);
-        $myLastBid = $stmt->fetchColumn();
+        $stmtMyBid->execute([$horseId, $userId]);
+        $myLastBid = $stmtMyBid->fetchColumn();
 
-        // MON ID BID
-        $stmt = $pdo->prepare("
+         $stmtMyBidId = $pdo->prepare("
             SELECT id_bid
             FROM bids
             WHERE horse_id_fk = ? AND user_id_fk = ?
             ORDER BY bid_amount DESC
             LIMIT 1
         ");
-        $stmt->execute([$horseId, $userId]);
-        $myBidId = $stmt->fetchColumn();
+        $stmtMyBidId->execute([$horseId, $userId]);
+        $myBidId = $stmtMyBidId->fetchColumn();
 
-        // 🔴 EST-CE QUE JE SUIS DÉPASSÉ ?
         $isOutbid = false;
 
         if ($myBidId) {
-            $stmt = $pdo->prepare("
-                SELECT COUNT(*)
-                FROM outbid
-                WHERE user_id_fk = ? AND bid_id_fk = ? AND seen = 0
+            $stmtOutbidCheck = $pdo->prepare("
+                SELECT COUNT(*) 
+                FROM outbid 
+                WHERE user_id_fk = ? 
+                AND bid_id_fk = ?
+                AND seen = 0
             ");
-            $stmt->execute([$userId, $myBidId]);
-            $isOutbid = $stmt->fetchColumn() > 0;
+            $stmtOutbidCheck->execute([$userId, $myBidId]);
+            $isOutbid = $stmtOutbidCheck->fetchColumn() > 0;
         }
 
-        // PARTICIPANTS
-        $stmt = $pdo->prepare("
+         $stmtCount = $pdo->prepare("
             SELECT COUNT(DISTINCT user_id_fk)
             FROM bids
             WHERE horse_id_fk = ?
         ");
-        $stmt->execute([$horseId]);
-        $participants = (int)$stmt->fetchColumn();
+        $stmtCount->execute([$horseId]);
+        $participants = (int)$stmtCount->fetchColumn();
 
-        // DERNIER ENCHÉRISSEUR
-        $stmt = $pdo->prepare("
+         $stmtWinner = $pdo->prepare("
             SELECT users.user_name, users.id_user
             FROM bids
             JOIN users ON bids.user_id_fk = users.id_user
@@ -128,26 +125,24 @@ try {
             ORDER BY bids.bid_amount DESC
             LIMIT 1
         ");
-        $stmt->execute([$horseId]);
-        $winner = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmtWinner->execute([$horseId]);
+        $winnerData = $stmtWinner->fetch(PDO::FETCH_ASSOC);
 
-        $lastBidder = $winner['user_name'] ?? 'Aucun';
-        $winnerId   = $winner['id_user'] ?? null;
+        $lastBidder = $winnerData['user_name'] ?? 'Aucun';
+        $winnerId   = $winnerData['id_user'] ?? null;
 
-        // DATA
-        $data = [
-            "id_horse"        => $horseId,
-            "horse_name"      => $horse['horse_name'],
-            "auction_end_date"=> $auction['auction_end_date'],
-            "last_price"      => $currentPrice,
-            "my_last_bid"     => $myLastBid,
-            "participants"    => $participants,
-            "is_outbid"       => $isOutbid,
-            "last_bidder"     => $lastBidder
-        ];
+         $data = [
+            "id_horse" => $horseId,
+            "horse_name" => $horse['horse_name'],
+            "auction_end_date" => $auction['auction_end_date'],
+            "last_price" => $currentPrice,
+            "my_last_bid" => $myLastBid,
+            "participants" => $participants,
+            "is_outbid" => $isOutbid,
+            "last_bidder" => $lastBidder,
+         ];
 
-        // STATUS
-        $status = strtolower(trim($auction['auction_status']));
+         $status = strtolower(trim($auction['auction_status']));
 
         if ($status === 'disponible') {
             $groupedAuctions["en_cours"][] = $data;

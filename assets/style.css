@@ -760,7 +760,7 @@ padding:18px;
   border:1px solid #f5b7b1;
 }
  
-/*  MODAL FAIRE UNE OFFRE */
+/*  MODAL FAIRE UNE OFFRE + OVERLAY */
 
 .custom-modal{
   display:flex;
@@ -770,6 +770,10 @@ padding:18px;
   align-items:center;
   z-index:9999;
   background:rgba(0,0,0,0.6);
+}
+
+.custom-modal.hidden {
+  display: none;
 }
 
 .hidden{
@@ -2463,9 +2467,8 @@ margin-top:16px;
   flex:1 1 100%;
   max-width:100%;
   }
-
-
-}
+ 
+} 
 
 /*  MENU HAMBURGER MOBILE */
 

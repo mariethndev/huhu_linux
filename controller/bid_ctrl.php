@@ -22,8 +22,7 @@ if ($horseId <= 0) {
 
 try {
 
-    // 🔎 Vérifier enchère
-    $stmtAuction = $pdo->prepare("
+     $stmtAuction = $pdo->prepare("
         SELECT auction_status, auction_end_date, auction_starting_price
         FROM auctions
         WHERE horse_id_fk = ?
@@ -41,8 +40,7 @@ try {
         exit;
     }
 
-    // 🔎 Dernier bid
-    $stmt = $pdo->prepare("
+     $stmt = $pdo->prepare("
         SELECT id_bid, user_id_fk, bid_amount
         FROM bids
         WHERE horse_id_fk = ?
@@ -62,18 +60,15 @@ try {
         $previousBidId = null;
     }
 
-    // 🔥 incrément automatique
-    $increment = 50;
+     $increment = 50;
     $bidAmount = $currentPrice + $increment;
 
-    // ❌ empêcher double enchère
-    if ($previousUser !== null && $previousUser === $userId) {
+     if ($previousUser !== null && $previousUser === $userId) {
         header("Location: ../views/horse_info.php?id=$horseId");
         exit;
     }
 
-    // 💰 insertion
-    $stmtInsert = $pdo->prepare("
+     $stmtInsert = $pdo->prepare("
         INSERT INTO bids (user_id_fk, bid_amount, bid_date, horse_id_fk)
         VALUES (?, ?, NOW(), ?)
     ");
@@ -83,8 +78,7 @@ try {
         $horseId
     ]);
 
-    // 🔴 notifier ancien enchérisseur
-    if ($previousUser && $previousUser !== $userId) {
+     if ($previousUser && $previousUser !== $userId) {
 
         $check = $pdo->prepare("
             SELECT COUNT(*) 
@@ -129,11 +123,7 @@ try {
     header("Location: ../views/horse_info.php?id=$horseId");
     exit;
 
-} catch (PDOException $e) {
-
-    // debug si besoin
-    // echo $e->getMessage();
-
+} catch (PDOException $e) { 
     header("Location: ../views/horse_info.php?id=$horseId");
     exit;
 }

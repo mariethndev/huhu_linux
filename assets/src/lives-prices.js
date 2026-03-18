@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
+
   const livePriceSpan = document.querySelector(".live-price");
   const bidMsg = document.getElementById("bidMessage");
   const bidButton = document.querySelector(".btn-bid");
 
   if (!livePriceSpan) return;
 
-  // ✅ message au chargement
-  if (bidMsg) {
+   if (bidMsg) {
     bidMsg.textContent = "Chargement des enchères...";
   }
 
@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data); // ✅ OK ici
 
         if (!data.success) {
           if (bidMsg) {
@@ -37,41 +36,38 @@ document.addEventListener("DOMContentLoaded", () => {
         const currentPrice = parseFloat(data.price);
         const lastBidderId = data.last_bidder;
         const currentUserId = data.current_user;
+        const hasBid = data.has_bid;
 
         if (!isNaN(currentPrice)) {
-          // 🔴 déjà dernier enchérisseur
-          if (
+
+           if (
             lastBidderId !== null &&
             String(lastBidderId) === String(currentUserId)
           ) {
             if (bidMsg) {
-              bidMsg.textContent =
-                "Vous êtes déjà le dernier enchérisseur. Attendez une nouvelle mise avant de surenchérir.";
+              bidMsg.textContent = "Vous êtes en tête sur ce lot !";
             }
             if (bidButton) bidButton.disabled = true;
           }
 
-          // 🟠 dépassé
-          else if (currentPrice > lastPrice) {
+           else if (hasBid === true) {
             if (bidMsg) {
-              bidMsg.textContent =
-                "Vous venez d'être dépassé ! Surenchérissez !";
-            }
-            if (bidButton) bidButton.disabled = false;
-            lastPrice = currentPrice;
-          }
-
-          // 🟢 en tête
-          else {
-            if (bidMsg) {
-              bidMsg.textContent = "Vous êtes en tête sur ce lot !";
+              bidMsg.textContent = "Vous avez été dépassé ! Surenchérissez !";
             }
             if (bidButton) bidButton.disabled = false;
           }
 
-          // 💰 update prix
-          livePriceSpan.textContent =
+           else {
+            if (bidMsg) {
+              bidMsg.textContent = "Faites votre première offre !";
+            }
+            if (bidButton) bidButton.disabled = false;
+          }
+
+           livePriceSpan.textContent =
             currentPrice.toLocaleString("fr-FR") + " €";
+
+          lastPrice = currentPrice;
         }
       })
       .catch((err) => {
@@ -82,9 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // ⏱️ refresh
-  setInterval(updatePrice, 3000);
+   setInterval(updatePrice, 3000);
 
-  // ⚡ premier appel
-  updatePrice();
+   updatePrice();
+
 });

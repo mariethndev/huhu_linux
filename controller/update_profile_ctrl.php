@@ -23,7 +23,6 @@ if (!$userName || !$userEmail) {
 
 try {
 
-    // vérifier email unique
     $stmt = $pdo->prepare("
         SELECT id_user
         FROM users
@@ -37,7 +36,6 @@ try {
         exit;
     }
 
-    // update profil
     $stmt = $pdo->prepare("
         UPDATE users
         SET user_name = ?, user_email = ?

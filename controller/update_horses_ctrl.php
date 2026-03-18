@@ -96,8 +96,7 @@ try {
         ]);
     }
 
-    // UPDATE enchère
-    $stmt = $pdo->prepare("
+     $stmt = $pdo->prepare("
         UPDATE auctions
         SET auction_starting_price=?,
             auction_status=?

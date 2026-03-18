@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../controller/horse_info_ctrl.php';
 require_once '../head.php';
 
@@ -9,6 +8,7 @@ $userLogged = $userLogged ?? false;
 
 $auction['is_active'] = $auction['is_active'] ?? false;
 $auction['is_last_user'] = $auction['is_last_user'] ?? false;
+$auction['is_following'] = $auction['is_following'] ?? false;
 
 $imagePath = !empty($horse['horse_image'])
     ? "/huhu/huhu_linux/uploads/horses/" . $horse['horse_image']
@@ -119,6 +119,11 @@ $imagePath = !empty($horse['horse_image'])
                 <p class="voters-info btn btn-secondary p-2">
                     <?= $auction['participants'] ?? 0 ?> participant(s)
                 </p>
+
+                <?php if ($userLogged && $auction['is_active']): ?>
+
+   
+                <?php endif; ?>
 
             </div>
         </div>

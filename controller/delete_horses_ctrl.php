@@ -20,15 +20,13 @@ if ($horse_id <= 0) {
 }
 
 try {
-
-    // supprimer les enchères liées
+ 
     $stmt = $pdo->prepare("
         DELETE FROM auctions
         WHERE horse_id_fk = ?
     ");
     $stmt->execute([$horse_id]);
-
-    // marquer le cheval comme supprimé
+ 
     $stmt = $pdo->prepare("
         UPDATE horses
         SET horse_is_deleted = 1

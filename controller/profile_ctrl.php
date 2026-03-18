@@ -9,15 +9,13 @@ if (empty($_SESSION['user_id'])) {
 
 $userId = (int)$_SESSION['user_id'];
 
-// génération token CSRF
-if (empty($_SESSION['csrf_token'])) {
+ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 try {
 
-    // récupérer utilisateur
-    $stmt = $pdo->prepare("
+     $stmt = $pdo->prepare("
         SELECT user_name, user_email, user_role
         FROM users
         WHERE id_user = ?
