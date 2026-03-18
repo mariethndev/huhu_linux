@@ -1,42 +1,43 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const deleteButtons = document.querySelectorAll(".btn-delete-horse");
-  const modal = document.getElementById("deleteModal");
-  const closeBtn = document.querySelector(".modal-close-delete");
-  const cancelBtn = document.querySelector(".btn-cancel-delete");
-  const horseName = document.getElementById("deleteHorseName");
-  const horseIdInput = document.getElementById("deleteHorseId");
- 
-  
-  deleteButtons.forEach((button) => {
-    button.addEventListener("click", function () {
-      horseName.textContent = this.dataset.name;
-      horseIdInput.value = this.dataset.id;
+document.addEventListener("DOMContentLoaded", () => {
 
+  document.querySelectorAll(".btn-delete-horse").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const nameEl = document.getElementById("deleteHorseName");
+      const idEl   = document.getElementById("deleteHorseId");
+      const modal  = document.getElementById("deleteModal");
+
+      if (!nameEl || !idEl || !modal) return;
+
+      nameEl.textContent = btn.dataset.name;
+      idEl.value = btn.dataset.id;
       modal.classList.remove("hidden");
     });
   });
 
-  function closeModal() {
-    modal.classList.add("hidden");
-  }
+  const closeBtn = document.querySelector(".modal-close-delete");
+  const cancelBtn = document.querySelector(".btn-cancel-delete");
+  const modal = document.getElementById("deleteModal");
 
-  if (closeBtn) {
-    closeBtn.addEventListener("click", function (e) {
+  if (closeBtn && modal) {
+    closeBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      closeModal();
+      modal.classList.add("hidden");
     });
   }
 
-  if (cancelBtn) {
-    cancelBtn.addEventListener("click", function (e) {
+  if (cancelBtn && modal) {
+    cancelBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      closeModal();
+      modal.classList.add("hidden");
     });
   }
 
-  modal.addEventListener("click", function (e) {
-    if (e.target === modal) {
-      closeModal();
-    }
-  });
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target.id === "deleteModal") {
+        modal.classList.add("hidden");
+      }
+    });
+  }
+
 });

@@ -3,7 +3,7 @@ session_start();
 require_once '../controller/my_auctions_ctrl.php';
 require_once '../head.php';
 
- $hasAuctions = 
+$hasAuctions = 
     !empty($groupedAuctions['en_cours']) ||
     !empty($groupedAuctions['annulees']) ||
     !empty($groupedAuctions['terminees']) ||
@@ -11,81 +11,152 @@ require_once '../head.php';
 ?>
 
 <div class="hl-page">
+
     <div class="hl-header">
         <h1 class="hl-title">Mes enchères</h1>
         <p class="hl-subtitle">Chevaux sur lesquels vous avez enchéri</p>
     </div>
 
-     <?php if ($outbidCount > 0): ?>
-        <div style="background:#ffe0e0;color:#900;padding:10px;border-radius:8px;margin-bottom:20px;">
-            Vous avez été dépassé sur <?= $outbidCount ?> enchère(s)
+    <!-- 🔔 NOTIFICATION -->
+    <?php if ($outbidCount > 0): ?>
+        <div class="alert alert-warning">
+            🔔 Vous avez été dépassé sur 
+            <strong><?= $outbidCount ?></strong> enchère<?= $outbidCount > 1 ? 's' : '' ?> :
+
+            <?php if ($outbidCount === 1): ?>
+                <a href="/huhu/huhu_linux/views/horse_info.php?id=<?= $outbids[0]['horse_id_fk'] ?>">
+                    Voir <?= htmlentities($outbids[0]['horse_name']) ?>
+                </a>
+            <?php else: ?>
+                <a href="#en_cours">Voir les enchères concernées</a>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 
     <?php if ($hasAuctions): ?>
 
-         <?php if (!empty($groupedAuctions['en_cours'])): ?>
-            <h2>En cours</h2>
+        <!-- ================= EN COURS ================= -->
+        <?php if (!empty($groupedAuctions['en_cours'])): ?>
+            <h2 id="en_cours">En cours</h2>
+
             <table class="hl-table">
+                <thead>
+                    <tr>
+                        <th>Cheval</th>
+                        <th>Prix actuel</th>
+                        <th>Mon enchère</th>
+                        <th>Statut</th>
+                        <th>Participants</th>
+                        <th>Fin</th>
+                        <th>Dernier enchérisseur</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
                 <tbody>
                     <?php foreach ($groupedAuctions['en_cours'] as $a): ?>
                         <tr>
                             <td><?= htmlentities($a['horse_name']) ?></td>
+
                             <td><?= number_format($a['last_price'], 0, ',', ' ') ?> €</td>
+
+                            <td><?= number_format($a['my_last_bid'], 0, ',', ' ') ?> €</td>
+
+                            <td>
+                                <?php if ($a['is_outbid']): ?>
+                                    <span class="status outbid">🔴 Surenchéri</span>
+                                <?php else: ?>
+                                    <span class="status leading">🟢 En tête</span>
+                                <?php endif; ?>
+                            </td>
+
                             <td><?= $a['participants'] ?></td>
+
                             <td><?= date('d/m/Y H:i', strtotime($a['auction_end_date'])) ?></td>
-                            <td><a href="horse_info.php?id=<?= $a['id_horse'] ?>">Voir</a></td>
+
+                            <td>
+                                <?php
+                                $sessionName = $_SESSION['user_name'] ?? '';
+                                echo ($a['last_bidder'] === $sessionName)
+                                    ? 'Toi'
+                                    : htmlentities($a['last_bidder']);
+                                ?>
+                            </td>
+
+                            <td>
+                                <a href="horse_info.php?id=<?= $a['id_horse'] ?>" class="btn-consult">
+                                    Voir
+                                </a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endif; ?>
 
-         <?php if (!empty($groupedAuctions['annulees'])): ?>
+        <!-- ================= ANNULEES ================= -->
+        <?php if (!empty($groupedAuctions['annulees'])): ?>
             <h2>Annulées</h2>
+
             <table class="hl-table">
                 <tbody>
                     <?php foreach ($groupedAuctions['annulees'] as $a): ?>
                         <tr>
                             <td><?= htmlentities($a['horse_name']) ?></td>
                             <td><?= number_format($a['last_price'], 0, ',', ' ') ?> €</td>
+                            <td><?= number_format($a['my_last_bid'], 0, ',', ' ') ?> €</td>
                             <td><?= $a['participants'] ?></td>
                             <td><?= date('d/m/Y H:i', strtotime($a['auction_end_date'])) ?></td>
-                            <td><a href="horse_info.php?id=<?= $a['id_horse'] ?>">Voir</a></td>
+                            <td><?= htmlentities($a['last_bidder'] ?? 'Aucun') ?></td>
+                            <td>
+                                <a href="horse_info.php?id=<?= $a['id_horse'] ?>">Voir</a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endif; ?>
 
-         <?php if (!empty($groupedAuctions['terminees'])): ?>
+        <!-- ================= TERMINEES ================= -->
+        <?php if (!empty($groupedAuctions['terminees'])): ?>
             <h2>Terminées</h2>
+
             <table class="hl-table">
                 <tbody>
                     <?php foreach ($groupedAuctions['terminees'] as $a): ?>
                         <tr>
                             <td><?= htmlentities($a['horse_name']) ?></td>
                             <td><?= number_format($a['last_price'], 0, ',', ' ') ?> €</td>
+                            <td><?= number_format($a['my_last_bid'], 0, ',', ' ') ?> €</td>
                             <td><?= $a['participants'] ?></td>
                             <td><?= date('d/m/Y H:i', strtotime($a['auction_end_date'])) ?></td>
-                            <td><a href="horse_info.php?id=<?= $a['id_horse'] ?>">Voir</a></td>
+                            <td><?= htmlentities($a['last_bidder'] ?? 'Aucun') ?></td>
+                            <td>
+                                <a href="horse_info.php?id=<?= $a['id_horse'] ?>">Voir</a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endif; ?>
 
-         <?php if (!empty($groupedAuctions['remportees'])): ?>
+        <!-- ================= REMPORTEES ================= -->
+        <?php if (!empty($groupedAuctions['remportees'])): ?>
             <h2>Remportées</h2>
+
             <table class="hl-table">
                 <tbody>
                     <?php foreach ($groupedAuctions['remportees'] as $a): ?>
                         <tr>
                             <td><?= htmlentities($a['horse_name']) ?></td>
                             <td><?= number_format($a['last_price'], 0, ',', ' ') ?> €</td>
+                            <td><?= number_format($a['my_last_bid'], 0, ',', ' ') ?> €</td>
                             <td><?= $a['participants'] ?></td>
                             <td><?= date('d/m/Y H:i', strtotime($a['auction_end_date'])) ?></td>
-                            <td><a href="horse_info.php?id=<?= $a['id_horse'] ?>">Voir</a></td>
+                            <td><?= htmlentities($a['last_bidder'] ?? 'Aucun') ?></td>
+                            <td>
+                                <a href="horse_info.php?id=<?= $a['id_horse'] ?>">Voir</a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -94,9 +165,12 @@ require_once '../head.php';
 
     <?php else: ?>
 
-         <div class="ma-empty-state">
+        <!-- EMPTY STATE -->
+        <div class="ma-empty-state">
             <p>Vous ne participez à aucune enchère pour le moment.</p>
-            <a href="buy_a_horse.php">Découvrir les enchères</a>
+            <a href="buy_a_horse.php" class="btn-consult">
+                Découvrir les enchères
+            </a>
         </div>
 
     <?php endif; ?>

@@ -32,8 +32,7 @@ $price_max  = $_GET['price_max'] ?? '';
 
             <div class="bah-filter-field">
                 <label>Nom</label>
-                <input type="text" name="search"
-                       value="<?= htmlentities($search) ?>">
+                <input type="text" name="search" value="<?= htmlentities($search) ?>">
             </div>
 
             <div class="bah-filter-field">
@@ -59,30 +58,26 @@ $price_max  = $_GET['price_max'] ?? '';
 
             <div class="bah-filter-field">
                 <label>Race</label>
-                <input type="text" name="breed"
-                       value="<?= htmlentities($breed) ?>">
+                <input type="text" name="breed" value="<?= htmlentities($breed) ?>">
             </div>
 
             <div class="bah-filter-field">
                 <label>Discipline</label>
-                <input type="text" name="discipline"
-                       value="<?= htmlentities($discipline) ?>">
+                <input type="text" name="discipline" value="<?= htmlentities($discipline) ?>">
             </div>
 
             <div class="bah-filter-field">
                 <label>Prix min</label>
-                <input type="number" name="price_min"
-                       value="<?= htmlentities($price_min) ?>">
+                <input type="number" name="price_min" value="<?= htmlentities($price_min) ?>">
             </div>
 
             <div class="bah-filter-field">
                 <label>Prix max</label>
-                <input type="number" name="price_max"
-                       value="<?= htmlentities($price_max) ?>">
+                <input type="number" name="price_max" value="<?= htmlentities($price_max) ?>">
             </div>
 
             <div class="bah-filter-actions">
-                <button type="submit">Filtrer</button>
+                <button type="submit" class="btn-consult">Filtrer</button>
                 <a href="buy_a_horse.php">Réinitialiser</a>
             </div>
 
@@ -116,16 +111,7 @@ $price_max  = $_GET['price_max'] ?? '';
 
                     <div>
                         Sexe :
-                        <?php
-                        $sex = $horse['horse_sex'] ?? '';
-                        if ($sex === 'M') {
-                            echo 'Mâle';
-                        } elseif ($sex === 'F') {
-                            echo 'Femelle';
-                        } else {
-                            echo '—';
-                        }
-                        ?>
+                        <?= ($horse['horse_sex'] ?? '') === 'M' ? 'Mâle' : (($horse['horse_sex'] ?? '') === 'F' ? 'Femelle' : '—') ?>
                     </div>
 
                     <div>
@@ -134,11 +120,19 @@ $price_max  = $_GET['price_max'] ?? '';
                     </div>
 
                     <div>
-                        <p><strong>Prix de départ :</strong>
-                            <?= number_format($horse['current_price'] ?? 0, 0, ',', ' ') ?> €
+                        <p><strong>Prix actuel :</strong>
+                            <span class="horse-price" data-horse-id="<?= $horse['id_horse'] ?>">
+                                <?= number_format($horse['current_price'] ?? 0, 0, ',', ' ') ?> €
+                            </span>
                         </p>
                     </div>
-                  
+
+                    <?php if (!empty($horse['my_last_bid']) && empty($horse['is_leader'])): ?>
+                        <div class="leader-badge red">
+                            Vous avez été dépassé — surenchérissez !
+                        </div>
+                    <?php endif; ?>
+
                 </div>
 
                 <div class="bah-card-footer">

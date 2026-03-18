@@ -1,19 +1,11 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const input = document.getElementById("horseImageInput");
-    const preview = document.getElementById("horsePreview");
-    if (!input || !preview) return;
+document.addEventListener("DOMContentLoaded", () => {
 
-    input.addEventListener("change", function () {
-        const file = this.files[0];
-        if (!file) return;
+  const input = document.getElementById("horseImageInput");
 
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            preview.src = e.target.result;
-        };
+  if (!input) return;
 
-        reader.readAsDataURL(file);
-
-    });
+  input.addEventListener("change", (e) => {
+    console.log("preview ok");
+  });
 
 });

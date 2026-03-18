@@ -1,17 +1,18 @@
 <?php
- require_once '../controller/horse_info_ctrl.php';
+session_start();
+require_once '../controller/horse_info_ctrl.php';
 require_once '../head.php';
 
-$defaultImage = "/huhu/huhu_linux/uploads/horses/horse_default.png";
+$horse = $horse ?? [];
+$auction = $auction ?? [];
+$userLogged = $userLogged ?? false;
+
+$auction['is_active'] = $auction['is_active'] ?? false;
+$auction['is_last_user'] = $auction['is_last_user'] ?? false;
 
 $imagePath = !empty($horse['horse_image'])
-    ? "/huhu/huhu_linux/uploads/horses/" . htmlentities($horse['horse_image'])
-    : $defaultImage;
-
-$birthdateFormatted = '—';
-if (!empty($horse['horse_birthdate'])) {
-    $birthdateFormatted = date('d/m/Y', strtotime($horse['horse_birthdate']));
-}
+    ? "/huhu/huhu_linux/uploads/horses/" . $horse['horse_image']
+    : "/huhu/huhu_linux/uploads/horses/horse_default.png";
 ?>
 
 <div class="container-info-horse">
@@ -19,7 +20,7 @@ if (!empty($horse['horse_birthdate'])) {
     <div class="left-card-horse">
 
         <h1 class="horse-title">
-            Fiche de <?= htmlentities($horse['horse_name'] ?? 'Cheval') ?>
+            Fiche de <?= htmlentities($horse['horse_name'] ?? '—') ?>
         </h1>
 
         <div class="image-horse-info">
@@ -34,17 +35,20 @@ if (!empty($horse['horse_birthdate'])) {
 
     </div>
 
-
     <div class="right-card-horse">
 
         <div class="infos">
-
-            <!-- toutes tes cards inchangées -->
             <div class="card-info">
                 <h3>DÉTAILS</h3>
                 <p>Numéro : <?= htmlentities($horse['horse_id_number'] ?? '—') ?></p>
-                <p>Naissance : <?= $birthdateFormatted ?></p>
-                <p>Discipline : <strong><?= htmlentities($horse['horse_discipline'] ?? '—') ?></strong></p>
+                <p>Naissance :
+                    <?= !empty($horse['horse_birthdate'])
+                        ? date('d/m/Y', strtotime($horse['horse_birthdate']))
+                        : '—' ?>
+                </p>
+                <p>Discipline :
+                    <strong><?= htmlentities($horse['horse_discipline'] ?? '—') ?></strong>
+                </p>
                 <p>Lieu : <?= htmlentities($horse['horse_location'] ?? '—') ?></p>
                 <p>Date d'enregistrement :
                     <?= !empty($horse['horse_register_date'])
@@ -58,12 +62,12 @@ if (!empty($horse['horse_birthdate'])) {
                 <p>Robe : <?= htmlentities($horse['horse_coat'] ?? '—') ?></p>
                 <p>Taille :
                     <?= !empty($horse['horse_height'])
-                        ? htmlentities($horse['horse_height']) . ' cm'
+                        ? $horse['horse_height'] . ' cm'
                         : 'NC' ?>
                 </p>
                 <p>Poids :
                     <?= !empty($horse['horse_weight'])
-                        ? htmlentities($horse['horse_weight']) . ' kg'
+                        ? $horse['horse_weight'] . ' kg'
                         : 'NC' ?>
                 </p>
                 <p>Sexe : <?= htmlentities($horse['horse_sex'] ?? '—') ?></p>
@@ -85,10 +89,10 @@ if (!empty($horse['horse_birthdate'])) {
                 <h3>DESCRIPTION</h3>
                 <p>
                     <?php
-                    $description = trim($horse['horse_description'] ?? '');
-                    echo ($description === '' || $description === '...')
+                    $desc = trim($horse['horse_description'] ?? '');
+                    echo ($desc === '' || $desc === '...')
                         ? 'Aucune description disponible.'
-                        : nl2br(htmlentities($description));
+                        : nl2br(htmlentities($desc));
                     ?>
                 </p>
             </div>
@@ -98,20 +102,22 @@ if (!empty($horse['horse_birthdate'])) {
 
                 <p>
                     Statut :
-                    <?php if (($auctionStatus ?? '') === 'active'): ?>
-                        <span class="badge bg-success">En cours</span>
-                    <?php else: ?>
-                        <span class="badge bg-danger">Clôturée</span>
-                    <?php endif; ?>
+                    <span class="badge <?= htmlentities($auction['badge_class'] ?? '') ?>">
+                        <?= htmlentities($auction['status_label'] ?? '—') ?>
+                    </span>
                 </p>
 
                 <p>
                     Prix actuel :
-                    <strong><?= number_format((float)($currentPrice ?? 0), 0, ',', ' ') ?> €</strong>
+                    <strong>
+                        <span class="live-price" data-id="<?= $horse['id_horse'] ?? 0 ?>">
+                            <?= number_format($auction['current_price'] ?? $auction['starting_price'] ?? 0, 0, ',', ' ') ?> €
+                        </span>
+                    </strong>
                 </p>
 
                 <p class="voters-info btn btn-secondary p-2">
-                    <?= $horse['voters'] ?? 0 ?> participant(s)
+                    <?= $auction['participants'] ?? 0 ?> participant(s)
                 </p>
 
             </div>
@@ -119,45 +125,29 @@ if (!empty($horse['horse_birthdate'])) {
 
         <div class="cta-horse-info">
 
-            <?php if (!isset($_SESSION['user_id'])): ?>
+            <?php if (!$userLogged): ?>
 
                 <p>Inscription requise pour participer.</p>
-
                 <a href="/huhu/huhu_linux/views/register_form.php" class="btn-horse-info">
                     S'inscrire
                 </a>
 
             <?php else: ?>
 
-                <?php if (!empty($auctionId)): ?>
+                <p id="bidMessage"></p>
 
-                    <?php if ($isFollowing): ?>
-                        <form method="post">
-                            <button class="btn btn-warning" name="unfollow">
-                                Ne plus suivre 
-                            </button>
-                        </form>
-                    <?php else: ?>
-                        <form method="post">
-                            <button class="btn btn-success" name="follow">
-                                Suivre
-                            </button>
-                        </form>
-                    <?php endif; ?>
-
-                <?php endif; ?>
-
-                <button
-                    class="btn-bid"
-                    data-horse-name="<?= htmlentities($horse['horse_name']) ?>"
-                    data-price="<?= (float)($currentPrice ?? 0) ?>"
-                    data-horse-id="<?= $horse['id_horse'] ?>"
+                <button type="button" class="btn-bid"
+                    data-price="<?= $auction['current_price'] ?? $auction['starting_price'] ?? 0 ?>"
+                    data-user-bid="<?= $auction['my_last_bid'] ?? 0 ?>"
+                    data-horse-name="<?= htmlentities($horse['horse_name'] ?? '') ?>"
+                    data-horse-id="<?= $horse['id_horse'] ?? 0 ?>"
                     data-image="<?= $imagePath ?>"
-                >
+                    <?= $auction['is_active'] ? '' : 'disabled' ?>>
                     Faire une offre
                 </button>
 
             <?php endif; ?>
+
         </div>
     </div>
 </div>
@@ -171,28 +161,20 @@ if (!empty($horse['horse_birthdate'])) {
 
         <div class="modal-body">
             <h2 id="modalHorseName"></h2>
-
-            <p>
-                Prix actuel :
-                <strong id="modalCurrentPrice"></strong>
+            <p class="modal-price">
+                Prix actuel : <strong id="modalCurrentPrice"></strong>
             </p>
 
             <form action="/huhu/huhu_linux/controller/bid_ctrl.php" method="POST">
-
                 <input type="hidden" name="horse_id" id="modalHorseId">
-
                 <div class="bid-input">
-                    <button type="button" id="bidMinus">-</button>
-
-                    <input type="number" name="bid_amount" id="bidAmount" required>
-
+                    <button type="button" id="bidMinus">−</button>
+                    <input type="number" name="bid_amount" id="bidAmount">
                     <button type="button" id="bidPlus">+</button>
                 </div>
-
-                <button type="submit" class="btn-bid-now">
+                <button class="btn-consult" type="submit">
                     Enchérir
                 </button>
-
             </form>
         </div>
     </div>
