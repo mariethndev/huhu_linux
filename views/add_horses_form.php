@@ -1,14 +1,14 @@
 <?php
 session_start();
 
-if (
+ if (
     !isset($_SESSION['user_id']) ||
     ($_SESSION['role'] ?? '') !== 'organisateur'
 ) {
     header("Location: homepage.php");
     exit;
 }
-
+ 
 require_once '../head.php';
 ?>
 
@@ -140,8 +140,8 @@ require_once '../head.php';
                  <div class="af-field">
                     <label>Statut</label>
                     <select name="horse_status">
-                        <option value="active">Disponible</option>
-                        <option value="inactive">Indisponible</option>
+                        <option value="disponible">Disponible</option>
+                        <option value="indisponible">Indisponible</option>
                     </select>
                 </div>
 

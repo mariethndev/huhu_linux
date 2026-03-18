@@ -6,7 +6,7 @@ $statusFilter = $_GET['auction_status'] ?? '';
 
 try {
 
-    // mettre fin aux enchères expirées
+    // 🔥 1. mise à jour des enchères expirées
     $pdo->query("
         UPDATE auctions
         SET auction_status = 'terminé'
@@ -14,39 +14,28 @@ try {
         AND auction_end_date <= NOW()
     ");
 
-    // récupérer tous les chevaux
+    // 🔥 2. récupérer chevaux + enchères DIRECTEMENT
     $stmt = $pdo->query("
-        SELECT *
+        SELECT horses.*, auctions.auction_status, auctions.auction_end_date
         FROM horses
-        WHERE horse_is_deleted = 0
-        ORDER BY horse_register_date DESC
+        LEFT JOIN auctions ON horses.id_horse = auctions.horse_id_fk
+        WHERE horses.horse_is_deleted = 0
+        ORDER BY horses.horse_register_date DESC
     ");
 
-    $allHorses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($allHorses as $horse) {
+    foreach ($results as $row) {
 
-        // récupérer l'enchère
-        $stmtAuction = $pdo->prepare("
-            SELECT *
-            FROM auctions
-            WHERE horse_id_fk = ?
-        ");
-        $stmtAuction->execute([$horse['id_horse']]);
-        $auction = $stmtAuction->fetch(PDO::FETCH_ASSOC);
-
-        if (!$auction) continue;
-
-        // filtre statut
-        if ($statusFilter && $auction['auction_status'] != $statusFilter) {
+        // 🔎 filtre statut
+        if ($statusFilter && $row['auction_status'] != $statusFilter) {
             continue;
         }
 
-        $horse['auction_status'] = $auction['auction_status'];
-        $horse['winner_name'] = '—';
+        $row['winner_name'] = '—';
 
-        // si enchère terminée → trouver gagnant
-        if ($auction['auction_status'] === 'terminé') {
+        // 🏆 si terminé → chercher gagnant
+        if ($row['auction_status'] === 'terminé') {
 
             $stmtBest = $pdo->prepare("
                 SELECT user_id_fk
@@ -55,7 +44,7 @@ try {
                 ORDER BY bid_amount DESC
                 LIMIT 1
             ");
-            $stmtBest->execute([$horse['id_horse']]);
+            $stmtBest->execute([$row['id_horse']]);
             $winnerId = $stmtBest->fetchColumn();
 
             if ($winnerId) {
@@ -65,11 +54,11 @@ try {
                     WHERE id_user = ?
                 ");
                 $stmtUser->execute([$winnerId]);
-                $horse['winner_name'] = $stmtUser->fetchColumn() ?: '—';
+                $row['winner_name'] = $stmtUser->fetchColumn() ?: '—';
             }
         }
 
-        $horses[] = $horse;
+        $horses[] = $row;
     }
 
 } catch (PDOException $e) {
