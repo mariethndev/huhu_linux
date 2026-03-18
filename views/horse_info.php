@@ -134,7 +134,9 @@ $imagePath = !empty($horse['horse_image'])
 
             <?php else: ?>
 
-                <p id="bidMessage"></p>
+                <p id="bidMessage"
+                data-is-last-user="<?= $auction['is_last_user'] ? '1' : '0' ?>">
+                </p>
 
                 <button type="button" class="btn-bid"
                     data-price="<?= $auction['current_price'] ?? $auction['starting_price'] ?? 0 ?>"

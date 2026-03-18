@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once "../model/config.php";
 
 $input = json_decode(file_get_contents("php://input"), true);
@@ -10,28 +11,36 @@ if ($horseId <= 0) {
 }
 
 try {
-    $stmt = $pdo->prepare("
-        SELECT MAX(bid_amount) AS current_price
+     $stmt = $pdo->prepare("
+        SELECT bid_amount, user_id_fk
         FROM bids
         WHERE horse_id_fk = ?
+        ORDER BY bid_amount DESC
+        LIMIT 1
     ");
     $stmt->execute([$horseId]);
-    $price = $stmt->fetchColumn();
+    $lastBid = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($price === null) {
-        $stmtAuction = $pdo->prepare("
+    if ($lastBid) {
+        $price = (float)$lastBid['bid_amount'];
+        $lastBidder = (int)$lastBid['user_id_fk'];
+    } else {
+         $stmtAuction = $pdo->prepare("
             SELECT auction_starting_price
             FROM auctions
             WHERE horse_id_fk = ?
             LIMIT 1
         ");
         $stmtAuction->execute([$horseId]);
-        $price = $stmtAuction->fetchColumn() ?? 0;
+        $price = (float)($stmtAuction->fetchColumn() ?? 0);
+        $lastBidder = null;
     }
 
     echo json_encode([
         "success" => true,
-        "current_price" => (float)$price
+        "price" => $price,
+        "last_bidder" => $lastBidder,
+        "current_user" => $_SESSION['user_id'] ?? null
     ]);
 
 } catch (PDOException $e) {

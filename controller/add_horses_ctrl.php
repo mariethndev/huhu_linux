@@ -2,6 +2,7 @@
 session_start();
 require_once "../model/config.php";
 
+// 🔐 Vérification utilisateur
 if (
     empty($_SESSION['user_id']) ||
     ($_SESSION['role'] ?? '') !== 'organisateur'
@@ -10,20 +11,24 @@ if (
     exit;
 }
 
+// 🔐 Vérification méthode
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/add_horses_form.php");
     exit;
 }
 
-$horse_name      = trim($_POST['horse_name'] ?? '');
-$horse_breed     = trim($_POST['horse_breed'] ?? '');
-$horse_sex       = $_POST['horse_sex'] ?? '';
-$horse_birthdate = $_POST['horse_birthdate'] ?? '';
-$horse_status    = $_POST['horse_status'] ?? 'active'; // 🔥 cohérent
+// 📥 Récupération données
+$horse_name       = trim($_POST['horse_name'] ?? '');
+$horse_breed      = trim($_POST['horse_breed'] ?? '');
+$horse_sex        = $_POST['horse_sex'] ?? '';
+$horse_birthdate  = $_POST['horse_birthdate'] ?? '';
+$horse_status     = $_POST['horse_status'] ?? 'disponible'; // ✅ corrigé
+
 $horse_discipline = trim($_POST['horse_discipline'] ?? '');
 $horse_coat       = trim($_POST['horse_coat'] ?? '');
 $horse_height     = $_POST['horse_height'] ?? null;
 $horse_weight     = $_POST['horse_weight'] ?? null;
+
 $horse_father     = trim($_POST['horse_father'] ?? '');
 $horse_mother     = trim($_POST['horse_mother'] ?? '');
 $horse_id_number  = trim($_POST['horse_id_number'] ?? '');
@@ -31,36 +36,33 @@ $horse_nb_ueln    = trim($_POST['horse_nb_ueln'] ?? '');
 $horse_description = trim($_POST['horse_description'] ?? '');
 
 $auction_price = !empty($_POST['auction_starting_price'])
-    ? $_POST['auction_starting_price']
+    ? (float)$_POST['auction_starting_price']
     : 1000;
 
 $user_id = $_SESSION['user_id'];
 
+// 📷 Upload image
 $imageName = "horse_default.png";
 $uploadDir = __DIR__ . "/../uploads/horses/";
-  
+
 if (
     isset($_FILES['horse_image']) &&
     $_FILES['horse_image']['error'] === 0
 ) {
-
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime = finfo_file($finfo, $_FILES['horse_image']['tmp_name']);
 
-     if (
-        $mime !== 'image/jpeg' &&
-        $mime !== 'image/png' &&
-        $mime !== 'image/webp'
-    ) {
+    if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp'])) {
         exit("Format image interdit");
     }
 
-    $imageName = uniqid() . ".webp";
+    $imageName = uniqid("horse_") . ".webp";
     $destination = $uploadDir . $imageName;
 
     move_uploaded_file($_FILES['horse_image']['tmp_name'], $destination);
 }
 
+// 🛑 Validation
 if (
     empty($horse_name) ||
     empty($horse_breed) ||
@@ -71,6 +73,7 @@ if (
     exit;
 }
 
+// 🔍 Vérif unicité numéro
 $stmt = $pdo->prepare("
     SELECT id_horse
     FROM horses
@@ -85,9 +88,9 @@ if ($stmt->fetch()) {
 
 try {
 
+    // 🐎 Insertion cheval
     $stmt = $pdo->prepare("
-        INSERT INTO horses
-        (
+        INSERT INTO horses (
             horse_name,
             horse_breed,
             horse_sex,
@@ -127,13 +130,12 @@ try {
         $imageName
     ]);
 
-    $horse_id = $pdo->lastInsertId();
+     $horse_id = $pdo->lastInsertId();
 
-    if ($horse_status === 'active') {
+     if ($horse_status === 'disponible') {
 
         $stmtAuction = $pdo->prepare("
-            INSERT INTO auctions
-            (
+            INSERT INTO auctions (
                 auction_starting_price,
                 auction_start_date,
                 auction_end_date,
@@ -153,6 +155,6 @@ try {
     exit;
 
 } catch (PDOException $e) {
-    echo $e->getMessage();
+    echo "Erreur : " . $e->getMessage();
     exit;
 }

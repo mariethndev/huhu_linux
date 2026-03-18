@@ -5,21 +5,18 @@ $horses = [];
 
 try {
 
-    // récupérer les 6 dernières enchères actives
-    $stmt = $pdo->query("
+     $stmt = $pdo->query("
         SELECT *
         FROM auctions
-        WHERE auction_status = 'disponible'
+        WHERE auction_status = 'disponible'        
         ORDER BY auction_start_date DESC
-        LIMIT 6
-    ");
+            ");
 
     $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($auctions as $auction) {
 
-        // récupérer le cheval lié
-        $stmtHorse = $pdo->prepare("
+         $stmtHorse = $pdo->prepare("
             SELECT *
             FROM horses
             WHERE id_horse = ?
@@ -30,8 +27,7 @@ try {
 
         if (!$horse) continue;
 
-        // récupérer le prix actuel
-        $stmtPrice = $pdo->prepare("
+         $stmtPrice = $pdo->prepare("
             SELECT MAX(bid_amount)
             FROM bids
             WHERE horse_id_fk = ?
@@ -40,7 +36,7 @@ try {
         $lastBid = $stmtPrice->fetchColumn();
 
         $horse['current_price'] =
-            $lastBid ?: $auction['auction_starting_price'];
+        $lastBid ? $lastBid : $auction['auction_starting_price'];
 
         $horse['auction_start_date'] = $auction['auction_start_date'];
         $horse['auction_end_date']   = $auction['auction_end_date'];

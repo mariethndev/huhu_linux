@@ -41,7 +41,7 @@ require_once '../head.php';
 
             <div class="af-grid-2">
 
-                <div class="af-field af-field--full">
+                 <div class="af-field af-field--full">
 
                     <label class="af-label">Photo du cheval</label>
 
@@ -62,7 +62,7 @@ require_once '../head.php';
 
                 </div>
 
-                <div class="af-field">
+                 <div class="af-field">
                     <label>Nom *</label>
                     <input type="text" name="horse_name" required>
                 </div>
@@ -137,11 +137,11 @@ require_once '../head.php';
                     <input type="text" name="horse_nb_ueln">
                 </div>
 
-                <div class="af-field">
+                 <div class="af-field">
                     <label>Statut</label>
                     <select name="horse_status">
-                        <option value="disponible">Disponible</option>
-                        <option value="indisponible">Indisponible</option>
+                        <option value="active">Disponible</option>
+                        <option value="inactive">Indisponible</option>
                     </select>
                 </div>
 
@@ -166,5 +166,5 @@ require_once '../head.php';
     </div>
 
 </div>
- 
+
 <?php require_once '../footer.php'; ?>
