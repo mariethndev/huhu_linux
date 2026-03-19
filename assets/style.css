@@ -78,11 +78,7 @@ nav a::after {
   background: var(--primary);
   transition: width 0.3s ease;
 }
-
-nav a:hover::after {
-  width: 100%;
-}
-
+ 
 /* Dropdown de  mon compte */
 
 .account-dropdown {
@@ -297,57 +293,56 @@ overflow:hidden;
 }
 
 .custom-header{
-background:var(--primary);
-color:var(--white);
-padding:1.2rem 1.5rem;
-display:flex;
-justify-content:space-between;
-align-items:center;
+  background:var(--primary);
+  color:var(--white);
+  padding:1.2rem 1.5rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 .custom-header h2{
-font-weight:600;
+  font-weight:600;
 }
 
 .btn-primary-custom{
-background:var(--white);
-color:var(--primary);
-border:none;
-font-weight:500;
-padding:0.5rem 1.2rem;
-border-radius:8px;
+  background:var(--white);
+  color:var(--primary);
+  border:none;
+  font-weight:500;
+  padding:0.5rem 1.2rem;
+  border-radius:8px;
 }
 
 .modal-header{
-background:var(--primary);
-color:var(--white);
+  background:var(--primary);
+  color:var(--white);
 }
 
 /* HOMEPAGE — ENCHÈRES RÉCENTES */
 
 .collection-section{
-padding:100px 0;
-background:var(--bg);
-}
+  padding:100px 0;
+ }
 
 .collection-container{
-max-width:1200px;
-width:92%;
-margin:0 auto;
-text-align:center;
+  max-width:1200px;
+  width:92%;
+  margin:0 auto;
+  text-align:center;
 }
 
 .collection-head{
-margin-bottom:52px;
+  margin-bottom:52px;
 }
 
 .collection-title{
-font-size:36px;
-font-weight:800;
-color:#111;
-letter-spacing:-0.5px;
-margin:0 0 14px;
-position:relative;
+  font-size:36px;
+  font-weight:800;
+  color: var(--black);
+  letter-spacing:-0.5px;
+  margin:0 0 14px;
+  position:relative;
 }
 
 .collection-title::after{
@@ -363,76 +358,76 @@ opacity:0.7;
 
 .collection-desc{
 font-size:15px;
-color:#888;
+color:var(--gray-500);
 margin:0;
 }
 
 .collection-empty{
-color:#aaa;
+color: var(--gray-300);
 font-size:15px;
 margin-bottom:32px;
 }
 
 .collection-grid{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:28px;
-margin-bottom:52px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:28px;
+  margin-bottom:52px;
 }
 
 .collection-card{
-width:100%;
-max-width:420px;
-position:relative;
-display:block;
-border-radius:14px;
-overflow:hidden;
-text-decoration:none;
-cursor:pointer;
+  width:100%;
+  max-width:420px;
+  position:relative;
+  display:block;
+  border-radius:14px;
+  overflow:hidden;
+  text-decoration:none;
+  cursor:pointer;
 }
 
 .collection-image{
-position:relative;
-width:100%;
-height:260px;
-overflow:hidden;
-border-radius:14px;
+  position:relative;
+  width:100%;
+  height:260px;
+  overflow:hidden;
+  border-radius:14px;
 }
 
 .collection-image img{
-width:100%;
-height:100%;
-object-fit:cover;
-display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
 
 .collection-badge{
-position:absolute;
-top:12px;
-right:12px;
-padding:8px 16px;
-background:rgba(255,255,255,0.95);
-color:var(--primary);
-font-size:0.85rem;
-font-weight:700;
-border-radius:30px;
-letter-spacing:0.5px;
-z-index:3;
+  position:absolute;
+  top:12px;
+  right:12px;
+  padding:8px 16px;
+  background:rgba(255,255,255,0.95);
+  color:var(--primary);
+  font-size:0.85rem;
+  font-weight:700;
+  border-radius:30px;
+  letter-spacing:0.5px;
+  z-index:3;
 }
 
 .collection-cta{
-position:absolute;
-bottom:12px;
-right:12px;
-padding:10px 18px;
-background:var(--primary);
-color:var(--white);
-font-size:0.85rem;
-font-weight:700;
-border-radius:30px;
-letter-spacing:0.6px;
-z-index:3;
+  position:absolute;
+  bottom:12px;
+  right:12px;
+  padding:10px 18px;
+  background:var(--primary);
+  color:var(--white);
+  font-size:0.85rem;
+  font-weight:700;
+  border-radius:30px;
+  letter-spacing:0.6px;
+  z-index:3;
 }
  
 .collection-footer { text-align: center; }
@@ -440,24 +435,24 @@ z-index:3;
 /*  PAGE ENCHÈRES (LISTE) */
  
 .auction-page{
-display:flex;
-justify-content:center;
-gap:50px;
-max-width:1300px;
-margin:40px auto;
-padding:0 20px;
+  display:flex;
+  justify-content:center;
+  gap:50px;
+  max-width:1300px;
+  margin:40px auto;
+  padding:0 20px;
 }
 
 .auction-sidebar{
-width:300px;
+  width:300px;
 }
 
 .auction-container{
-flex:1;
+  flex:1;
 }
 
 .auction-content{
-max-width:100%;
+  max-width:100%;
 }
 
 .results-counter{
@@ -472,107 +467,107 @@ background:var(--white);
 }
 
 .auction-title{
-color:var(--primary);
-font-weight:600;
+  color:var(--primary);
+  font-weight:600;
 }
 
 .horses-grid{
-display:flex;
-flex-wrap:wrap;
-gap:24px;
-justify-content:center;
+  display:flex;
+  flex-wrap:wrap;
+  gap:24px;
+  justify-content:center;
 }
 
 .horse-card{
-width:100%;
-max-width:360px;
-background:var(--white);
-border-radius:16px;
-overflow:hidden;
-display:flex;
-flex-direction:column;
+  width:100%;
+  max-width:360px;
+  background:var(--white);
+  border-radius:16px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
 }
 
 .card-image{
-width:100%;
-aspect-ratio:4/3;
-overflow:hidden;
-background:var(--gray-100);
+  width:100%;
+  aspect-ratio:4/3;
+  overflow:hidden;
+  background:var(--gray-100);
 }
 
 .card-image img{
-width:100%;
-height:100%;
-object-fit:cover;
-display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
 
 .card-content{
-padding:15px;
-font-size:14px;
+  padding:15px;
+  font-size:14px;
 }
 
 .card-content h3{
-font-size:18px;
-margin-bottom:8px;
+  font-size:18px;
+  margin-bottom:8px;
 }
 
 .card-title{
-font-size:1.1rem;
-font-weight:700;
-color:var(--black);
+  font-size:1.1rem;
+  font-weight:700;
+  color:var(--black);
 }
 
 .price-current{
-font-size:0.9rem;
-font-weight:600;
-color:var(--primary);
+  font-size:0.9rem;
+  font-weight:600;
+  color:var(--primary);
 }
 
 .filter-form{
-display:flex;
-flex-direction:column;
-gap:15px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
 }
 
 .filter-form input,
 .filter-form select{
-width:100%;
-padding:10px;
-border:1px solid var(--gray-300);
-border-radius:8px;
-font-size:14px;
-background:var(--white);
+  width:100%;
+  padding:10px;
+  border:1px solid var(--gray-300);
+  border-radius:8px;
+  font-size:14px;
+  background:var(--white);
 }
 
 .filter-form input:focus,
 .filter-form select:focus{
-outline:none;
-border-color:var(--primary);
+  outline:none;
+  border-color:var(--primary);
 }
 
 /* PAGE FICHE INFO CHEVAL */
   
 .container-info-horse{
-max-width:1100px;
-margin:60px auto;
-display:flex;
-flex-direction:column;
-gap:40px;
-padding:0 20px;
+  max-width:1100px;
+  margin:60px auto;
+  display:flex;
+  flex-direction:column;
+  gap:40px;
+  padding:0 20px;
 } 
 
 .image-horse-info{
-max-width:720px;
-margin:auto;
+  max-width:720px;
+  margin:auto;
 }
 
 .image-horse-info img{
-width:100%;
-height:380px;
-object-fit:cover;
-border-radius:10px;
-display:block;
+  width:100%;
+  height:380px;
+  object-fit:cover;
+  border-radius:10px;
+  display:block;
 }
   
 .back-horse-info{
@@ -672,8 +667,6 @@ display:block;
     position: relative;
 }
 
-
-
 /* STATUT SURENCHERI */
 
 .status {
@@ -699,7 +692,7 @@ display:block;
 .leader-badge{
   margin-top:10px;
   padding:6px 10px;
-  background:#e6f9ec;
+  background:var(--gray-200);
   color:#27ae60;
   font-weight:600;
   text-align:center;
@@ -719,7 +712,8 @@ display:block;
   border:1px solid #f5b7b1;
 }
  
-/*  MODAL FAIRE UNE OFFRE + OVERLAY */
+/*  MODAL HORSE INFO FAIRE 
+UNE OFFRE + OVERLAY */
 
 .custom-modal{
   display:flex;
@@ -873,7 +867,7 @@ display:block;
   margin-left:8px;
 }
 
-/* ACHETER UN CHEVAL */
+/* PAGE BUY A HORSE */
 
 .ma-empty-link {
   text-decoration: none;
@@ -1353,49 +1347,49 @@ color:#d63031;
  
 .co-page,
 .signup-page{
-min-height:60vh;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:52px 20px 80px;
+  min-height:60vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:52px 20px 80px;
 }
 
 .signup-page{
-min-height:calc(100vh - 220px);
-padding:40px 20px;
-background:var(--bg);
+  min-height:calc(100vh - 220px);
+  padding:40px 20px;
+  background:var(--bg);
 }
 
 .co-card{
-width:100%;
-max-width:460px;
-background:var(--white);
-border-radius:20px;
-border:1px solid #f0f0f0;
-padding:44px 44px 40px;
+  width:100%;
+  max-width:460px;
+  background:var(--white);
+  border-radius:20px;
+  border:1px solid #f0f0f0;
+  padding:44px 44px 40px;
 }
 
 .signup-form-wrapper{
-width:100%;
-max-width:350px;
-text-align:center;
-border:1px solid var(--gray-400);
-padding:30px;
-border-radius:6px;
-background:var(--white);
+  width:100%;
+  max-width:350px;
+  text-align:center;
+  border:1px solid var(--gray-400);
+  padding:30px;
+  border-radius:6px;
+  background:var(--white);
 }
 
 .signup-form-wrapper h2{
-font-size:1.2rem;
-font-weight:700;
-color:var(--black);
-margin-bottom:8px;
+  font-size:1.2rem;
+  font-weight:700;
+  color:var(--black);
+  margin-bottom:8px;
 }
 
 .signup-subtitle{
-font-size:0.8rem;
-color:var(--gray-500);
-margin-bottom:25px;
+  font-size:0.8rem;
+  color:var(--gray-500);
+  margin-bottom:25px;
 }
 
 .signup-subtitle a{
@@ -1454,16 +1448,16 @@ color:#1e7e44;
 }
 
 .co-field{
-display:flex;
-flex-direction:column;
-gap:7px;
-margin-bottom:18px;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  margin-bottom:18px;
 }
 
 .co-label{
-font-size:13px;
-font-weight:600;
-color:#444;
+  font-size:13px;
+  font-weight:600;
+  color: var(--gray-600);
 }
 
 .co-input{
@@ -1637,9 +1631,9 @@ color:#444;
 }
 
 .dash-subtitle{
-font-size:15px;
-color: var(--gray-500);
-margin:0;
+  font-size:15px;
+  color: var(--gray-500);
+  margin:0;
 }
 
 .dash-grid{
@@ -1688,17 +1682,17 @@ margin:0;
 }
 
 .dash-card-desc{
-font-size:13px;
-color:#999;
-margin:0;
-line-height:1.5;
+  font-size:13px;
+  color:var(--gray-400);
+  margin:0;
+  line-height:1.5;
 }
 
 .dash-card-cta{
-font-size:13px;
-font-weight:600;
-color:var(--primary);
-letter-spacing:0.2px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--primary);
+  letter-spacing:0.2px;
 }
  
 /* ENCHÈRES ORGANISATEUR */
@@ -1750,7 +1744,7 @@ letter-spacing:0.2px;
   letter-spacing:0.6px;
   color: var(--gray-400);
   padding:16px 20px;
-  background:#fafafa;
+  background: var(--white);
 }
 
 .ga-section td{
@@ -2036,19 +2030,19 @@ letter-spacing:0.2px;
 }
 
 .af-alert--danger{
-background:var(--white);
-color:#9f1239;
-border:1px solid #fecdd3;
+  background:var(--white);
+  color:#9f1239;
+  border:1px solid #fecdd3;
 }
 
 .af-card{
-background:var(--white);
-border-radius:14px;
-border:1px solid var(--gray-200);
-padding:30px;
-display:flex;
-flex-direction:column;
-gap:22px;
+  background:var(--white);
+  border-radius:14px;
+  border:1px solid var(--gray-200);
+  padding:30px;
+  display:flex;
+  flex-direction:column;
+  gap:22px;
 }
 
 .af-grid-2 {
@@ -2165,8 +2159,7 @@ gap:22px;
 .af-preview-img.visible{
   display:block;
 }
-
-/* footer */
+ 
 .af-footer{
   display:flex;
   justify-content:flex-end;
@@ -2228,7 +2221,7 @@ gap:22px;
   margin:30px 0;
 }
 
-/* Profil */
+/* Page Profil */
 
 .profile-page{
   max-width:720px;
@@ -2316,20 +2309,20 @@ gap:22px;
 
 /*  MENU HAMBURGER MOBILE */
 
-.burger{
-display:none;
+.burger {
+  display:none;
 }
 
-.mobile-nav{
-display:none;
+.mobile-nav {
+  display:none;
 }
 
-.menu-overlay{
-display:none;
+.menu-overlay {
+  display:none;
 }
 
-.mobile-nav form{
-width:100%;
+.mobile-nav form {
+  width:100%;
 }
 
 .mobile-nav .mobile-logout {
@@ -2344,56 +2337,7 @@ width:100%;
   transition: 0.3s ease;
 }
 
-/* FOOTER */
-
-footer{
-  background-color: var(--black);
-  padding:50px 80px;
-}
-
-.footer-container{
-  max-width:1100px;
-  margin:0 auto;
-  display:flex;
-  gap:40px;
-}
-
-.footer-section{
-  flex:1;
-}
-
-.footer-section h3{
-  font-size:2rem;
-  color:var(--white);
-  margin-bottom:10px;
-  font-weight:700;
-}
-
-.footer-section h4{
-  font-size:0.9rem;
-  color:var(--white);
-  margin-bottom:15px;
-  font-weight:600;
-}
-
-.footer-section p,
-.footer-links a{
-  color:var(--gray-400);
-  font-size:0.85rem;
-  text-decoration:none;
-}
-
-.footer-links{
-  list-style:none;
-  padding:0;
-  margin:0;
-}
-
-.footer-links li{
-  margin-bottom:8px;
-}
-
-/* Boutons */
+/* Boutons de la page add_horses_form.phps */
 
 .connect-btn,
 .btn-bid,
@@ -2594,33 +2538,81 @@ footer{
 }
 
 .btn-save-profile{
-background:var(--gray-300);
-color:var(--black);
-border:none;
-padding:10px;
-border-radius:3px;
-margin-left:20px;
+  background:var(--gray-300);
+  color:var(--black);
+  border:none;
+  padding:10px;
+  border-radius:3px;
+  margin-left:20px;
 }
 
-.btn-action{
-border-radius:6px;
-padding:0.35rem 0.6rem;
+.btn-action {
+  border-radius:6px;
+  padding:0.35rem 0.6rem;
 }
 
-.profile-action-btn{
-padding:14px;
-border-radius:14px;
-text-align:center;
-text-decoration:none;
+.profile-action-btn {
+  padding:14px;
+  border-radius:14px;
+  text-align:center;
+  text-decoration:none;
 }
 
-.profile-action-btn.secondary{
-background:var(--gray-200);
-color:var(--black);
+.profile-action-btn.secondary {
+  background:var(--gray-200);
+  color:var(--black);
+}
+ 
+/* FOOTER de la page add_horses_form.phps */
+
+footer{
+  background-color: var(--black);
+  padding:50px 80px;
 }
 
+.footer-container{
+  max-width:1100px;
+  margin:0 auto;
+  display:flex;
+  gap:40px;
+}
 
-/* ________RESPONSIVE______________ */
+.footer-section{
+  flex:1;
+}
+
+.footer-section h3{
+  font-size:2rem;
+  color:var(--white);
+  margin-bottom:10px;
+  font-weight:700;
+}
+
+.footer-section h4{
+  font-size:0.9rem;
+  color:var(--white);
+  margin-bottom:15px;
+  font-weight:600;
+}
+
+.footer-section p,
+.footer-links a{
+  color:var(--gray-400);
+  font-size:0.85rem;
+  text-decoration:none;
+}
+
+.footer-links{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+.footer-links li{
+  margin-bottom:8px;
+}
+
+/* ________ */
 
 @media (max-width:480px){
 
