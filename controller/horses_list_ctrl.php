@@ -1,5 +1,7 @@
 <?php
+ 
 require_once "../model/config.php";
+require_once "../views/horses_list.php";
 
 $horses = [];
 $statusFilter = $_GET['auction_status'] ?? '';
@@ -69,5 +71,3 @@ try {
     $horses = [];
 }
 
-// vue
-require_once "../views/horses_list.php";

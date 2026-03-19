@@ -35,8 +35,7 @@ require_once '../head.php';
 
             <input type="hidden" name="auction_id" value="<?= (int)$auction['id_auction'] ?>">
 
-            <!-- DATE DE FIN -->
-            <div class="af-field">
+             <div class="af-field">
 
                 <label class="af-label">Date de fin</label>
 
@@ -50,8 +49,7 @@ require_once '../head.php';
 
             </div>
 
-            <!-- CHOISIR LE STATUT -->
-            <div class="af-field">
+             <div class="af-field">
 
                 <label class="af-label">Statut</label>
 

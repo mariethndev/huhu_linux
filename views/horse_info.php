@@ -31,7 +31,6 @@ $imagePath = !empty($horse['horse_image'])
                 RETOUR
             </a>
         </div>
-
     </div>
 
     <div class="right-card-horse">
@@ -40,9 +39,7 @@ $imagePath = !empty($horse['horse_image'])
 
             <div class="card-info">
                 <h3>DÉTAILS</h3>
-
                 <p>Numéro : <?= htmlentities($horse['horse_id_number'] ?? '—') ?></p>
-
                 <p>Naissance :
                     <?= !empty($horse['horse_birthdate'])
                         ? date('d/m/Y', strtotime($horse['horse_birthdate']))
@@ -54,7 +51,6 @@ $imagePath = !empty($horse['horse_image'])
                 </p>
 
                 <p>Lieu : <?= htmlentities($horse['horse_location'] ?? '—') ?></p>
-
                 <p>Date d'enregistrement :
                     <?= !empty($horse['horse_register_date'])
                         ? date('d/m/Y', strtotime($horse['horse_register_date']))
@@ -64,21 +60,17 @@ $imagePath = !empty($horse['horse_image'])
 
             <div class="card-info">
                 <h3>MORPHOLOGIE</h3>
-
                 <p>Robe : <?= htmlentities($horse['horse_coat'] ?? '—') ?></p>
-
                 <p>Taille :
                     <?= !empty($horse['horse_height'])
                         ? $horse['horse_height'] . ' cm'
                         : 'NC' ?>
                 </p>
-
                 <p>Poids :
                     <?= !empty($horse['horse_weight'])
                         ? $horse['horse_weight'] . ' kg'
                         : 'NC' ?>
                 </p>
-
                 <p>Sexe : <?= htmlentities($horse['horse_sex'] ?? '—') ?></p>
             </div>
 
@@ -208,11 +200,8 @@ $imagePath = !empty($horse['horse_image'])
                 </button>
 
             </form>
-
         </div>
-
     </div>
-
 </div>
 
 <?php require_once '../footer.php'; ?>

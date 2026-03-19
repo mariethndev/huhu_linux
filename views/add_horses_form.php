@@ -1,14 +1,14 @@
 <?php
 session_start();
 
- if (
+if (
     !isset($_SESSION['user_id']) ||
     ($_SESSION['role'] ?? '') !== 'organisateur'
 ) {
     header("Location: homepage.php");
     exit;
 }
- 
+
 require_once '../head.php';
 ?>
 
@@ -78,7 +78,7 @@ require_once '../head.php';
 
                 <div class="af-field">
                     <label>Date de naissance *</label>
-                    <input type="date" name="horse_birthdate" required>
+                <input type="date" name="horse_birthdate" required>          
                 </div>
 
                 <div class="af-field">
@@ -147,7 +147,7 @@ require_once '../head.php';
 
                 <div class="af-field">
                     <label>Prix de départ (€)</label>
-                    <input type="number" name="auction_starting_price" min="0">
+                    <input type="number" name="auction_starting_price" min="0" step="1">
                 </div>
 
                 <div class="af-field af-field--full">

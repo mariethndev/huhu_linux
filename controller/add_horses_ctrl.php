@@ -15,15 +15,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$horse_name       = trim($_POST['horse_name'] ?? '');
-$horse_breed      = trim($_POST['horse_breed'] ?? '');
-$horse_sex        = $_POST['horse_sex'] ?? '';
-$horse_birthdate  = $_POST['horse_birthdate'] ?? '';
-$horse_status     = $_POST['horse_status'] ?? 'disponible'; 
+$horse_name      = trim($_POST['horse_name'] ?? '');
+$horse_breed     = trim($_POST['horse_breed'] ?? '');
+$horse_sex       = $_POST['horse_sex'] ?? '';
+$horse_birthdate = $_POST['horse_birthdate'] ?? '';
+$horse_status    = $_POST['horse_status'] ?? 'disponible';
+
 $horse_discipline = trim($_POST['horse_discipline'] ?? '');
 $horse_coat       = trim($_POST['horse_coat'] ?? '');
-$horse_height     = $_POST['horse_height'] ?? null;
-$horse_weight     = $_POST['horse_weight'] ?? null;
+
+$horse_height = !empty($_POST['horse_height']) ? (int)$_POST['horse_height'] : null;
+$horse_weight = !empty($_POST['horse_weight']) ? (int)$_POST['horse_weight'] : null;
+
 $horse_father     = trim($_POST['horse_father'] ?? '');
 $horse_mother     = trim($_POST['horse_mother'] ?? '');
 $horse_id_number  = trim($_POST['horse_id_number'] ?? '');
@@ -43,10 +46,15 @@ if (
     isset($_FILES['horse_image']) &&
     $_FILES['horse_image']['error'] === 0
 ) {
+
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime = finfo_file($finfo, $_FILES['horse_image']['tmp_name']);
 
-    if (!in_array($mime, ['image/jpeg', 'image/png', 'image/webp'])) {
+    if (
+        $mime !== 'image/jpeg' &&
+        $mime !== 'image/png' &&
+        $mime !== 'image/webp'
+    ) {
         exit("Format image interdit");
     }
 
@@ -56,6 +64,7 @@ if (
     move_uploaded_file($_FILES['horse_image']['tmp_name'], $destination);
 }
 
+// VALIDATION
 if (
     empty($horse_name) ||
     empty($horse_breed) ||
@@ -66,6 +75,7 @@ if (
     exit;
 }
 
+// UNIQUE ID NUMBER
 $stmt = $pdo->prepare("
     SELECT id_horse
     FROM horses
@@ -80,6 +90,7 @@ if ($stmt->fetch()) {
 
 try {
 
+    // INSERT CHEVAL
     $stmt = $pdo->prepare("
         INSERT INTO horses (
             horse_name,
@@ -121,7 +132,7 @@ try {
         $imageName
     ]);
 
-     $horse_id = $pdo->lastInsertId();
+    $horse_id = $pdo->lastInsertId();
 
      if ($horse_status === 'disponible') {
 
@@ -146,6 +157,6 @@ try {
     exit;
 
 } catch (PDOException $e) {
-    echo "Erreur : " . $e->getMessage();
+    echo $e->getMessage();
     exit;
 }

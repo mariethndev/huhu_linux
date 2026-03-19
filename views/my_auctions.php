@@ -71,11 +71,8 @@ require_once '../head.php';
                 <?php foreach ($groupedAuctions['en_cours'] as $auctionItem): ?>
 
                     <tr>
-
                         <td><?= escapeHtml($auctionItem['horse_name']) ?></td>
-
                         <td><?= number_format((float)$auctionItem['last_price'], 0, ',', ' ') ?> €</td>
-
                         <td><?= number_format((float)$auctionItem['my_last_bid'], 0, ',', ' ') ?> €</td>
 
                         <td>
@@ -129,7 +126,6 @@ require_once '../head.php';
                 <tbody>
 
                 <?php foreach ($groupedAuctions['annulees'] as $auctionItem): ?>
-
                     <tr>
                         <td><?= escapeHtml($auctionItem['horse_name']) ?></td>
                         <td><?= number_format((float)$auctionItem['last_price'], 0, ',', ' ') ?> €</td>
@@ -139,9 +135,7 @@ require_once '../head.php';
                         <td><?= escapeHtml($auctionItem['last_bidder'] ?? 'Aucun') ?></td>
                         <td><a href="horse_info.php?id=<?= (int)$auctionItem['id_horse'] ?>">Voir</a></td>
                     </tr>
-
                 <?php endforeach; ?>
-
                 </tbody>
             </table>
 
@@ -150,12 +144,10 @@ require_once '../head.php';
          <?php if (!empty($groupedAuctions['terminees'])): ?>
 
             <h2>Terminées</h2>
-
             <table class="hl-table">
                 <tbody>
 
                 <?php foreach ($groupedAuctions['terminees'] as $auctionItem): ?>
-
                     <tr>
                         <td><?= escapeHtml($auctionItem['horse_name']) ?></td>
                         <td><?= number_format((float)$auctionItem['last_price'], 0, ',', ' ') ?> €</td>
@@ -165,7 +157,6 @@ require_once '../head.php';
                         <td><?= escapeHtml($auctionItem['last_bidder'] ?? 'Aucun') ?></td>
                         <td><a href="horse_info.php?id=<?= (int)$auctionItem['id_horse'] ?>">Voir</a></td>
                     </tr>
-
                 <?php endforeach; ?>
 
                 </tbody>
