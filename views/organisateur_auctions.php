@@ -89,14 +89,10 @@ function e($value) {
                             <a href="edit_auction.php?id=<?= (int)$auction['id_auction'] ?>" class="ga-btn-edit">
                                 Modifier
                             </a>
-
-                            <a href="/huhu/huhu_linux/controller/close_auction.php?id=<?= (int)$auction['id_auction'] ?>" class="ga-btn-close">
-                                Clôturer
-                            </a>
-
+                            
                             <button
                                 type="button"
-                                class="ga-btn-delete btn-delete-auction"
+                                class="ga-btn-delete btn-delete-auction btn btn-danger"
                                 data-id="<?= (int)$auction['id_auction'] ?>"
                                 data-name="<?= e($auction['horse_name']) ?>"
                             >

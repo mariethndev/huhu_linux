@@ -1697,7 +1697,7 @@ color:#1e7e44;
  
 /* ENCHÈRES ORGANISATEUR */
  
-.ga-page{
+.ga-page {
   max-width:1200px;
   margin:auto;
   padding:60px 30px 80px;
@@ -1711,17 +1711,17 @@ color:#1e7e44;
   color: var(--black);
 }
 
-.ga-page p{
+.ga-page p {
   color: var(--gray-400);
   font-size:14px;
   margin-bottom:28px;
 }
 
-.ga-section{
+.ga-section {
   margin-bottom:20px;
 }
 
-.ga-section h2{
+.ga-section h2 {
   font-size:22px;
   font-weight:700;
   margin-bottom:12px;
@@ -1731,7 +1731,7 @@ color:#1e7e44;
 .ga-section table{
   width:100%;
   border-collapse:collapse;
-  background: var(--gray-300);
+  background: var(--white);
   border-radius:14px;
   overflow: hidden;
   border:1px solid #ececec;
