@@ -7,8 +7,8 @@ require_once '../model/config.php';
 require_once '../controller/horses_list_ctrl.php';
 require_once '../head.php';
 
-function afficherTexteSecurise($valeur) {
-    return htmlentities($valeur ?? '', ENT_QUOTES, 'UTF-8');
+function escapeHtml($value) {
+    return htmlentities($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
 if (empty($_SESSION['csrf_token'])) {
@@ -23,26 +23,26 @@ $auction_status = $_GET['auction_status'] ?? '';
     <div class="hl-header">
         <div>
             <h1 class="hl-title">Liste des chevaux</h1>
-            <p class="hl-subtitle">Gérez tous les chevaux enregistrés sur la plateforme</p>
+            <p class="hl-subtitle">Gérez les chevaux</p>
         </div>
 
         <form method="GET" class="hl-filter">
             <select name="auction_status" class="hl-select">
+
                 <option value="">Tous les statuts</option>
-                <option value="disponible" <?= $auction_status === 'disponible' ? 'selected' : '' ?>>Disponible</option>
-                <option value="terminé" <?= $auction_status === 'terminé' ? 'selected' : '' ?>>Terminé</option>
-                <option value="annulé" <?= $auction_status === 'annulé' ? 'selected' : '' ?>>Annulé</option>
-                <option value="indisponible" <?= $auction_status === 'indisponible' ? 'selected' : '' ?>>Indisponible</option>
+
+                <option value="disponible" <?= $auction_status == 'disponible' ? 'selected' : '' ?>>Disponible</option>
+                <option value="terminé" <?= $auction_status == 'terminé' ? 'selected' : '' ?>>Terminé</option>
+                <option value="annulé" <?= $auction_status == 'annulé' ? 'selected' : '' ?>>Annulé</option>
+                <option value="indisponible" <?= $auction_status == 'indisponible' ? 'selected' : '' ?>>Indisponible</option>
+
             </select>
 
-            <button type="submit" class="hl-btn-filter">
-                Filtrer
-            </button>
+            <button type="submit" class="hl-btn-filter">Filtrer</button>
         </form>
     </div>
 
     <div class="hl-container">
-
         <div class="hl-table-wrapper">
 
             <table class="hl-table">
@@ -65,179 +65,142 @@ $auction_status = $_GET['auction_status'] ?? '';
                 <?php if (empty($horses)): ?>
 
                     <tr>
-                        <td colspan="8" class="hl-empty">
-                            Aucun cheval enregistré
-                        </td>
+                        <td colspan="8" class="hl-empty">Aucun cheval</td>
                     </tr>
 
                 <?php else: ?>
 
-                <?php foreach ($horses as $horse):
+                <?php foreach ($horses as $horse): ?>
 
+                    <?php
                     $status = $horse['auction_status'] ?? 'indisponible';
 
-                    $badgeMap = [
-                        'disponible'   => ['hl-badge--disponible', 'Disponible'],
-                        'terminé'      => ['hl-badge--termine', 'Terminé'],
-                        'annulé'       => ['hl-badge--annule', 'Annulé'],
-                        'indisponible' => ['hl-badge--indisponible', 'Indisponible'],
-                    ];
-
-                    [$badgeClass, $label] =
-                        $badgeMap[$status] ?? ['hl-badge--indisponible', 'Indisponible'];
-                ?>
+                    if ($status == 'disponible') {
+                        $badgeClass = 'hl-badge--disponible';
+                        $label = 'Disponible';
+                    } elseif ($status == 'terminé') {
+                        $badgeClass = 'hl-badge--termine';
+                        $label = 'Terminé';
+                    } elseif ($status == 'annulé') {
+                        $badgeClass = 'hl-badge--annule';
+                        $label = 'Annulé';
+                    } else {
+                        $badgeClass = 'hl-badge--indisponible';
+                        $label = 'Indisponible';
+                    }
+                    ?>
 
                 <tr>
 
-                    <td data-label="Nom">
-
+                    <td>
                         <div class="hl-horse-cell">
 
                             <img
-                                src="/huhu/huhu_linux/uploads/horses/<?= afficherTexteSecurise($horse['horse_image'] ?? 'horse_default.png') ?>"
+                                src="/huhu/huhu_linux/uploads/horses/<?= escapeHtml($horse['horse_image'] ?? 'horse_default.png') ?>"
                                 class="hl-horse-avatar"
                                 width="38"
                                 height="38"
-                                alt=""
                             >
 
                             <span class="hl-horse-name">
-                                <?= afficherTexteSecurise($horse['horse_name']) ?>
+                                <?= escapeHtml($horse['horse_name']) ?>
                             </span>
 
                         </div>
-
                     </td>
 
-                    <td data-label="Sexe">
-                        <?= ($horse['horse_sex'] ?? '') === 'M' ? 'Mâle' : 'Femelle' ?>
+                    <td>
+                        <?= ($horse['horse_sex'] ?? '') == 'M' ? 'Mâle' : 'Femelle' ?>
                     </td>
 
-                    <td data-label="Race">
-                        <?= afficherTexteSecurise($horse['horse_breed']) ?>
-                    </td>
+                    <td><?= escapeHtml($horse['horse_breed']) ?></td>
+                    <td><?= escapeHtml($horse['horse_coat']) ?></td>
+                    <td><?= escapeHtml($horse['horse_discipline']) ?></td>
 
-                    <td data-label="Robe">
-                        <?= afficherTexteSecurise($horse['horse_coat']) ?>
-                    </td>
-
-                    <td data-label="Discipline">
-                        <?= afficherTexteSecurise($horse['horse_discipline']) ?>
-                    </td>
-
-                    <td data-label="Statut">
-
+                    <td>
                         <span class="hl-badge <?= $badgeClass ?>">
-                            <?= afficherTexteSecurise($label) ?>
+                            <?= escapeHtml($label) ?>
                         </span>
-
                     </td>
 
-                    <td data-label="Gagnant">
+                    <td>
+                        <?php if ($status == 'terminé'): ?>
 
-                        <?php if ($status === 'terminé' && !empty($horse['winner_name']) && $horse['winner_name'] !== '—'): ?>
-
-                            <span class="hl-winner">
-                                🏆 <?= afficherTexteSecurise($horse['winner_name']) ?>
-                            </span>
-
-                        <?php elseif ($status === 'terminé'): ?>
-
-                            <span class="hl-no-data">
-                                Aucune mise
-                            </span>
+                            <?php if (!empty($horse['winner_name']) && $horse['winner_name'] != '—'): ?>
+                                <span class="hl-winner">
+                                    🏆 <?= escapeHtml($horse['winner_name']) ?>
+                                </span>
+                            <?php else: ?>
+                                <span class="hl-no-data">Aucune mise</span>
+                            <?php endif; ?>
 
                         <?php else: ?>
-
-                            <span class="hl-no-data">
-                                —
-                            </span>
-
+                            <span class="hl-no-data">—</span>
                         <?php endif; ?>
-
                     </td>
 
-                    <td data-label="Actions">
-
+                    <td>
                         <div class="hl-actions">
 
-                            <a
-                                href="/huhu/huhu_linux/views/horse_info.php?id=<?= (int)$horse['id_horse'] ?>"
-                                class="hl-action-btn"
-                                title="Voir la fiche"
-                            >
-                                <i class="bi bi-eye"></i>
+                            <a href="/huhu/huhu_linux/views/horse_info.php?id=<?= (int)$horse['id_horse'] ?>">
+                                👁
                             </a>
 
-                            <a
-                                href="/huhu/huhu_linux/views/update_horses_form.php?id=<?= (int)$horse['id_horse'] ?>"
-                                class="hl-action-btn"
-                                title="Modifier"
-                            >
-                                <i class="bi bi-pencil"></i>
+                            <a href="/huhu/huhu_linux/views/update_horses_form.php?id=<?= (int)$horse['id_horse'] ?>">
+                                ✏️
                             </a>
 
                             <button
                                 type="button"
                                 class="hl-action-btn hl-action-btn--danger btn-delete-horse"
                                 data-id="<?= (int)$horse['id_horse'] ?>"
-                                data-name="<?= afficherTexteSecurise($horse['horse_name']) ?>"
-                                title="Supprimer"
+                                data-name="<?= escapeHtml($horse['horse_name']) ?>"
                             >
-                                <i class="bi bi-trash"></i>
+                                🗑
                             </button>
 
                         </div>
-
                     </td>
 
                 </tr>
 
                 <?php endforeach; ?>
-
                 <?php endif; ?>
 
                 </tbody>
-
             </table>
 
         </div>
-
     </div>
-
 </div>
 
+<!-- MODAL POUR SUPPRIMER UN CHEVAL-->
 <div id="deleteModal" class="custom-modal hidden">
-
     <div class="modal-card">
-
         <div class="modal-body mt-3">
 
             <p>
-                Êtes-vous sûr de vouloir supprimer
-                <strong id="deleteHorseName"></strong> ?
+                Supprimer <strong id="deleteHorseName"></strong> ?
             </p>
 
             <form action="/huhu/huhu_linux/controller/delete_horses_ctrl.php" method="POST">
 
                 <input type="hidden" name="horse_id" id="deleteHorseId">
 
-                <input
-                    type="hidden"
-                    name="csrf_token"
-                    value="<?= afficherTexteSecurise($_SESSION['csrf_token']) ?>"
-                >
+                <input type="hidden"
+                       name="csrf_token"
+                       value="<?= escapeHtml($_SESSION['csrf_token']) ?>">
 
-                <div class="d-flex justify-content-end gap-2 mt-3">
-                    <button type="button" class="btn btn-secondary btn-cancel-delete">
-                        Annuler
-                    </button>
+                <button type="button" class="btn btn-secondary btn-cancel-delete">
+                    Annuler
+                </button>
 
-                    <button type="submit" class="btn btn-danger">
-                        Oui, supprimer
-                    </button>
-                </div>
+                <button type="submit" class="btn btn-danger">
+                    Supprimer
+                </button>
+
             </form>
+
         </div>
     </div>
 </div>

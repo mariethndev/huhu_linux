@@ -1,21 +1,20 @@
 <?php
-session_start();
 require_once "../model/config.php";
 
-if (
+ if (
     empty($_SESSION['user_id']) ||
-    $_SESSION['role'] !== 'organisateur'
+    ($_SESSION['role'] ?? '') !== 'organisateur'
 ) {
     header("Location: ../views/homepage.php");
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/horses_list.php");
     exit;
 }
 
-$horseId = (int)($_POST['horse_id'] ?? 0);
+ $horseId = (int)($_POST['horse_id'] ?? 0);
 
 $name        = trim($_POST['name'] ?? '');
 $sex         = $_POST['sex'] ?? '';
@@ -24,8 +23,8 @@ $breed       = trim($_POST['race'] ?? '');
 $discipline  = trim($_POST['discipline'] ?? '');
 $status      = $_POST['horse_status'] ?? '';
 
-$height      = $_POST['height'] ?: null;
-$weight      = $_POST['weight'] ?: null;
+$height      = !empty($_POST['height']) ? $_POST['height'] : null;
+$weight      = !empty($_POST['weight']) ? $_POST['weight'] : null;
 
 $coat        = trim($_POST['coat'] ?? '');
 $location    = trim($_POST['location'] ?? '');
@@ -37,7 +36,7 @@ $ueln        = trim($_POST['ueln'] ?? '');
 
 $price = (float)($_POST['price_starter'] ?? 0);
 
-$imageName = null;
+ $imageName = null;
 
 if (!empty($_FILES['horse_image']['name']) && $_FILES['horse_image']['error'] === 0) {
 
@@ -51,8 +50,7 @@ if (!empty($_FILES['horse_image']['name']) && $_FILES['horse_image']['error'] ==
 
 try {
 
-    // UPDATE cheval
-    if ($imageName) {
+     if ($imageName) {
 
         $stmt = $pdo->prepare("
             UPDATE horses
@@ -66,12 +64,23 @@ try {
         ");
 
         $stmt->execute([
-            $name, $sex, $birthdate,
-            $breed, $discipline, $status,
-            $coat, $height, $weight,
-            $location, $father, $mother,
-            $description, $idNumber, $ueln,
-            $imageName, $horseId
+            $name,
+            $sex,
+            $birthdate,
+            $breed,
+            $discipline,
+            $status,
+            $coat,
+            $height,
+            $weight,
+            $location,
+            $father,
+            $mother,
+            $description,
+            $idNumber,
+            $ueln,
+            $imageName,
+            $horseId
         ]);
 
     } else {
@@ -87,19 +96,28 @@ try {
         ");
 
         $stmt->execute([
-            $name, $sex, $birthdate,
-            $breed, $discipline, $status,
-            $coat, $height, $weight,
-            $location, $father, $mother,
-            $description, $idNumber, $ueln,
+            $name,
+            $sex,
+            $birthdate,
+            $breed,
+            $discipline,
+            $status,
+            $coat,
+            $height,
+            $weight,
+            $location,
+            $father,
+            $mother,
+            $description,
+            $idNumber,
+            $ueln,
             $horseId
         ]);
     }
 
      $stmt = $pdo->prepare("
         UPDATE auctions
-        SET auction_starting_price=?,
-            auction_status=?
+        SET auction_starting_price=?, auction_status=?
         WHERE horse_id_fk=?
     ");
 
@@ -109,11 +127,11 @@ try {
         $horseId
     ]);
 
-    header("Location: ../views/update_horses_form.php?id=$horseId&status=success");
+     header("Location: ../views/update_horses_form.php?id=" . $horseId . "&status=success");
     exit;
 
 } catch (PDOException $e) {
 
-    header("Location: ../views/horses_list.php?status=danger");
+     header("Location: ../views/horses_list.php?status=danger");
     exit;
 }

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'organisateur') {
+if (($_SESSION['role'] ?? '') !== 'organisateur') {
     header("Location: homepage.php");
     exit;
 }
@@ -9,7 +9,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'organisateur') {
 require_once '../controller/organisateur_auctions_ctrl.php';
 require_once '../head.php';
 
-function e($value) {
+function escapeHtml($value) {
     return htmlentities($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 ?>
@@ -48,53 +48,57 @@ function e($value) {
 
                 <tbody>
 
-                <?php foreach ($auctions as $auction): ?>
+                <?php foreach ($auctions as $auctionItem): ?>
 
                     <?php
-                    $price   = (float)($auction['auction_starting_price'] ?? 0);
-                    $lastBid = (float)($auction['last_bid'] ?? 0);
+                    $startPrice = (float)($auctionItem['auction_starting_price'] ?? 0);
+                    $lastPrice  = (float)($auctionItem['last_bid'] ?? 0);
                     ?>
 
                     <tr>
 
                         <td>
-                            <?= e($auction['horse_name'] ?? '—') ?>
-                            <small>#<?= (int)$auction['horse_id_fk'] ?></small>
+                            <?= escapeHtml($auctionItem['horse_name'] ?? '—') ?>
+                            <small>#<?= (int)$auctionItem['horse_id_fk'] ?></small>
                         </td>
 
                         <td>
-                            <?= $price > 0 
-                                ? number_format($price, 0, ',', ' ') . ' €'
-                                : '-' ?>
+                            <?php if ($startPrice > 0): ?>
+                                <?= number_format($startPrice, 0, ',', ' ') ?> €
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
                         </td>
 
                         <td>
-                            <?= $lastBid > 0
-                                ? number_format($lastBid, 0, ',', ' ') . ' €'
-                                : '-' ?>
+                            <?php if ($lastPrice > 0): ?>
+                                <?= number_format($lastPrice, 0, ',', ' ') ?> €
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
                         </td>
 
                         <td>
-                            <?= e($auction['last_bidder_name'] ?? '—') ?>
+                            <?= escapeHtml($auctionItem['last_bidder_name'] ?? '—') ?>
                         </td>
 
                         <td>
-                            <?= !empty($auction['auction_end_date']) 
-                                ? date('d/m/Y', strtotime($auction['auction_end_date']))
+                            <?= !empty($auctionItem['auction_end_date'])
+                                ? date('d/m/Y', strtotime($auctionItem['auction_end_date']))
                                 : '-' ?>
                         </td>
 
                         <td class="ga-actions">
 
-                            <a href="edit_auction.php?id=<?= (int)$auction['id_auction'] ?>" class="ga-btn-edit">
+                            <a href="edit_auction.php?id=<?= (int)$auctionItem['id_auction'] ?>" class="ga-btn-edit">
                                 Modifier
                             </a>
-                            
+
                             <button
                                 type="button"
                                 class="ga-btn-delete btn-delete-auction btn btn-danger"
-                                data-id="<?= (int)$auction['id_auction'] ?>"
-                                data-name="<?= e($auction['horse_name']) ?>"
+                                data-id="<?= (int)$auctionItem['id_auction'] ?>"
+                                data-name="<?= escapeHtml($auctionItem['horse_name']) ?>"
                             >
                                 Supprimer
                             </button>
@@ -151,6 +155,5 @@ function e($value) {
     </div>
 
 </div>
- 
 
 <?php require_once '../footer.php'; ?>

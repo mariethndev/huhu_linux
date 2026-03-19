@@ -1,6 +1,6 @@
 <?php
 session_start();
- 
+
 if (($_SESSION['role'] ?? '') !== 'organisateur') {
     header("Location: homepage.php");
     exit;
@@ -8,7 +8,6 @@ if (($_SESSION['role'] ?? '') !== 'organisateur') {
 
 require_once '../controller/update_auction.php';
 require_once '../head.php';
-
 ?>
 
 <div class="af-page">
@@ -20,27 +19,26 @@ require_once '../head.php';
 
     <div class="af-card">
 
-        <?php if (isset($_GET['status']) && $_GET['status'] === 'success'): ?>
+        <?php if (isset($_GET['status']) && $_GET['status'] == 'success'): ?>
             <div class="af-alert af-alert--success">
                 Modification enregistrée avec succès.
             </div>
         <?php endif; ?>
 
-        <?php if (isset($_GET['status']) && $_GET['status'] === 'danger'): ?>
+        <?php if (isset($_GET['status']) && $_GET['status'] == 'danger'): ?>
             <div class="af-alert af-alert--danger">
-                Une erreur est survenue lors de la modification.
+                Une erreur est survenue.
             </div>
         <?php endif; ?>
 
         <form method="POST" action="../controller/update_auction.php">
 
-            <input type="hidden" name="auction_id" value="<?= $auction['id_auction'] ?>">
+            <input type="hidden" name="auction_id" value="<?= (int)$auction['id_auction'] ?>">
 
+            <!-- DATE DE FIN -->
             <div class="af-field">
 
-                <label class="af-label">
-                    Date de fin
-                </label>
+                <label class="af-label">Date de fin</label>
 
                 <input
                     type="date"
@@ -52,23 +50,25 @@ require_once '../head.php';
 
             </div>
 
+            <!-- CHOISIR LE STATUT -->
             <div class="af-field">
 
-                <label class="af-label">
-                    Statut
-                </label>
+                <label class="af-label">Statut</label>
 
                 <select name="auction_status" class="af-select">
 
-                    <option value="disponible" <?= $auction['auction_status'] === 'disponible' ? 'selected' : '' ?>>
+                    <option value="disponible"
+                        <?= $auction['auction_status'] == 'disponible' ? 'selected' : '' ?>>
                         Disponible
                     </option>
 
-                    <option value="terminé" <?= $auction['auction_status'] === 'terminé' ? 'selected' : '' ?>>
+                    <option value="terminé"
+                        <?= $auction['auction_status'] == 'terminé' ? 'selected' : '' ?>>
                         Terminé
                     </option>
 
-                    <option value="annulé" <?= $auction['auction_status'] === 'annulé' ? 'selected' : '' ?>>
+                    <option value="annulé"
+                        <?= $auction['auction_status'] == 'annulé' ? 'selected' : '' ?>>
                         Annulé
                     </option>
 
@@ -77,25 +77,23 @@ require_once '../head.php';
             </div>
 
             <div class="af-footer">
-
                 <button type="submit" class="btn btn-dark btn-md">
-                    Enregistrer les modifications
+                    Enregistrer
                 </button>
-
             </div>
 
         </form>
 
         <div class="af-divider"></div>
 
-        <form method="POST" action="../controller/close_auction.php">
+         <form method="POST" action="../controller/close_auction.php">
 
-            <input type="hidden" name="auction_id" value="<?= $auction['id_auction'] ?>">
+            <input type="hidden" name="auction_id" value="<?= (int)$auction['id_auction'] ?>">
 
             <div class="af-footer">
 
                 <button type="submit" class="btn btn-secondary btn-md">
-                    Clôturer l'enchère maintenant
+                    Clôturer maintenant
                 </button>
 
             </div>

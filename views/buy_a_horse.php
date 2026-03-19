@@ -5,13 +5,15 @@ require_once '../controller/buy_a_horse_ctrl.php';
 require_once '../head.php';
 
 $horses = $horses ?? [];
-$count  = $count  ?? 0;
-
+$count  = $count ?? 0;
 $search     = $_GET['search'] ?? '';
 $breed      = $_GET['breed'] ?? '';
 $discipline = $_GET['discipline'] ?? '';
 $price_min  = $_GET['price_min'] ?? '';
 $price_max  = $_GET['price_max'] ?? '';
+$sex        = $_GET['filter_sex'] ?? '';
+$age        = $_GET['filter_age'] ?? '';
+
 ?>
 
 <div class="bah-page">
@@ -39,8 +41,8 @@ $price_max  = $_GET['price_max'] ?? '';
                 <label>Sexe</label>
                 <select name="filter_sex">
                     <option value="">Tous</option>
-                    <option value="jument" <?= ($_GET['filter_sex'] ?? '') === 'jument' ? 'selected' : '' ?>>Femelle</option>
-                    <option value="male" <?= ($_GET['filter_sex'] ?? '') === 'male' ? 'selected' : '' ?>>Mâle</option>
+                    <option value="jument" <?= $sex == 'jument' ? 'selected' : '' ?>>Femelle</option>
+                    <option value="male" <?= $sex == 'male' ? 'selected' : '' ?>>Mâle</option>
                 </select>
             </div>
 
@@ -48,11 +50,11 @@ $price_max  = $_GET['price_max'] ?? '';
                 <label>Âge</label>
                 <select name="filter_age">
                     <option value="">Tous</option>
-                    <option value="poulain" <?= ($_GET['filter_age'] ?? '') === 'poulain' ? 'selected' : '' ?>>Poulain</option>
-                    <option value="pouliche" <?= ($_GET['filter_age'] ?? '') === 'pouliche' ? 'selected' : '' ?>>Pouliche</option>
-                    <option value="jeune_adulte" <?= ($_GET['filter_age'] ?? '') === 'jeune_adulte' ? 'selected' : '' ?>>Jeune adulte</option>
-                    <option value="adulte" <?= ($_GET['filter_age'] ?? '') === 'adulte' ? 'selected' : '' ?>>Adulte</option>
-                    <option value="senior" <?= ($_GET['filter_age'] ?? '') === 'senior' ? 'selected' : '' ?>>Senior</option>
+                    <option value="poulain" <?= $age == 'poulain' ? 'selected' : '' ?>>Poulain</option>
+                    <option value="pouliche" <?= $age == 'pouliche' ? 'selected' : '' ?>>Pouliche</option>
+                    <option value="jeune_adulte" <?= $age == 'jeune_adulte' ? 'selected' : '' ?>>Jeune adulte</option>
+                    <option value="adulte" <?= $age == 'adulte' ? 'selected' : '' ?>>Adulte</option>
+                    <option value="senior" <?= $age == 'senior' ? 'selected' : '' ?>>Senior</option>
                 </select>
             </div>
 
@@ -85,7 +87,7 @@ $price_max  = $_GET['price_max'] ?? '';
 
     </div>
 
-    <div class="bah-grid">
+     <div class="bah-grid">
 
         <?php if ($count === 0): ?>
             <p>Aucun cheval ne correspond aux filtres.</p>
@@ -93,10 +95,18 @@ $price_max  = $_GET['price_max'] ?? '';
 
         <?php foreach ($horses as $horse): ?>
 
+            <?php
+             if (!empty($horse['horse_image'])) {
+                $image = $horse['horse_image'];
+            } else {
+                $image = 'horse_default.png';
+            }
+            ?>
+
             <div class="bah-card">
 
                 <div class="bah-card-image">
-                    <img src="/huhu/huhu_linux/uploads/horses/<?= htmlentities($horse['horse_image'] ?? 'horse_default.png') ?>">
+                    <img src="/huhu/huhu_linux/uploads/horses/<?= htmlentities($image) ?>">
                 </div>
 
                 <div class="bah-card-body">
@@ -111,7 +121,15 @@ $price_max  = $_GET['price_max'] ?? '';
 
                     <div>
                         Sexe :
-                        <?= ($horse['horse_sex'] ?? '') === 'M' ? 'Mâle' : (($horse['horse_sex'] ?? '') === 'F' ? 'Femelle' : '—') ?>
+                        <?php
+                        if (($horse['horse_sex'] ?? '') == 'M') {
+                            echo "Mâle";
+                        } elseif (($horse['horse_sex'] ?? '') == 'F') {
+                            echo "Femelle";
+                        } else {
+                            echo "—";
+                        }
+                        ?>
                     </div>
 
                     <div>
@@ -121,7 +139,7 @@ $price_max  = $_GET['price_max'] ?? '';
 
                     <div>
                         <p><strong>Prix actuel :</strong>
-                            <span class="horse-price" data-horse-id="<?= $horse['id_horse'] ?>">
+                            <span class="horse-price" data-horse-id="<?= (int)$horse['id_horse'] ?>">
                                 <?= number_format($horse['current_price'] ?? 0, 0, ',', ' ') ?> €
                             </span>
                         </p>
