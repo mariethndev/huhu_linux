@@ -22,6 +22,7 @@ try {
             WHERE id_horse = ?
             AND horse_is_deleted = 0
         ");
+        
         $stmtHorse->execute([$auction['horse_id_fk']]);
         $horse = $stmtHorse->fetch(PDO::FETCH_ASSOC);
 

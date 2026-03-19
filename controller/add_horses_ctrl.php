@@ -20,12 +20,10 @@ $horse_breed      = trim($_POST['horse_breed'] ?? '');
 $horse_sex        = $_POST['horse_sex'] ?? '';
 $horse_birthdate  = $_POST['horse_birthdate'] ?? '';
 $horse_status     = $_POST['horse_status'] ?? 'disponible'; 
-
 $horse_discipline = trim($_POST['horse_discipline'] ?? '');
 $horse_coat       = trim($_POST['horse_coat'] ?? '');
 $horse_height     = $_POST['horse_height'] ?? null;
 $horse_weight     = $_POST['horse_weight'] ?? null;
-
 $horse_father     = trim($_POST['horse_father'] ?? '');
 $horse_mother     = trim($_POST['horse_mother'] ?? '');
 $horse_id_number  = trim($_POST['horse_id_number'] ?? '');

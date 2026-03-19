@@ -47,6 +47,7 @@ try {
         ORDER BY bid_amount DESC
         LIMIT 1
     ");
+    
     $stmt->execute([$horseId]);
     $lastBid = $stmt->fetch(PDO::FETCH_ASSOC);
 
