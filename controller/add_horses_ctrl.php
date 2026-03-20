@@ -47,24 +47,41 @@ if (
     $_FILES['horse_image']['error'] === 0
 ) {
 
+    $allowedTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+        'image/avif'
+    ];
+
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime = finfo_file($finfo, $_FILES['horse_image']['tmp_name']);
 
-    if (
-        $mime !== 'image/jpeg' &&
-        $mime !== 'image/png' &&
-        $mime !== 'image/webp'
-    ) {
-        exit("Format image interdit");
+    if (!in_array($mime, $allowedTypes)) {
+        exit("Format image interdit : " . $mime);
     }
 
-    $imageName = uniqid("horse_") . ".webp";
+    if (!is_uploaded_file($_FILES['horse_image']['tmp_name'])) {
+        exit("Upload invalide");
+    }
+
+    $extension = match ($mime) {
+        'image/jpeg' => 'jpg',
+        'image/png'  => 'png',
+        'image/webp' => 'webp',
+        'image/avif' => 'avif',
+        default => 'jpg'
+    };
+
+    $imageName = uniqid("horse_") . "." . $extension;
     $destination = $uploadDir . $imageName;
 
     move_uploaded_file($_FILES['horse_image']['tmp_name'], $destination);
 }
 
+// =====================
 // VALIDATION
+// =====================
 if (
     empty($horse_name) ||
     empty($horse_breed) ||
@@ -75,7 +92,6 @@ if (
     exit;
 }
 
-// UNIQUE ID NUMBER
 $stmt = $pdo->prepare("
     SELECT id_horse
     FROM horses
@@ -90,7 +106,6 @@ if ($stmt->fetch()) {
 
 try {
 
-    // INSERT CHEVAL
     $stmt = $pdo->prepare("
         INSERT INTO horses (
             horse_name,
@@ -134,7 +149,7 @@ try {
 
     $horse_id = $pdo->lastInsertId();
 
-     if ($horse_status === 'disponible') {
+    if ($horse_status === 'disponible') {
 
         $stmtAuction = $pdo->prepare("
             INSERT INTO auctions (
@@ -144,12 +159,13 @@ try {
                 horse_id_fk,
                 auction_status
             )
-            VALUES (?, NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY), ?, 'active')
+            VALUES (?, NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY), ?, ?)
         ");
 
         $stmtAuction->execute([
             $auction_price,
-            $horse_id
+            $horse_id,
+            'disponible'
         ]);
     }
 

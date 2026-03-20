@@ -78,7 +78,7 @@ require_once '../head.php';
 
                 <div class="af-field">
                     <label>Date de naissance *</label>
-                <input type="date" name="horse_birthdate" required>          
+                <input type="date" name="horse_birthdate" required max="<?= date('Y-m-d') ?>">         
                 </div>
 
                 <div class="af-field">
