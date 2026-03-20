@@ -12,6 +12,17 @@
   --bg:           #EDEDED; 
 }
 
+@font-face {
+    font-family: 'Poppins';
+    src: url('/huhu/huhu_linux/assets/fonts/Poppins-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
 /*  HEADER & NAVIGATION */
 
 header {
