@@ -78,10 +78,7 @@ if (
 
     move_uploaded_file($_FILES['horse_image']['tmp_name'], $destination);
 }
-
-// =====================
-// VALIDATION
-// =====================
+ 
 if (
     empty($horse_name) ||
     empty($horse_breed) ||
