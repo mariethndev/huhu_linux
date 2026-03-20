@@ -2313,8 +2313,12 @@ color:#1e7e44;
   display:none;
 }
 
-.mobile-nav {
-  display:none;
+.mobile-nav{
+  position:fixed;
+  top:0;
+  left:-100%;
+  width:80%;
+  height:100vh;
 }
 
 .menu-overlay {
@@ -2612,741 +2616,371 @@ footer{
   margin-bottom:8px;
 }
 
-/* ________ */
+/* MOBILE SMALL (480px) */
 
 @media (max-width:480px){
 
   .bah-page{
-  width:100%;
-  padding:16px 0;
+    width:100%;
+    padding:16px 0;
   }
 
   .bah-hero{
-  padding:0 16px;
-  margin-bottom:20px;
+    padding:0 16px;
+    margin-bottom:20px;
   }
 
   .bah-filter-bar{
-  margin:0 16px 24px;
-  padding:16px;
+    margin:0 16px 24px;
+    padding:16px;
   }
 
-   .bah-filter-form{
-  gap:10px;
+  .bah-filter-form{
+    gap:10px;
   }
 
-  .bah-filter-field{
-  flex:1 1 100%;
-  }
-
+  .bah-filter-field,
   .bah-filter-actions{
-  flex:1 1 100%;
-  margin-top:4px;
+    flex:1 1 100%;
   }
 
   .bah-btn-search,
   .bah-btn-reset{
-  flex:1;
-  text-align:center;
+    flex:1;
+    text-align:center;
   }
 
-   .bah-grid{
-  flex-direction:column;
-  gap:20px;
-  padding:0 12px;
+  .bah-grid{
+    flex-direction:column;
+    gap:20px;
+    padding:0 12px;
   }
 
   .bah-card{
-  width:100%;
-  border-radius:14px;
+    width:100%;
+    border-radius:14px;
   }
 
   .bah-card-image img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center top;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center top;
   }
 
-  .bah-card-body{
-  padding:16px 14px 10px;
-  }
+  .bah-card-body{ padding:16px 14px 10px; }
+  .bah-card-footer{ padding:0 14px 16px; }
 
-  .bah-card-footer{
-  padding:0 14px 16px;
-  }
-
-  .bah-card-name{
-  font-size:18px;
-  margin-bottom:4px;
-  }
-
-  .bah-price-value{
-  font-size:24px;
-  }
-
-  .bah-dates{
-  font-size:13px;
-  }
+  .bah-card-name{ font-size:18px; }
+  .bah-price-value{ font-size:24px; }
+  .bah-dates{ font-size:13px; }
 
   .bah-btn-consult{
-  width:100%;
-  text-align:center;
-  padding:13px;
-  font-size:14px;
-  white-space:nowrap;
+    width:100%;
+    padding:13px;
+    font-size:14px;
   }
 }
 
-@media (max-width:768px){
 
-  .profile-page{
-    margin:30px auto;
-  }
-
-  .profile-card{
-    padding:24px;
-  }
-
-  .profile-title{
-    font-size:26px;
-  }
-
-  .bah-card{
-  flex:1 1 100%;
-  max-width:100%;
-  }
- 
-} 
-
-/* RESPONSIVE */
-
-@media(max-width:768px){
-
-.container-info-horse{
-margin:30px auto;
-}
-
-.image-horse-info img{
-height:260px;
-}
-
-.infos{
-grid-template-columns:1fr;
-}
-
-.card-info{
-padding:16px;
-}
-
-.cta-horse-info{
-padding:18px;
-}
-
-}
-
-
-/* TABLE MOBILE FLEX */
-
-.table-mobile-flex tr td:only-child{
-justify-content:center;
-font-style:italic;
-color:var(--gray-500);
-}
- 
+/* TABLETTE (1100px) */
 
 @media (max-width:1100px){
 
-.auction-page{
-flex-direction:column;
-gap:30px;
+  .auction-page{
+    flex-direction:column;
+    gap:30px;
+  }
+
+  .auction-sidebar{
+    width:100%;
+    order:-1;
+  }
+
+  .auction-container{
+    width:100%;
+  }
+
+  .bah-grid{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:24px;
+  }
+
+  .bah-card{
+    flex:1 1 45%;
+    max-width:45%;
+  }
+
+  .horses-grid{
+    flex-direction:column;
+    align-items:center;
+    gap:15px;
+  }
+
+  .horse-card{
+    width:100%;
+    max-width:420px;
+    border-radius:14px;
+  }
 }
 
-.auction-sidebar{
-width:100%;
-order:-1;
-}
 
-.auction-container{
-width:100%;
-}
-
-.bah-grid{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:26px;
-}
-
-.bah-card{
-flex:1 1 45%;
-max-width:45%;
-}
-
-}
-
-/* Tablette portrait */
-
-@media (max-width:992px){
-
-.horses-grid{
-flex-direction:column;
-align-items:center;
-gap:15px;
-}
-
-.horse-card{
-width:100%;
-max-width:420px;
-border-radius:14px;
-}
-
-.card-image{
-width:100%;
-aspect-ratio:4/3;
-overflow:hidden;
-}
-
-}
-
-/* Mobile */
+/*  MOBILE GLOBAL (768px) */
 
 @media (max-width:768px){
 
-/* Header */
+  /* Header */
 
-header{
-flex-direction:row;
-justify-content:space-between;
-padding:15px;
-}
+  header{
+    display:flex;
+    justify-content:space-between;
+    padding:15px;
+  }
 
-.logo img{
-width:70px;
-}
+  .logo img{ width:70px; }
 
-.desktop-nav,
-.header-actions{
-display:none !important;
-}
+  .desktop-nav,
+  .header-actions{
+    display:none !important;
+  }
 
-/* Hamburger */
+  /* MENU BURGER RESPONSIVE */
+
+ /* BURGER (caché par défaut) */
 
 .burger{
-display:flex;
-flex-direction:column;
-gap:6px;
-cursor:pointer;
-}
-
-.burger span{
-width:25px;
-height:3px;
-background:var(--primary-dark);
-}
-
-.mobile-nav{
-display:flex;
-flex-direction:column;
-position:fixed;
-top:0;
-left:-100%;
-width:80%;
-height:100vh;
-background:var(--white);
-padding:120px 30px;
-gap:25px;
-transition:left 0.3s ease;
-z-index:3000;
-border-right:1px solid var(--black);
-}
-
-.mobile-nav.active{
-left:0;
-}
-
-.menu-overlay{
-display:block;
-position:fixed;
-inset:0;
-opacity:0;
-pointer-events:none;
-z-index:2000;
-}
-
-.menu-overlay.active{
-opacity:1;
-pointer-events:all;
-}
-
-/* Footer */
-
-footer{
-padding:35px 20px;
-}
-
-.footer-container{
-display:flex;
-flex-direction:column;
-gap:25px;
-}
-
-.footer-section h3{
-font-size:1.6rem;
-margin-bottom:5px;
-}
-
-.footer-section h4{
-margin-bottom:8px;
-}
-
-.footer-links li{
-margin-bottom:4px;
-}
-
-.footer-section:first-child{
-display:flex;
-flex-direction:column;
-align-items:center;
-}
-
-/* Collection */
-
-.collection-section{
-padding:70px 0;
-}
-
-.collection-title{
-font-size:28px;
-}
-
-.collection-grid{
-flex-direction:column;
-align-items:stretch;
-gap:20px;
-}
-
-.collection-card{
-max-width:100%;
-}
-
-.collection-image{
-height:240px;
-}
-
-/* Page enchères */
-
-.auction-page{
-flex-direction:column;
-padding:0 15px;
-}
-
-.auction-content{
-width:100%;
-}
-
-.auction-sidebar{
-width:100%;
-}
-
-.horses-grid{
-flex-direction:column;
-align-items:center;
-gap:15px;
-}
-
-.horse-card{
-max-width:100%;
-border-radius:14px;
-}
-
-.card-image{
-width:100%;
-aspect-ratio:4/3;
-overflow:hidden;
-}
-
-.card-image img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.results-counter{
-text-align:center;
-font-size:14px;
-}
-
-.card-content{
-font-size:13px;
-}
-
-.card-content h3{
-font-size:16px;
-}
-
-.price-current{
-font-size:15px;
-}
-
-.horse-footer{
-display:flex;
-justify-content:center;
-margin-top:10px;
-}
-
-/* Filtres */
-
-.filter-form{
-background:var(--white);
-padding:20px;
-border-radius:16px;
-border:1px solid var(--gray-300);
-margin-bottom:20px;
-}
-
-.filter-form input,
-.filter-form select{
-width:100%;
-padding:12px;
-font-size:14px;
-border-radius:10px;
-}
-
-.btn-search,
-.btn-reset{
-width:100%;
-padding:12px;
-border-radius:10px;
-margin-top:5px;
-}
-
-/* Fiche cheval */
-
-.container-info-horse{
-display:flex;
-flex-direction:column;
-gap:25px;
-margin:30px 15px;
-}
-
-.image-horse-info img{
-height:260px;
-border-radius:12px;
-}
-
-.infos{
-display:flex;
-flex-direction:column;
-gap:15px;
-}
-
-.cta-horse-info{
-padding:20px;
-border-radius:14px;
-background:var(--gray-100);
-}
-
-.btn-horse-info{
-width:100%;
-padding:14px;
-border-radius:10px;
-}
-
-/* Achat cheval */
-
-.bah-page{
-padding:28px 15px 60px;
-}
-
-.bah-hero h1{
-font-size:24px;
-}
-
-.bah-filter-form{
-flex-direction:column;
-}
-
-.bah-filter-field{
-flex:1 1 100%;
-}
-
-.bah-filter-actions{
-width:100%;
-}
-
-.bah-btn-search,
-.bah-btn-reset{
-flex:1;
-justify-content:center;
-text-align:center;
-}
-
-.bah-grid{
-flex-direction:column;
-align-items:center;
-gap:18px;
-}
-
-.bah-card{
-flex:1 1 100%;
-max-width:100%;
-width:100%;
-}
-
-/* Profil */
-
-.pr-card-top{
-padding:28px 24px 22px;
-}
-
-.pr-info-item{
-padding:14px 24px;
-}
-
-.pr-card-footer{
-padding:20px 24px;
-}
-
-/* Connexion */
-
-.co-card{
-padding:32px 24px 28px;
-}
-
-/* Modifier profil */
-
-.up-form-body{
-padding:20px 24px 8px;
-}
-
-.up-actions{
-flex-direction:column-reverse;
-}
-
-.up-btn-cancel,
-.up-actions .co-btn-submit{
-width:100%;
-justify-content:center;
-}
-
-/* Dash */
-
-.dash-page{
-padding:36px 16px 60px;
-}
-
-.dash-grid{
-flex-direction:column;
-}
-
-/* Gestion enchères */
-
-.ga-page{
-padding:28px 15px 60px;
-}
-
-.ga-page-header{
-margin-bottom:32px;
-}
-
-.ga-section{
-margin-bottom:36px;
-}
-
-/* Liste chevaux */
-
-.hl-page{
-padding:28px 15px 60px;
-}
-
-.hl-container{
-background:transparent;
-border:none;
-}
-
-.hl-header{
-flex-direction:column;
-align-items:flex-start;
-gap:16px;
-}
-
-.hl-filter{
-width:100%;
-}
-
-.hl-select{
-flex:1;
-}
-
-.hl-table,
-.hl-table thead,
-.hl-table tbody,
-.hl-table th,
-.hl-table td,
-.hl-table tr{
-display:block;
-width:100%;
-}
-
-.hl-table thead{
-display:none;
-}
-
-.hl-table tbody tr{
-background:var(--white);
-border-radius:14px;
-margin-bottom:16px;
-padding:16px;
-border:1px solid var(--gray-200);
-}
-
-.hl-table tbody td{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:10px 0;
-font-size:14px;
-border-bottom:1px solid var(--gray-200);
-white-space:normal;
-text-align:right;
-}
-
-.hl-table tbody td:last-child{
-border-bottom:none;
-}
-
-.hl-table tbody td::before{
-content:attr(data-label);
-font-weight:600;
-color:var(--gray-500);
-font-size:12px;
-text-transform:uppercase;
-letter-spacing:0.4px;
-flex-shrink:0;
-text-align:left;
-}
-
-.hl-table td[colspan]{
-justify-content:center;
-}
-
-.hl-table td[colspan]::before{
-display:none;
-}
-
-.hl-table tbody td .hl-actions{
-justify-content:flex-end;
-}
-
-.hl-table tbody tr:last-child{
-border-bottom:1px solid var(--gray-200);
-}
-
-/* Formulaire ajout */
-
-.af-page{
-padding:28px 15px 60px;
-}
-
-.af-grid-2{
-flex-direction:column;
-}
-
-.af-footer{
-justify-content:stretch;
-}
-
-.af-btn-submit{
-width:100%;
-}
-
-/* Table mobile flex */
-
-.table-mobile-flex table,
-.table-mobile-flex thead,
-.table-mobile-flex tbody,
-.table-mobile-flex th,
-.table-mobile-flex td,
-.table-mobile-flex tr{
-display:block;
-width:100%;
-}
-
-.table-mobile-flex thead{
-display:none;
-}
-
-.table-mobile-flex tr{
-background:var(--white);
-padding:18px;
-margin-bottom:20px;
-border:1px solid var(--gray-300);
-}
-
-.table-mobile-flex td{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:10px 0;
-font-size:14px;
-border-bottom:1px solid var(--gray-200);
-}
-
-.table-mobile-flex td:last-child{
-border-bottom:none;
-}
-
-.table-mobile-flex td::before{
-font-weight:600;
-color:var(--gray-500);
-font-size:13px;
-content:attr(data-label);
-}
-
-/* Table enchères mobile */
-
-.table-auctions-mobile thead{
-display:none;
-}
-
-.table-auctions-mobile tr{
-display:flex;
-flex-direction:column;
-gap:6px;
-background:var(--white);
-border-radius:14px;
-margin-bottom:16px;
-padding:16px;
-border:1px solid var(--gray-200);
-}
-
-.table-auctions-mobile td{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:8px 0;
-border-bottom:1px solid var(--gray-200);
-font-size:14px;
-gap:12px;
-}
-
-.table-auctions-mobile td:last-child{
-border-bottom:none;
-}
-
-.table-auctions-mobile td::before{
-content:attr(data-label);
-font-weight:600;
-color:var(--gray-600);
-font-size:11px;
-text-transform:uppercase;
-letter-spacing:0.4px;
-flex-shrink:0;
-}
-
-.table-auctions-mobile td span,
-.table-auctions-mobile td a{
-text-align:right;
-}
+  display:none;
+}
+
+/* VERSION MOBILE */
+
+@media (max-width:768px){
+
+  /* Burger visible */
+  .burger{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    cursor:pointer;
+  }
+
+  .burger span{
+    width:25px;
+    height:3px;
+    background:var(--primary-dark);
+  }
+
+  /* Menu mobile */
+  .mobile-nav{
+    position:fixed;
+    top:0;
+    left:-100%;
+    width:80%;
+    height:100vh;
+    background:var(--white);
+    padding:120px 30px;
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+    transition:left 0.3s ease;
+    z-index:3000;
+    border-right:1px solid var(--black);
+  }
+
+  .mobile-nav.active{
+    left:0;
+  }
+
+  /* Overlay */
+  .menu-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.4);
+    opacity:0;
+    pointer-events:none;
+    z-index:2000;
+    transition:0.3s;
+  }
+
+  .menu-overlay.active{
+    opacity:1;
+    pointer-events:all;
+  }
+}
+
+  /* Layout */
+
+  .bah-page,
+  .hl-page,
+  .ga-page,
+  .af-page{
+    padding:28px 15px 60px;
+  }
+
+  .bah-grid,
+  .horses-grid,
+  .collection-grid,
+  .dash-grid{
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+  }
+
+  .bah-card,
+  .horse-card{
+    width:100%;
+    max-width:100%;
+  }
+
+  /* Images */
+
+  .card-image{
+    width:100%;
+    aspect-ratio:4/3;
+    overflow:hidden;
+  }
+
+  .card-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+
+  /* Forms */
+
+  .filter-form,
+  .bah-filter-form{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .filter-form input,
+  .filter-form select,
+  .btn-search,
+  .btn-reset{
+    width:100%;
+  }
+
+  /* Horse page */
+
+  .container-info-horse{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+    margin:30px 15px;
+  }
+
+  .image-horse-info img{
+    height:260px;
+    border-radius:12px;
+  }
+
+  .infos{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+  }
+
+  /* Footer */
+
+  footer{ padding:35px 20px; }
+
+  .footer-container{
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+  }
+
+  /*Tables responsive */
+
+  .hl-table,
+  .hl-table *{
+    display:block;
+    width:100%;
+  }
+
+  .hl-table thead{ display:none; }
+
+  .hl-table tr{
+    background:var(--white);
+    padding:16px;
+    margin-bottom:16px;
+    border-radius:14px;
+  }
+
+  .hl-table td{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--gray-200);
+  }
+
+  .hl-table td::before{
+    content:attr(data-label);
+    font-weight:600;
+  }
+
+  /* Tables flex */
+
+  .table-mobile-flex *{
+    display:block;
+    width:100%;
+  }
+
+  .table-mobile-flex thead{ display:none; }
+
+  .table-mobile-flex tr{
+    background:var(--white);
+    padding:18px;
+    margin-bottom:20px;
+    border:1px solid var(--gray-300);
+  }
+
+  .table-mobile-flex td{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--gray-200);
+  }
+
+  .table-mobile-flex td::before{
+    content:attr(data-label);
+    font-weight:600;
+  }
+
+  /* Table auctions */
+
+  .table-auctions-mobile thead{ display:none; }
+
+  .table-auctions-mobile tr{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    background:var(--white);
+    padding:16px;
+    margin-bottom:16px;
+    border-radius:14px;
+  }
+
+  .table-auctions-mobile td{
+    display:flex;
+    justify-content:space-between;
+    padding:8px 0;
+    border-bottom:1px solid var(--gray-200);
+  }
+
+  .table-auctions-mobile td::before{
+    content:attr(data-label);
+    font-weight:600;
+    font-size:11px;
+  }
+}
+
+.table-mobile-flex tr td:only-child{
+  justify-content:center;
+  font-style:italic;
+  color:var(--gray-500);
 }

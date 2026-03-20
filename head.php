@@ -14,13 +14,9 @@ $role   = strtolower(trim($_SESSION['role'] ?? ''));
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Huhu - Plateforme d'enchères de chevaux</title>
-
-  <!-- CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/huhu/huhu_linux/assets/style.css">
-
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="/huhu/huhu_linux/img/favicon.png">
 </head>
 
@@ -93,7 +89,6 @@ $role   = strtolower(trim($_SESSION['role'] ?? ''));
 <div class="menu-overlay" id="menuOverlay"></div>
 
 <nav id="mobileMenu" class="mobile-nav">
-
   <div class="mobile-header">
     <span class="close-menu" id="closeMenu">&times;</span>
   </div>
@@ -122,7 +117,6 @@ $role   = strtolower(trim($_SESSION['role'] ?? ''));
     <a href="/huhu/huhu_linux/views/login_form.php">Se connecter</a>
 
   <?php endif; ?>
-
 </nav>
 
 <!-- Contenu principal -->
