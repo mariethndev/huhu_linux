@@ -119,5 +119,4 @@ $role   = strtolower(trim($_SESSION['role'] ?? ''));
   <?php endif; ?>
 </nav>
 
-<!-- Contenu principal -->
 <main class="main-content">

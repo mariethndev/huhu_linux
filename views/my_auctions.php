@@ -23,9 +23,7 @@ require_once '../head.php';
     </div>
 
      <?php if (!empty($outbidCount) && $outbidCount > 0): ?>
-
         <div class="alert alert-warning">
-
             🔔 Vous avez été dépassé sur 
             <strong><?= $outbidCount ?></strong>
             enchère<?= $outbidCount > 1 ? 's' : '' ?> :
@@ -37,21 +35,14 @@ require_once '../head.php';
                 </a>
 
             <?php else: ?>
-
                 <a href="#en_cours">Voir les enchères concernées</a>
-
             <?php endif; ?>
-
         </div>
-
     <?php endif; ?>
 
     <?php if ($hasAuctions): ?>
-
          <?php if (!empty($groupedAuctions['en_cours'])): ?>
-
             <h2 id="en_cours">En cours</h2>
-
             <table class="hl-table">
                 <thead>
                     <tr>
@@ -65,16 +56,12 @@ require_once '../head.php';
                         <th>Action</th>
                     </tr>
                 </thead>
-
                 <tbody>
-
                 <?php foreach ($groupedAuctions['en_cours'] as $auctionItem): ?>
-
                     <tr>
                         <td><?= escapeHtml($auctionItem['horse_name']) ?></td>
                         <td><?= number_format((float)$auctionItem['last_price'], 0, ',', ' ') ?> €</td>
                         <td><?= number_format((float)$auctionItem['my_last_bid'], 0, ',', ' ') ?> €</td>
-
                         <td>
                             <?php if (!empty($auctionItem['is_outbid'])): ?>
                                 <span class="status outbid">Surenchéri</span>
@@ -82,19 +69,15 @@ require_once '../head.php';
                                 <span class="status leading">En tête</span>
                             <?php endif; ?>
                         </td>
-
                         <td><?= (int)$auctionItem['participants'] ?></td>
-
                         <td>
                             <?= !empty($auctionItem['auction_end_date'])
                                 ? date('d/m/Y H:i', strtotime($auctionItem['auction_end_date']))
                                 : '—' ?>
                         </td>
-
                         <td>
                             <?php
                             $sessionName = $_SESSION['user_name'] ?? '';
-
                             if ($auctionItem['last_bidder'] === $sessionName) {
                                 echo "Toi";
                             } else {
@@ -102,29 +85,20 @@ require_once '../head.php';
                             }
                             ?>
                         </td>
-
                         <td>
                             <a href="horse_info.php?id=<?= (int)$auctionItem['id_horse'] ?>" class="btn-consult">
                                 Voir
                             </a>
                         </td>
-
                     </tr>
-
                 <?php endforeach; ?>
-
                 </tbody>
             </table>
-
         <?php endif; ?>
-
          <?php if (!empty($groupedAuctions['annulees'])): ?>
-
             <h2>Annulées</h2>
-
             <table class="hl-table">
                 <tbody>
-
                 <?php foreach ($groupedAuctions['annulees'] as $auctionItem): ?>
                     <tr>
                         <td><?= escapeHtml($auctionItem['horse_name']) ?></td>
@@ -140,9 +114,7 @@ require_once '../head.php';
             </table>
 
         <?php endif; ?>
-
          <?php if (!empty($groupedAuctions['terminees'])): ?>
-
             <h2>Terminées</h2>
             <table class="hl-table">
                 <tbody>
@@ -158,21 +130,15 @@ require_once '../head.php';
                         <td><a href="horse_info.php?id=<?= (int)$auctionItem['id_horse'] ?>">Voir</a></td>
                     </tr>
                 <?php endforeach; ?>
-
                 </tbody>
             </table>
-
         <?php endif; ?>
 
          <?php if (!empty($groupedAuctions['remportees'])): ?>
-
             <h2>Remportées</h2>
-
             <table class="hl-table">
                 <tbody>
-
                 <?php foreach ($groupedAuctions['remportees'] as $auctionItem): ?>
-
                     <tr>
                         <td><?= escapeHtml($auctionItem['horse_name']) ?></td>
                         <td><?= number_format((float)$auctionItem['last_price'], 0, ',', ' ') ?> €</td>
@@ -182,14 +148,10 @@ require_once '../head.php';
                         <td><?= escapeHtml($auctionItem['last_bidder'] ?? 'Aucun') ?></td>
                         <td><a href="horse_info.php?id=<?= (int)$auctionItem['id_horse'] ?>">Voir</a></td>
                     </tr>
-
                 <?php endforeach; ?>
-
                 </tbody>
             </table>
-
         <?php endif; ?>
-
     <?php else: ?>
 
         <div class="ma-empty-state">

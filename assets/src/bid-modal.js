@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation(); 
 
-      base = +btn.dataset.price;
+      base = Number(btn.dataset.price);
 
       document.getElementById("modalHorseName").textContent = btn.dataset.horseName;
       document.getElementById("modalCurrentPrice").textContent = base + " €";
@@ -29,11 +29,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-   const closeBtn = document.querySelector(".modal-close");
+  const closeBtn = document.querySelector(".modal-close");
   if (closeBtn && modal) {
     closeBtn.addEventListener("click", () => {
       modal.classList.add("hidden");
     });
   }
 
- });
+});
