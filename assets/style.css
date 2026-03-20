@@ -20,7 +20,7 @@
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins','Arial', sans-serif;
 }
 
 /*  HEADER & NAVIGATION */
@@ -723,8 +723,7 @@ background:var(--white);
   border:1px solid #f5b7b1;
 }
  
-/*  MODAL HORSE INFO FAIRE 
-UNE OFFRE + OVERLAY */
+/*  MODAL HORSE INFO FAIRE UNE OFFRE + OVERLAY */
 
 .custom-modal{
   display:flex;
@@ -2332,10 +2331,6 @@ color:#1e7e44;
   height:100vh;
 }
 
-.menu-overlay {
-  display:none;
-}
-
 .mobile-nav form {
   width:100%;
 }
@@ -2759,10 +2754,10 @@ footer{
 
   /* MENU BURGER RESPONSIVE */
 
- /* BURGER (caché par défaut) */
 
 .burger{
   display:none;
+}
 }
 
 /* VERSION MOBILE */
@@ -2803,24 +2798,9 @@ footer{
   .mobile-nav.active{
     left:0;
   }
+ 
 
-  /* Overlay */
-  .menu-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.4);
-    opacity:0;
-    pointer-events:none;
-    z-index:2000;
-    transition:0.3s;
-  }
-
-  .menu-overlay.active{
-    opacity:1;
-    pointer-events:all;
-  }
-}
-
+ 
   /* Layout */
 
   .bah-page,

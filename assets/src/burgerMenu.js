@@ -1,13 +1,11 @@
 const burger = document.getElementById('burger');
 const menu = document.getElementById('mobileMenu');
-const overlay = document.getElementById('menuOverlay');
+const closeMenu = document.getElementById('closeMenu');
 
-burger.onclick = () => {
-  menu.classList.toggle('active');
-  overlay.classList.toggle('active');
-};
+burger.addEventListener('click', () => {
+    menu.classList.toggle('active');
+});
 
-overlay.onclick = () => {
-  menu.classList.remove('active');
-  overlay.classList.remove('active');
-};
+closeMenu.addEventListener('click', () => {
+    menu.classList.remove('active');
+});
