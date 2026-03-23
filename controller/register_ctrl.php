@@ -7,6 +7,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+if (
+    empty($_POST['csrf_token']) ||
+    empty($_SESSION['csrf_token']) ||
+    !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])
+) {
+    header("Location: ../views/register_form.php?status=danger");
+    exit;
+}
+
 $name     = trim($_POST['nom'] ?? '');
 $email    = trim($_POST['mail'] ?? '');
 $password = $_POST['psw'] ?? '';
@@ -53,6 +62,8 @@ try {
 
     $_SESSION['user_id'] = $pdo->lastInsertId();
     $_SESSION['role']    = $profil;
+
+    unset($_SESSION['csrf_token']);
 
     header("Location: ../views/homepage.php");
     exit;

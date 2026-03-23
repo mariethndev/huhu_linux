@@ -29,11 +29,16 @@ try {
 
     $outbidCount = count($outbids);
 
-     $stmt = $pdo->prepare("
-        SELECT horse_id_fk FROM bids WHERE user_id_fk = ?
+    $stmt = $pdo->prepare("
+        SELECT horse_id_fk 
+        FROM bids 
+        WHERE user_id_fk = ?
         UNION
-        SELECT horse_id_fk FROM to_bid WHERE user_id_fk = ?
+        SELECT horse_id_fk
+        FROM to_bid 
+        WHERE user_id_fk = ?
     ");
+    
     $stmt->execute([$userId, $userId]);
     $bids = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
