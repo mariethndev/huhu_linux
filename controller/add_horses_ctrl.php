@@ -42,6 +42,16 @@ $user_id = $_SESSION['user_id'];
 $imageName = "horse_default.png";
 $uploadDir = __DIR__ . "/../uploads/horses/";
 
+if (!is_dir($uploadDir)) {
+    mkdir($uploadDir, 0777, true);
+}
+
+if (!is_writable($uploadDir)) {
+    error_log("Dossier non writable: " . $uploadDir);
+    header("Location: ../views/add_horses_form.php?status=error_upload");
+    exit;
+}
+
 if (
     isset($_FILES['horse_image']) &&
     $_FILES['horse_image']['error'] === 0
@@ -58,11 +68,13 @@ if (
     $mime = finfo_file($finfo, $_FILES['horse_image']['tmp_name']);
 
     if (!in_array($mime, $allowedTypes)) {
-        exit("Format image interdit : " . $mime);
+        header("Location: ../views/add_horses_form.php?status=invalid_format");
+        exit;
     }
 
     if (!is_uploaded_file($_FILES['horse_image']['tmp_name'])) {
-        exit("Upload invalide");
+        header("Location: ../views/add_horses_form.php?status=invalid_upload");
+        exit;
     }
 
     $extension = match ($mime) {
@@ -76,9 +88,13 @@ if (
     $imageName = uniqid("horse_") . "." . $extension;
     $destination = $uploadDir . $imageName;
 
-    move_uploaded_file($_FILES['horse_image']['tmp_name'], $destination);
+    if (!move_uploaded_file($_FILES['horse_image']['tmp_name'], $destination)) {
+        error_log("Erreur upload vers : " . $destination);
+        header("Location: ../views/add_horses_form.php?status=upload_failed");
+        exit;
+    }
 }
- 
+
 if (
     empty($horse_name) ||
     empty($horse_breed) ||
@@ -90,9 +106,7 @@ if (
 }
 
 $stmt = $pdo->prepare("
-    SELECT id_horse
-    FROM horses
-    WHERE horse_id_number = ?
+    SELECT id_horse FROM horses WHERE horse_id_number = ?
 ");
 $stmt->execute([$horse_id_number]);
 
@@ -105,22 +119,12 @@ try {
 
     $stmt = $pdo->prepare("
         INSERT INTO horses (
-            horse_name,
-            horse_breed,
-            horse_sex,
-            horse_birthdate,
-            horse_status,
-            horse_discipline,
-            horse_coat,
-            horse_height,
-            horse_weight,
-            horse_father,
-            horse_mother,
-            horse_id_number,
-            horse_nb_ueln,
-            horse_description,
-            user_id_fk,
-            horse_image
+            horse_name, horse_breed, horse_sex, horse_birthdate,
+            horse_status, horse_discipline, horse_coat,
+            horse_height, horse_weight,
+            horse_father, horse_mother,
+            horse_id_number, horse_nb_ueln,
+            horse_description, user_id_fk, horse_image
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
@@ -170,6 +174,7 @@ try {
     exit;
 
 } catch (PDOException $e) {
-    echo $e->getMessage();
+    error_log($e->getMessage());
+    header("Location: ../views/add_horses_form.php?status=error_db");
     exit;
 }

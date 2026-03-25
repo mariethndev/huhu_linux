@@ -37,35 +37,24 @@ try {
     ");
     $stmt->execute([$horseId]);
     $auctionData = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+
     $auctionId = $auctionData['id_auction'] ?? 0;
 
     $lastBid = null;
 
     if ($auctionId) {
-
-         $stmt = $pdo->prepare("
+        $stmt = $pdo->prepare("
             SELECT MAX(bid_amount)
             FROM bids
             WHERE auction_id_fk = ?
         ");
         $stmt->execute([$auctionId]);
         $lastBid = $stmt->fetchColumn();
-
-         if ($lastBid === null) {
-            $stmt = $pdo->prepare("
-                SELECT MAX(bid_amount)
-                FROM bids b
-                JOIN auctions a ON a.id_auction = ?
-                WHERE a.horse_id_fk = ?
-            ");
-            $stmt->execute([$auctionId, $horseId]);
-            $lastBid = $stmt->fetchColumn();
-        }
     }
 
-     if ($lastBid !== null && $lastBid > 0) {
+    if ($lastBid !== null && $lastBid > 0) {
         $currentPrice = (float)$lastBid;
-    } elseif (!empty($auctionData['auction_starting_price']) && $auctionData['auction_starting_price'] > 0) {
+    } elseif (!empty($auctionData['auction_starting_price'])) {
         $currentPrice = (float)$auctionData['auction_starting_price'];
     } else {
         $currentPrice = 0;
@@ -85,7 +74,8 @@ try {
 
     $status = strtolower(trim($auctionData['auction_status'] ?? ''));
     $isEnded = !empty($auctionData['auction_end_date']) &&
-    strtotime($auctionData['auction_end_date']) <= time();
+               strtotime($auctionData['auction_end_date']) <= time();
+
     $isActive = ($status === 'disponible' && !$isEnded);
 
     $auction = [
@@ -99,7 +89,7 @@ try {
 
 } catch (PDOException $e) {
 
-    echo $e->getMessage();
+    error_log($e->getMessage());
 
     $horse = null;
     $auction = [

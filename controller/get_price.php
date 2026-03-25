@@ -2,34 +2,46 @@
 session_start();
 require_once "../model/config.php";
 
-$data = json_decode(file_get_contents("php://input"), true);
-$horseId = (int)($data['horse_id'] ?? 0);
+header('Content-Type: application/json');
 
-if (!$horseId) {
+$data = json_decode(file_get_contents("php://input"), true);
+
+$horseId = 0;
+
+if ($data && isset($data['horse_id'])) {
+    $horseId = (int)$data['horse_id'];
+} elseif (isset($_GET['horse_id'])) {
+    $horseId = (int)$_GET['horse_id'];
+}
+
+if ($horseId <= 0) {
     echo json_encode(["success" => false]);
     exit;
 }
 
 try {
     $stmt = $pdo->prepare("
-        SELECT bid_amount, user_id_fk
+        SELECT bids.bid_amount, bids.user_id_fk
         FROM bids
-        WHERE horse_id_fk = ?
-        ORDER BY bid_amount DESC
+        JOIN auctions ON bids.auction_id_fk = auctions.id_auction
+        WHERE auctions.horse_id_fk = ?
+        ORDER BY bids.bid_amount DESC
         LIMIT 1
     ");
     $stmt->execute([$horseId]);
-    $bid = $stmt->fetch();
+    $bid = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($bid) {
         $price = (float)$bid['bid_amount'];
         $last = (int)$bid['user_id_fk'];
     } else {
-        $price = (float)$pdo->query("
+        $stmt = $pdo->prepare("
             SELECT auction_starting_price 
             FROM auctions 
-            WHERE horse_id_fk = $horseId
-        ")->fetchColumn();
+            WHERE horse_id_fk = ?
+        ");
+        $stmt->execute([$horseId]);
+        $price = (float)($stmt->fetchColumn() ?? 0);
         $last = null;
     }
 
@@ -38,8 +50,10 @@ try {
     $hasBid = false;
     if ($user) {
         $stmt = $pdo->prepare("
-            SELECT COUNT(*) FROM bids 
-            WHERE horse_id_fk = ? AND user_id_fk = ?
+            SELECT COUNT(*) 
+            FROM bids
+            JOIN auctions ON bids.auction_id_fk = auctions.id_auction
+            WHERE auctions.horse_id_fk = ? AND bids.user_id_fk = ?
         ");
         $stmt->execute([$horseId, $user]);
         $hasBid = $stmt->fetchColumn() > 0;
@@ -54,6 +68,5 @@ try {
     ]);
 
 } catch (Exception $e) {
-    echo $e->getMessage();
     echo json_encode(["success" => false]);
 }

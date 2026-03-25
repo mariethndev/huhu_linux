@@ -115,7 +115,7 @@ $imagePath = !empty($horse['horse_image'])
                 <p>
                     Prix actuel :
                     <strong>
-                        <span class="live-price" data-auction-id="<?= $auction['id_auction'] ?? 0 ?>">
+                        <span class="live-price" data-id="<?= $horse['id_horse'] ?? 0 ?>">
                             <?= number_format($auction['current_price'] ?? $auction['starting_price'] ?? 0, 0, ',', ' ') ?> €
                         </span>
                     </strong>
