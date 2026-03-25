@@ -1,99 +1,101 @@
+// Attend que le DOM soit complètement chargé
 document.addEventListener("DOMContentLoaded", () => {
 
+  // Récupère les éléments HTML nécessaires
   const priceEl = document.querySelector(".live-price");
   const msg = document.getElementById("bidMessage");
   const btn = document.querySelector(".btn-bid");
 
+  // Si l'élément prix n'existe pas → on stoppe
   if (!priceEl) return;
 
+  // Récupère l'id du cheval depuis l'attribut data-id
   const horseId = Number(priceEl.dataset.id);
+
+  // Vérifie que l'id est valide
   if (!horseId) {
     msg.textContent = "Erreur ID";
+    console.error("ID invalide :", priceEl.dataset.id);
     return;
   }
 
+  // Clé utilisée pour stocker le prix en local (localStorage)
   const key = "price_" + horseId;
 
+  // Récupère le dernier prix sauvegardé dans le navigateur
   const saved = localStorage.getItem(key);
   if (saved) priceEl.textContent = saved + " €";
 
+  // Fonction qui met à jour le prix en temps réel
   function update() {
 
+    // Création d'un FormData pour envoyer l'id au serveur
+    const formData = new FormData();
+    formData.append("horse_id", horseId);
+
+    // Requête vers le serveur pour récupérer le prix actuel
     fetch("/huhu/huhu_linux/controller/get_price.php", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        horse_id: horseId
-      })
+      body: formData
     })
     .then(response => {
-      if (!response.ok) throw new Error("HTTP");
+      // Vérifie si la réponse HTTP est correcte
+      if (!response.ok) throw new Error("HTTP " + response.status);
       return response.json();
     })
     .then(data => {
 
+      // Affiche les données reçues dans la console (debug)
+      console.log("DATA:", data); 
+
+      // Si le serveur renvoie une erreur
       if (!data.success) {
-        msg.textContent = "Erreur";
+        msg.textContent = data.error || "Erreur";
+        console.error("Erreur PHP :", data);
         return;
       }
 
+      // Convertit le prix en nombre
       const price = Number(data.price);
-      if (isNaN(price)) return;
 
+      // Vérifie que le prix est valide
+      if (isNaN(price)) {
+        console.error("Prix invalide :", data.price);
+        return;
+      }
+
+      // Vérifie si l'utilisateur est actuellement le meilleur enchérisseur
       if (data.current_user && data.last_bidder == data.current_user) {
         msg.textContent = "Vous êtes en tête";
         btn.disabled = true;
       } 
+      // L'utilisateur a déjà enchéri mais a été dépassé
       else if (data.has_bid) {
         msg.textContent = "Dépassé !";
         btn.disabled = false;
       } 
+      // L'utilisateur n'a pas encore enchéri
       else {
         msg.textContent = "Faites une offre";
         btn.disabled = false;
       }
 
+      // Met à jour le prix affiché
       priceEl.textContent = price + " €";
+
+      // Sauvegarde le prix dans le localStorage
       localStorage.setItem(key, price);
     })
-    .catch(() => {
+    .catch((err) => {
+      // Gestion des erreurs de connexion
+      console.error("Fetch error :", err);
       msg.textContent = "Erreur connexion";
     });
   }
 
+  // Met à jour le prix toutes les 3 secondes
   setInterval(update, 3000);
+
+  // Lance une première mise à jour immédiatement
   update();
 });
-/*
-La fonction update permet de récupérer en temps réel les informations de l’enchère depuis le serveur.
-
-Elle envoie une requête HTTP avec fetch vers le fichier get_price.php en passant l’identifiant du cheval dans l’URL.
-Cette requête est asynchrone, ce qui signifie qu’elle s’exécute sans recharger la page.
-
-Lorsque la réponse est reçue, elle est d’abord vérifiée avec response.ok afin de s’assurer que la requête HTTP s’est bien déroulée.
-Si ce n’est pas le cas, une erreur est déclenchée.
-
-Ensuite, la réponse est convertie en JSON avec response.json(), ce qui permet de récupérer les données envoyées par le serveur.
-
-Dans le bloc suivant, les données sont analysées. Si data.success est false, cela signifie qu’il y a eu un problème côté serveur,
-et un message “Erreur” est affiché à l’utilisateur.
-
-Si la réponse est valide, le prix est récupéré avec data.price et converti en nombre.
-Une vérification avec isNaN permet d’éviter d’afficher une valeur incorrecte.
-
-Le script applique ensuite une logique en fonction de la situation de l’utilisateur.
-Si l’utilisateur connecté est le dernier enchérisseur, il est en tête, un message est affiché et le bouton est désactivé.
-Si l’utilisateur a déjà enchéri mais qu’il a été dépassé, un message “Dépassé !” est affiché et le bouton reste actif.
-Sinon, l’utilisateur n’a jamais enchéri et un message l’invite à faire une offre.
-
-Le prix est ensuite mis à jour dans l’interface avec priceEl.textContent et sauvegardé dans le localStorage
-afin de conserver la dernière valeur connue.
-
-En cas d’erreur lors de la requête fetch, le bloc catch permet d’afficher un message “Erreur connexion”.
-
-La fonction update est appelée immédiatement une première fois pour afficher les données actuelles,
-puis elle est exécutée automatiquement toutes les trois secondes grâce à setInterval,
-ce qui permet de simuler une mise à jour en temps réel de l’enchère.
-*/

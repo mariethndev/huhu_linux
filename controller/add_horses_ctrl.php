@@ -174,7 +174,7 @@ try {
     exit;
 
 } catch (PDOException $e) {
-    error_log($e->getMessage());
+    echo $e->getMessage();
     header("Location: ../views/add_horses_form.php?status=error_db");
     exit;
 }

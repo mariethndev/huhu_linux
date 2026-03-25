@@ -4,17 +4,10 @@ require_once "../model/config.php";
 
 header('Content-Type: application/json');
 
- $data = json_decode(file_get_contents("php://input"), true) ?? [];
+// Récupère uniquement depuis FormData (POST)
+$horseId = isset($_POST['horse_id']) ? (int)$_POST['horse_id'] : 0;
 
-$horseId = 0;
-
- if (isset($data['horse_id'])) {
-    $horseId = (int)$data['horse_id'];
-} elseif (isset($_GET['horse_id'])) {
-    $horseId = (int)$_GET['horse_id'];
-}
-
- if ($horseId <= 0) {
+if ($horseId <= 0) {
     echo json_encode([
         "success" => false,
         "error" => "invalid_id"
@@ -24,7 +17,8 @@ $horseId = 0;
 
 try {
 
-     $stmt = $pdo->prepare("
+    // Récupère la meilleure enchère actuelle
+    $stmt = $pdo->prepare("
         SELECT bids.bid_amount, bids.user_id_fk
         FROM bids
         JOIN auctions ON bids.auction_id_fk = auctions.id_auction
@@ -39,7 +33,8 @@ try {
         $price = (float)$bid['bid_amount'];
         $last = (int)$bid['user_id_fk'];
     } else {
-         $stmt = $pdo->prepare("
+        // Si aucune enchère → prix de départ
+        $stmt = $pdo->prepare("
             SELECT auction_starting_price 
             FROM auctions 
             WHERE horse_id_fk = ?
@@ -49,11 +44,13 @@ try {
         $last = null;
     }
 
-     $user = $_SESSION['user_id'] ?? null;
+    // Utilisateur connecté
+    $user = $_SESSION['user_id'] ?? null;
 
-     $hasBid = false;
+    $hasBid = false;
 
     if ($user) {
+        // Vérifie si l'utilisateur a déjà enchéri
         $stmt = $pdo->prepare("
             SELECT COUNT(*) 
             FROM bids
@@ -64,7 +61,7 @@ try {
         $hasBid = $stmt->fetchColumn() > 0;
     }
 
-     echo json_encode([
+    echo json_encode([
         "success" => true,
         "price" => $price,
         "last_bidder" => $last,

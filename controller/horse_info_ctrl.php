@@ -89,7 +89,7 @@ try {
 
 } catch (PDOException $e) {
 
-    error_log($e->getMessage());
+    echo $e->getMessage();
 
     $horse = null;
     $auction = [

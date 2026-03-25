@@ -32,7 +32,7 @@ if ($profil !== "acheteur" && $profil !== "vendeur") {
 }
 
 try {
- 
+
     $stmt = $pdo->prepare("
         SELECT id_user
         FROM users
