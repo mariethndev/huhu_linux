@@ -19,46 +19,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function update() {
 
-   fetch("/huhu/huhu_linux/controller/get_price.php?horse_id=" + horseId)
-      .then(response => {
-        if (!response.ok) throw new Error("HTTP");
-        return response.json();
+    fetch("/huhu/huhu_linux/controller/get_price.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        horse_id: horseId
       })
-      .then(data => {
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("HTTP");
+      return response.json();
+    })
+    .then(data => {
 
-        if (!data.success) {
-          msg.textContent = "Erreur";
-          return;
-        }
+      if (!data.success) {
+        msg.textContent = "Erreur";
+        return;
+      }
 
-        const price = Number(data.price);
-        if (isNaN(price)) return;
+      const price = Number(data.price);
+      if (isNaN(price)) return;
 
-        if (data.current_user && data.last_bidder == data.current_user) {
-          msg.textContent = "Vous êtes en tête";
-          btn.disabled = true;
-        } 
-        else if (data.has_bid) {
-          msg.textContent = "Dépassé !";
-          btn.disabled = false;
-        } 
-        else {
-          msg.textContent = "Faites une offre";
-          btn.disabled = false;
-        }
+      if (data.current_user && data.last_bidder == data.current_user) {
+        msg.textContent = "Vous êtes en tête";
+        btn.disabled = true;
+      } 
+      else if (data.has_bid) {
+        msg.textContent = "Dépassé !";
+        btn.disabled = false;
+      } 
+      else {
+        msg.textContent = "Faites une offre";
+        btn.disabled = false;
+      }
 
-        priceEl.textContent = price + " €";
-        localStorage.setItem(key, price);
-      })
-      .catch(() => {
-        msg.textContent = "Erreur connexion";
-      });
+      priceEl.textContent = price + " €";
+      localStorage.setItem(key, price);
+    })
+    .catch(() => {
+      msg.textContent = "Erreur connexion";
+    });
   }
 
   setInterval(update, 3000);
   update();
 });
-
 /*
 La fonction update permet de récupérer en temps réel les informations de l’enchère depuis le serveur.
 
