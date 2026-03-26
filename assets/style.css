@@ -557,329 +557,231 @@ background:var(--white);
   border-color:var(--primary);
 }
 
-/* PAGE FICHE INFO CHEVAL */
-  
-.container-info-horse{
-  max-width:1100px;
-  margin:60px auto;
-  display:flex;
-  flex-direction:column;
-  gap:40px;
-  padding:0 20px;
-} 
 
-.image-horse-info{
-  max-width:720px;
-  margin:auto;
+/* page info horse */
+
+.container-info-horse {
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
-.image-horse-info img{
-  width:100%;
-  height:380px;
-  object-fit:cover;
-  border-radius:10px;
-  display:block;
+.image-horse-info {
+  display: flex;
+  justify-content: center;
 }
-  
-.back-horse-info{
-  color:var(--primary-dark);
-  font-weight:700;
-  text-decoration:none;
-  font-size:13px;
+
+.image-horse-info img {
+  width: 100%;
+  max-width: 720px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 10px;
 }
- 
-.right-card-horse{
-  display:flex;
-  flex-direction:column;
-  gap:25px;
+
+.horse-title {
+  font-size: 26px;
+  font-weight: bold;
+  text-align: center;
 }
- 
+
+.back-horse-info {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--primary-dark);
+  text-decoration: none;
+}
+
 .infos {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 15px;
   max-width: 720px;
   margin: auto;
 }
 
-.infos > * {
-  flex: 1 1 calc(50% - 10px);
-}
-
 .card-info {
-  background:var(--white);
-  border-radius:10px;
-  padding:18px;
-  border:1px solid var(--gray-200);
+  flex: 1 1 45%;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 15px;
 }
 
 .card-info h3 {
-  font-size:12px;
-  letter-spacing:1px;
-  margin-bottom:12px;
-  color:var(--gray-600);
+  font-size: 12px;
+  color: var(--gray-600);
 }
 
 .card-info p {
-  font-size:14px;
-  margin:4px 0;
-}
- 
-.auction-time {
-  font-size:14px;
-  margin-top:8px;
-  display:inline-block;
+  font-size: 14px;
 }
 
-.voters-info {
-  margin-top:10px;
-  font-size:13px;
-  display:inline-block;
-}
- 
-.cta-horse-info {
-  margin-top:20px;
-  padding:22px;
-  text-align:center;
-  border:1px solid var(--gray-200);
-  border-radius:10px;
-  background:var(--white);
-  max-width:500px;
-  margin-left:auto;
-  margin-right:auto;
-}
-
-.cta-horse-info p {
-  font-size:14px;
-  margin-bottom:15px;
-}
-
-.horse-title {
-  font-size:28px;
-  font-weight:700;
-  max-width:720px;
-  margin:0 auto 10px auto;
-}
-
-.horse-details-container{
-  max-width:720px;
-  margin:10px auto 0 auto;
-  display:flex;
-  justify-content:flex-start;
-}
- 
-.btn-bid{
-  background:var(--primary);
-  color:var(--white);
-  border:none;
-  padding:14px 28px;
-  border-radius:8px;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.card-info {
-    position: relative;
-}
-
-/* STATUT SURENCHERI */
+/* STATUT */
 
 .status {
-  font-weight: 600;
-  padding: 6px 10px;
+  padding: 5px 10px;
   border-radius: 20px;
   font-size: 13px;
-  display: inline-block;
+  font-weight: bold;
 }
 
 .status.outbid {
-  color: #dc3545;
   background: #ffe5e5;
+  color: #dc3545;
 }
 
 .status.leading {
-  color: #28a745;
   background: #e6ffed;
+  color: #28a745;
 }
 
-/* BADGE ENTETE SUR BUY A HORSE */
+.cta-horse-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 
-.leader-badge{
-  margin-top:10px;
-  padding:6px 10px;
-  background:var(--gray-200);
-  color:#27ae60;
-  font-weight:600;
-  text-align:center;
-  border-radius:6px;
-  font-size:0.85rem;
-  border:1px solid #b7ebc6;
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  background: var(--white);
 }
 
-.leader-badge::before{
-  content:"";
-  margin-right:4px;
+.btn-bid {
+  background: var(--primary);
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
 }
 
-.leader-badge.red{
-  background:#fdecea;
-  color:#e74c3c;
-  border:1px solid #f5b7b1;
-}
- 
-/*  MODAL HORSE INFO FAIRE UNE OFFRE + OVERLAY */
+/* BADGE */
 
-.custom-modal{
-  display:flex;
-  position:fixed;
-  inset:0;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
-  background:rgba(0,0,0,0.6);
+.leader-badge {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background: var(--gray-200);
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: center;
 }
 
-.custom-modal.hidden {
+.leader-badge.red {
+  background: #fdecea;
+  color: #e74c3c;
+}
+
+/* MODAL */
+
+.custom-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CACHE AU DEBUT */
+
+.hidden {
   display: none;
 }
 
-.hidden{
-  display:none;
+/* CARD MODAL */
+
+.modal-card {
+  width: 90%;
+  max-width: 400px;
+  max-height: 90vh;
+
+  background: white;
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
 }
 
-.modal-card{
-  background:var(--white);
-  position: relative; 
-  border-radius:10px;
-  padding:25px;
-  width:400px;
-  animation:fadeIn 0.2s ease;
-  overflow:hidden; 
+/* IMAGE MODAL */
+
+.modal-image img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
 }
 
-.modal-image{
-  position:relative;
-  border-radius:10px 10px 0 0;
-  overflow:hidden;
+.modal-image {
+  height: 220px;
+  overflow: hidden;
+}
+ 
+/* CONTENU DE LA MODAL */
+
+.modal-body {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
 }
 
-.modal-image img{
-  width:100%;
-  height:auto;
-  display:block;
-  object-fit:contain;
+/* MODAL FERME */
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 30px;
+  height: 30px;
+
+  background: black;
+  color: white;
+
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
 }
 
-.modal-close{
-  position:absolute;
-  top:10px;
-  color: var(--black);
-  background: var(--gray-100);
-  right:12px;
-  color:var(--white);
-  width:32px;
-  height:32px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  font-size:20px;
+/* INPUT BID */
+
+.bid-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.modal-body{
-  padding:20px;
+.bid-input {
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 
-.modal-body h2{
-  font-size:1.1rem;
-  font-weight:700;
-  margin-bottom:5px;
+.bid-input input {
+  flex: 1;
+  border: none;
+  text-align: center;
 }
 
-.modal-subtitle{
-  font-size:0.8rem;
-  color: var(--gray-500);
-  margin-bottom:15px;
+.bid-input button {
+  width: 40px;
+  border: none;
+  background: #eee;
 }
 
-.modal-timer{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:15px;
-}
-
-.modal-timer div{
-  text-align:center;
-}
-
-.modal-timer strong{
-  display:block;
-  font-size:1rem;
-}
-
-.modal-timer span{
-  font-size:0.65rem;
-  color: var(--gray-500);
-}
-
-.modal-prices{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:15px;
-}
-
-.modal-prices span{
-  font-size:0.7rem;
-  color: var(--gray-500);
-}
-
-.modal-prices strong{
-  font-size:1rem;
-  color:var(--primary);
-}
-
-.bid-form{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-
-.bid-input{
-  display:flex;
-  border:1px solid #ddd;
-  border-radius:8px;
-  overflow:hidden;
-}
-
-.bid-input button{
-  width:50px;
-  border:none;
-  background:var(--gray-100);
-  font-size:20px;
-  cursor:pointer;
-}
-
-.bid-input input{
-  flex:1;
-  border:none;
-  text-align:center;
-  font-size:1rem;
-}
-
-.modal-stats{
-  margin:10px 0;
-  font-size:0.9rem;
-  color: var(--gray-500);;
-  display:flex;
-  justify-content:center;
-}
-
-.hot-lot{
-  color:#d35400;
-  font-weight:600;
-  margin-left:8px;
-}
 
 /* PAGE BUY A HORSE */
 
@@ -2327,12 +2229,16 @@ color:#1e7e44;
   display:none;
 }
 
-.mobile-nav{
-  position:fixed;
-  top:0;
-  left:-100%;
-  width:80%;
-  height:100vh;
+.mobile-nav {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 80%;
+  height: 100vh;
+  background: white;
+
+  z-index: 10000; /* 🔥 super important */
+  transition: left 0.3s ease;
 }
 
 .mobile-nav form {
@@ -2349,6 +2255,11 @@ color:#1e7e44;
   font-weight: 600;
   cursor: pointer;
   transition: 0.3s ease;
+}
+
+
+.mobile-nav.active {
+  left: 0;
 }
 
 /* Boutons de la page add_horses_form.phps */
@@ -2780,7 +2691,7 @@ footer{
 
 
 .burger{
-  display:none;
+  display: flex;
 }
 }
 

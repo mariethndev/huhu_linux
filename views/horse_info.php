@@ -161,33 +161,43 @@ $imagePath = !empty($horse['horse_image'])
 
 <!-- MODAL -->
 <div id="bidModal" class="custom-modal hidden">
+
     <div class="modal-card">
 
+        <!-- IMAGE -->
         <div class="modal-image">
-            <img src="" alt="">
+            <img id="modalImage" src="" alt="Cheval">
             <span class="modal-close">&times;</span>
         </div>
 
+        <!-- CONTENU -->
         <div class="modal-body">
+
             <h2 id="modalHorseName"></h2>
 
             <p class="modal-price">
                 Prix actuel : <strong id="modalCurrentPrice"></strong>
             </p>
 
-            <form action="/huhu/huhu_linux/controller/bid_ctrl.php" method="POST">
+            <!-- FORM -->
+            <form action="/huhu/huhu_linux/controller/bid_ctrl.php" method="POST" class="bid-form">
+
                 <input type="hidden" name="horse_id" id="modalHorseId">
 
                 <div class="bid-input">
                     <button type="button" id="bidMinus">−</button>
-                    <input type="number" name="bid_amount" id="bidAmount">
+
+                    <input type="number" name="bid_amount" id="bidAmount" min="0">
+
                     <button type="button" id="bidPlus">+</button>
                 </div>
 
-                <button class="btn-consult" type="submit">
+                <button class="btn-bid" type="submit">
                     Enchérir
                 </button>
+
             </form>
+
         </div>
     </div>
 </div>

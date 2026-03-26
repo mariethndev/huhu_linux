@@ -4,7 +4,6 @@ session_start();
 require_once '../controller/my_auctions_ctrl.php';
 require_once '../head.php';
 
-// correction ici
 $hasAuctions =
     !empty($groupedAuctions['en_cours']) ||
     !empty($groupedAuctions['annulees']) ||
@@ -18,6 +17,13 @@ $hasAuctions =
         <h1 class="hl-title">Mes enchères</h1>
         <p class="hl-subtitle">Chevaux sur lesquels vous avez enchéri</p>
     </div>
+
+    <!-- MESSAGE UTILISATEUR -->
+    <?php if (!empty($message)) : ?>
+        <div class="alert alert-warning">
+            <?= htmlentities($message) ?>
+        </div>
+    <?php endif; ?>
 
     <?php if (!empty($outbidCount) && $outbidCount > 0): ?>
         <div class="alert alert-warning">
@@ -73,7 +79,7 @@ $hasAuctions =
                         <td><?= (int)$auctionItem['participants'] ?></td>
                         <td>
                             <?= !empty($auctionItem['auction_end_date'])
-                                ? date('d/m/Y H:i', strtotime($auctionItem['auction_end_date']))
+                                ? date('d/m/Y', strtotime($auctionItem['auction_end_date']))
                                 : '—' ?>
                         </td>
                         <td>
@@ -111,7 +117,7 @@ $hasAuctions =
                         <td><?= number_format((float)$auctionItem['last_price'], 0, ',', ' ') ?> €</td>
                         <td><?= number_format((float)$auctionItem['my_last_bid'], 0, ',', ' ') ?> €</td>
                         <td><?= (int)$auctionItem['participants'] ?></td>
-                        <td><?= !empty($auctionItem['auction_end_date']) ? date('d/m/Y H:i', strtotime($auctionItem['auction_end_date'])) : '—' ?></td>
+                        <td><?= !empty($auctionItem['auction_end_date']) ? date('d/m/Y', strtotime($auctionItem['auction_end_date'])) : '—' ?></td>
                         <td><?= $auctionItem['last_bidder'] ?? 'Aucun' ?></td>
                         <td><a href="horse_info.php?id=<?= (int)$auctionItem['id_horse'] ?>">Voir</a></td>
                     </tr>
@@ -134,7 +140,7 @@ $hasAuctions =
                         <td><?= number_format((float)$auctionItem['last_price'], 0, ',', ' ') ?> €</td>
                         <td><?= number_format((float)$auctionItem['my_last_bid'], 0, ',', ' ') ?> €</td>
                         <td><?= (int)$auctionItem['participants'] ?></td>
-                        <td><?= !empty($auctionItem['auction_end_date']) ? date('d/m/Y H:i', strtotime($auctionItem['auction_end_date'])) : '—' ?></td>
+                        <td><?= !empty($auctionItem['auction_end_date']) ? date('d/m/Y', strtotime($auctionItem['auction_end_date'])) : '—' ?></td>
                         <td><?= $auctionItem['last_bidder'] ?? 'Aucun' ?></td>
                         <td><a href="horse_info.php?id=<?= (int)$auctionItem['id_horse'] ?>">Voir</a></td>
                     </tr>
@@ -157,7 +163,7 @@ $hasAuctions =
                         <td><?= number_format((float)$auctionItem['last_price'], 0, ',', ' ') ?> €</td>
                         <td><?= number_format((float)$auctionItem['my_last_bid'], 0, ',', ' ') ?> €</td>
                         <td><?= (int)$auctionItem['participants'] ?></td>
-                        <td><?= !empty($auctionItem['auction_end_date']) ? date('d/m/Y H:i', strtotime($auctionItem['auction_end_date'])) : '—' ?></td>
+                        <td><?= !empty($auctionItem['auction_end_date']) ? date('d/m/Y', strtotime($auctionItem['auction_end_date'])) : '—' ?></td>
                         <td><?= $auctionItem['last_bidder'] ?? 'Aucun' ?></td>
                         <td><a href="horse_info.php?id=<?= (int)$auctionItem['id_horse'] ?>">Voir</a></td>
                     </tr>

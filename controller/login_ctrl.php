@@ -64,6 +64,7 @@ try {
     $_SESSION['user_id'] = $user['id_user'];
     $_SESSION['role']    = $user['user_role'];
 
+    
     // redirection selon le rôle
     if ($user['user_role'] === 'organisateur') {
         header("Location: ../views/organisateur_dashboard.php");

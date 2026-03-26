@@ -1,42 +1,52 @@
 <?php
-// je démarre la session
+// je démarre la session pour récupérer les infos utilisateur
 session_start();
-
-// je charge la config
 require_once "../model/config.php";
 
-// je récupère l'id cheval
+// je récupère l'id depuis l'URL (ex: ?id=5)
+// ?? 0 → si l'id n'existe pas → je mets 0 par défaut
+// (évite une erreur si rien n'est envoyé)
+// (int) → je force la valeur en nombre entier
+// même si quelqu’un envoie "abc" → ça devient 0
 $horseId = (int)($_GET['id'] ?? 0);
 
-// si id invalide → redirection
+// si l'id est invalide → je redirige vers la liste
 if ($horseId <= 0) {
     header("Location: ../views/buy_a_horse.php");
     exit;
 }
 
-// variables
-$horse = null;
-$auction = [];
-$userLogged = !empty($_SESSION['user_id']);
+// je crée mes variables de base pour éviter les erreurs
+$horse = null; //je mets null au début QUI sera rempli avec les données du cheval
+$auction = []; // je crée un tableau vide QUI sera rempli avec les infos de l’enchère
+$userLogged = !empty($_SESSION['user_id']); // je vérifie si l'utilisateur est connecté
+// je vérifie si l'utilisateur est connecté
+// si user_id existe → true
+// sinon → false
 
 try {
 
-    // je récupère le cheval
+    // RECUPERE DU CHEVAL
+    // je récupère les données du cheval
     $stmt = $pdo->prepare("SELECT * FROM horses WHERE id_horse = ? LIMIT 1");
     $stmt->execute([$horseId]);
     $horse = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    // si le cheval n'existe pas dans la bdd je redirige l'utilisateur sur buy a horse.
     if (!$horse) {
         header("Location: ../views/buy_a_horse.php");
         exit;
     }
 
-    // je récupère l'enchère
+    // RECUPERE LENCHERE LIEE AU CHEVAL 
     $stmt = $pdo->prepare("SELECT * FROM auctions WHERE horse_id_fk = ? LIMIT 1");
     $stmt->execute([$horseId]);
     $auctionData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // si pas d'enchère → valeurs par défaut
+    // si aucune enchère existe pour ce cheval
+    // je crée des valeurs par défaut pour éviter les erreurs
+    // comme ça je peux quand même utiliser $auctionData
+
     if (!$auctionData) {
         $auctionData = [
             'id_auction' => 0,
@@ -45,27 +55,33 @@ try {
             'auction_end_date' => null
         ];
     }
+    // __ Je mets des valeurs par défaut pour éviter les erreurs quand il n’y a pas d’enchère.
 
-    // 👉 IMPORTANT (manquait chez toi)
+    // je récupère l'id de l'enchère sans risque d'erreur
     $auctionId = $auctionData['id_auction'];
 
-    // je récupère la dernière enchère
+    // PARTIE PRIX DE L'ENCHERE 
+    // je récupère le prix de la dernière enchère faite par l'utilisateur
     $lastBid = 0;
 
     if ($auctionId) {
         $stmt = $pdo->prepare("SELECT MAX(bid_amount) FROM bids WHERE auction_id_fk = ?");
         $stmt->execute([$auctionId]);
-        $lastBid = $stmt->fetchColumn() ?: 0;
+        $lastBid = $stmt->fetchColumn() ?: 0;   // le 0 remplace null renvoyé par MAX quand il n’y a aucune enchère
+                                                // ça évite les erreurs et permet de continuer le calcul
     }
 
-    // prix actuel
+    // si une enchère existe et que le montant est > à 0
+    // on prend ce prix
+    // sinon on garde le prix de départ
     if ($lastBid > 0) {
         $currentPrice = (float)$lastBid;
     } else {
         $currentPrice = (float)$auctionData['auction_starting_price'];
     }
 
-    // participants
+    // PARTIE PARTICIPANTS
+    // je compte le nombre de participants (personnes différentes)
     $participants = 0;
 
     if ($auctionId) {
@@ -78,22 +94,16 @@ try {
         $participants = (int)$stmt->fetchColumn();
     }
 
-    // statut
+    // PARTIE STATUT DE L'ENCHÈRE
+    // je récupère le statut enregistré en base (ex: disponible, terminé)
+    // je le nettoie pour éviter les erreurs (espaces, majuscules)
     $status = strtolower(trim($auctionData['auction_status'] ?? ''));
 
-    // fin enchère
-    $isEnded = false;
-    if (!empty($auctionData['auction_end_date'])) {
-        $end = strtotime($auctionData['auction_end_date']);
-        if ($end && $end <= time()) {
-            $isEnded = true;
-        }
-    }
+    // je détermine le status de
+    $isActive = ($status === 'disponible');
 
-    // actif ?
-    $isActive = ($status === 'disponible' && !$isEnded);
-
-    // tableau final
+    // je prépare les données finales pour l'affichage
+    // (texte, couleur, prix, participants…)
     $auction = [
         "id_auction"    => $auctionId,
         "is_active"     => $isActive,
@@ -104,7 +114,6 @@ try {
     ];
 
 } catch (PDOException $e) {
-
     echo $e->getMessage();
 
     $horse = null;
