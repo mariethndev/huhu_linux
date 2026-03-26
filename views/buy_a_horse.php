@@ -3,17 +3,7 @@ session_start();
 
 require_once '../controller/buy_a_horse_ctrl.php';
 require_once '../head.php';
-
-$horses = $horses ?? [];
-$count  = $count ?? 0;
-$search     = $_GET['search'] ?? '';
-$breed      = $_GET['breed'] ?? '';
-$discipline = $_GET['discipline'] ?? '';
-$price_min  = $_GET['price_min'] ?? '';
-$price_max  = $_GET['price_max'] ?? '';
-$sex        = $_GET['filter_sex'] ?? '';
-$age        = $_GET['filter_age'] ?? '';
-
+  
 ?>
 
 <div class="bah-page">

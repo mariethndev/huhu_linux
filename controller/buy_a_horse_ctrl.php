@@ -1,8 +1,10 @@
 <?php
 require_once "../model/config.php";
 
+// je prépare un tableau pour stocker les chevaux filtrés
 $horses = [];
 
+// je récupère les filtres envoyés en GET (ou valeur vide par défaut)
 $search     = trim($_GET['search'] ?? '');
 $breed      = trim($_GET['breed'] ?? '');
 $discipline = trim($_GET['discipline'] ?? '');
@@ -11,155 +13,89 @@ $ageFilter  = $_GET['filter_age'] ?? '';
 $price_min  = $_GET['price_min'] ?? '';
 $price_max  = $_GET['price_max'] ?? '';
 
+// je récupère l'id de l'utilisateur connecté (ou null)
 $userId = $_SESSION['user_id'] ?? null;
 
 try {
 
-    // Récupère toutes les enchères dont le statut est "disponible"
-    $stmtAuctions = $pdo->prepare("
-        SELECT *
-        FROM auctions
-        WHERE auction_status = ?
-    ");
-    $stmtAuctions->execute(['disponible']);
-    $auctions = $stmtAuctions->fetchAll(PDO::FETCH_ASSOC);
+    // je récupère toutes les enchères disponibles
+    $stmt = $pdo->prepare("SELECT * FROM auctions WHERE auction_status = ?");
+    $stmt->execute(['disponible']);
+    $auctions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Prépare une requête pour récupérer un cheval spécifique non supprimé
+    // je parcours les enchères
     foreach ($auctions as $auction) {
 
-        $stmtHorse = $pdo->prepare("
-            SELECT *
-            FROM horses
-            WHERE id_horse = ?
-            AND horse_is_deleted = 0
-        ");
-        $stmtHorse->execute([$auction['horse_id_fk']]);
-        $horse = $stmtHorse->fetch(PDO::FETCH_ASSOC);
+        // je récupère le cheval
+        $stmt = $pdo->prepare("SELECT * FROM horses WHERE id_horse = ? AND horse_is_deleted = 0");
+        $stmt->execute([$auction['horse_id_fk']]);
+        $horse = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$horse) continue;
+        // je vérifie que le cheval existe avant de continuer
+        if ($horse) {
 
-        // Récupère le montant de la plus haute enchère pour cette enchère
-        $stmtLastBid = $pdo->prepare("
-            SELECT MAX(bid_amount)
-            FROM bids
-            WHERE auction_id_fk = ?
-        ");
-        $stmtLastBid->execute([$auction['id_auction']]);
-        $lastBid = $stmtLastBid->fetchColumn();
+            // je récupère le prix (enchère ou prix de départ)
+            $stmt = $pdo->prepare("SELECT MAX(bid_amount) FROM bids WHERE auction_id_fk = ?");
+            $stmt->execute([$auction['id_auction']]);
+            $price = $stmt->fetchColumn() ?: $auction['auction_starting_price'];
 
-        if ($lastBid !== null) {
-            $currentPrice = (float)$lastBid;
-        } else {
-            $currentPrice = (float)$auction['auction_starting_price'];
-        }
+            // je récupère le leader
+            $stmt = $pdo->prepare("
+                SELECT user_id_fk FROM bids 
+                WHERE auction_id_fk = ? 
+                ORDER BY bid_amount DESC LIMIT 1
+            ");
+            $stmt->execute([$auction['id_auction']]);
+            $leaderId = $stmt->fetchColumn();
 
-        $horse['current_price'] = $currentPrice;
-        $horse['auction_start_date'] = $auction['auction_start_date'];
-        $horse['auction_end_date']   = $auction['auction_end_date'];
+            // j’ajoute les infos utiles
+            $horse['current_price'] = (float)$price;
+            $horse['auction_start_date'] = $auction['auction_start_date'];
+            $horse['auction_end_date']   = $auction['auction_end_date'];
+            $horse['is_leader'] = ($leaderId && $leaderId == $userId);
 
-        // Récupère l'utilisateur en tête de l'enchère
-        $stmtLeader = $pdo->prepare("
-            SELECT user_id_fk
-            FROM bids
-            WHERE auction_id_fk = ?
-            ORDER BY bid_amount DESC
-            LIMIT 1
-        ");
-        $stmtLeader->execute([$auction['id_auction']]);
-        $leaderId = $stmtLeader->fetchColumn();
+            // je calcule l’âge
+            $age = !empty($horse['horse_birthdate'])
+                ? (new DateTime())->diff(new DateTime($horse['horse_birthdate']))->y
+                : null;
 
-        $horse['is_leader'] = ($leaderId && $leaderId == $userId);
+            // je vérifie tous les filtres
+            $matchesFilters =
+                (!$search || stripos($horse['horse_name'], $search) !== false) &&
+                (!$breed || stripos($horse['horse_breed'], $breed) !== false) &&
+                (!$discipline || stripos($horse['horse_discipline'], $discipline) !== false) &&
+                (
+                    !$sex ||
+                    ($sex === 'male' && ($horse['horse_sex'] ?? '') === 'M') ||
+                    ($sex === 'jument' && ($horse['horse_sex'] ?? '') === 'F')
+                ) &&
+                (
+                    !$ageFilter ||
+                    ($age !== null && (
+                        ($ageFilter === 'poulain' && $age < 3) ||
+                        ($ageFilter === 'pouliche' && $age < 3) ||
+                        ($ageFilter === 'jeune_adulte' && $age >= 3 && $age < 6) ||
+                        ($ageFilter === 'adulte' && $age >= 6 && $age < 15) ||
+                        ($ageFilter === 'senior' && $age >= 15)
+                    ))
+                ) &&
+                ($price_min === '' || $price >= (float)$price_min) &&
+                ($price_max === '' || $price <= (float)$price_max);
 
-
-        //  Par défaut le cheval correspond aux filtres"
-        $matchesFilters = true;
-
-        // On utilise stripos pour vérifier si la valeur recherchée 
-        // est contenue dans les champs (nom, race, discipline)
-        // sans tenir compte des majuscules/minuscules (ex: "cheval" = "Cheval")
-        // Si la valeur n'est pas trouvée, on exclut le cheval des résultats
-        if ($search !== '') {
-            if (stripos($horse['horse_name'], $search) === false) {
-                $matchesFilters = false;
+            // si le cheval respecte tous les filtres sélectionnés (nom, race, prix, âge, etc.)
+            // alors je l’ajoute au tableau des résultats à afficher
+            if ($matchesFilters) {
+                $horses[] = $horse;
             }
         }
-
-        if ($breed !== '') {
-            if (stripos($horse['horse_breed'], $breed) === false) {
-                $matchesFilters = false;
-            }
-        }
-
-        if ($discipline !== '') {
-            if (stripos($horse['horse_discipline'], $discipline) === false) {
-                $matchesFilters = false;
-            }
-        }
-
-        if ($sex === 'male') {
-            if ($horse['horse_sex'] !== 'M') {
-                $matchesFilters = false;
-            }
-        } else if ($sex === 'jument') {
-            if ($horse['horse_sex'] !== 'F') {
-                $matchesFilters = false;
-            }
-        }
-
-        $age = null;
-        if (!empty($horse['horse_birthdate'])) {
-            $birthDate = new DateTime($horse['horse_birthdate']);
-            $today = new DateTime();
-            $age = $today->diff($birthDate)->y;
-        }
-
-        if ($ageFilter !== '' && $age !== null) {
-
-            if ($ageFilter === 'poulain') {
-                if (!($age < 3 && $horse['horse_sex'] === 'M')) {
-                    $matchesFilters = false;
-                }
-            } else if ($ageFilter === 'pouliche') {
-                if (!($age < 3 && $horse['horse_sex'] === 'F')) {
-                    $matchesFilters = false;
-                }
-            } else if ($ageFilter === 'jeune_adulte') {
-                if (!($age >= 3 && $age < 6)) {
-                    $matchesFilters = false;
-                }
-            } else if ($ageFilter === 'adulte') {
-                if (!($age >= 6 && $age < 15)) {
-                    $matchesFilters = false;
-                }
-            } else if ($ageFilter === 'senior') {
-                if (!($age >= 15)) {
-                    $matchesFilters = false;
-                }
-            }
-        }
-
-        if ($price_min !== '') {
-            if ($currentPrice < (float)$price_min) {
-                $matchesFilters = false;
-            }
-        }
-
-        if ($price_max !== '') {
-            if ($currentPrice > (float)$price_max) {
-                $matchesFilters = false;
-            }
-        }
-
-        if (!$matchesFilters) {
-            continue;
-        }
-
-        $horses[] = $horse;
     }
 
 } catch (PDOException $e) {
+
+    // en cas d’erreur, j’affiche le message et je vide le tableau
     echo $e->getMessage();
     $horses = [];
 }
 
+// je compte le nombre de chevaux trouvés
 $count = count($horses);

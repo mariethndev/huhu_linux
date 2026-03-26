@@ -15,18 +15,14 @@ $imagePath = !empty($horse['horse_image'])
 ?>
 
 <div class="container-info-horse">
-
     <div class="left-card-horse">
-
         <h1 class="horse-title">
             Fiche de <?= htmlentities($horse['horse_name'] ?? '—') ?>
         </h1>
-
         <div class="image-horse-info">
             <img src="<?= $imagePath ?>" alt="Photo du cheval">
         </div>
-
-        <div class="horse-details-container">
+        <div class="horse-details-scontainer">
             <a href="/huhu/huhu_linux/views/buy_a_horse.php" class="back-horse-info">
                 RETOUR
             </a>
@@ -34,9 +30,7 @@ $imagePath = !empty($horse['horse_image'])
     </div>
 
     <div class="right-card-horse">
-
         <div class="infos">
-
             <div class="card-info">
                 <h3>DÉTAILS</h3>
                 <p>Numéro : <?= htmlentities($horse['horse_id_number'] ?? '—') ?></p>
@@ -105,7 +99,6 @@ $imagePath = !empty($horse['horse_image'])
 
              <div class="card-info">
                 <h3>ENCHÈRE</h3>
-
                 <p>
                     Statut :
                     <span class="badge <?= htmlentities($auction['badge_class'] ?? '') ?>">
@@ -144,6 +137,13 @@ $imagePath = !empty($horse['horse_image'])
                    data-is-last-user="<?= $auction['is_last_user'] ? '1' : '0' ?>">
                 </p>
 
+                <!-- 
+                    Bouton d'enchère dynamique :
+                    - Affiche "Faire une offre" pour un cheval en vente
+                    - Stocke les informations nécessaires dans des attributs data-* pour JS
+                    - Permet de récupérer facilement les données côté front (prix, utilisateur, cheval...)
+                    - Se désactive automatiquement si l'enchère n'est plus active
+                --> 
                 <button type="button" class="btn-bid"
                     data-price="<?= $auction['current_price'] ?? $auction['starting_price'] ?? 0 ?>"
                     data-user-bid="<?= $auction['my_last_bid'] ?? 0 ?>"
@@ -160,8 +160,8 @@ $imagePath = !empty($horse['horse_image'])
     </div>
 </div>
 
+<!-- Modal pour enchérir -->
 <div id="bidModal" class="custom-modal hidden">
-
     <div class="modal-card">
 
         <div class="modal-image">
@@ -170,15 +170,12 @@ $imagePath = !empty($horse['horse_image'])
         </div>
 
         <div class="modal-body">
-
             <h2 id="modalHorseName"></h2>
-
             <p class="modal-price">
                 Prix actuel : <strong id="modalCurrentPrice"></strong>
             </p>
 
             <form action="/huhu/huhu_linux/controller/bid_ctrl.php" method="POST">
-
                 <input type="hidden" name="horse_id" id="modalHorseId">
 
                 <div class="bid-input">
@@ -190,7 +187,6 @@ $imagePath = !empty($horse['horse_image'])
                 <button class="btn-consult" type="submit">
                     Enchérir
                 </button>
-
             </form>
         </div>
     </div>

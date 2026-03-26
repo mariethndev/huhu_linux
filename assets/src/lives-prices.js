@@ -1,101 +1,105 @@
-// Attend que le DOM soit complètement chargé
+// j’attends que la page soit chargée
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Récupère les éléments HTML nécessaires
+  // je récupère les éléments
   const priceEl = document.querySelector(".live-price");
   const msg = document.getElementById("bidMessage");
   const btn = document.querySelector(".btn-bid");
 
-  // Si l'élément prix n'existe pas → on stoppe
+  // si le prix existe pas j’arrête
   if (!priceEl) return;
 
-  // Récupère l'id du cheval depuis l'attribut data-id
+  // je récupère l’id du cheval
   const horseId = Number(priceEl.dataset.id);
 
-  // Vérifie que l'id est valide
+  // si l’id est invalide j’affiche une erreur
   if (!horseId) {
     msg.textContent = "Erreur ID";
     console.error("ID invalide :", priceEl.dataset.id);
     return;
   }
 
-  // Clé utilisée pour stocker le prix en local (localStorage)
+  // j’ai une clé pour le localStorage
   const key = "price_" + horseId;
 
-  // Récupère le dernier prix sauvegardé dans le navigateur
+  // je récupère le prix sauvegardé
   const saved = localStorage.getItem(key);
   if (saved) priceEl.textContent = saved + " €";
 
-  // Fonction qui met à jour le prix en temps réel
+  // fonction pour mettre à jour le prix
   function update() {
 
-    // Création d'un FormData pour envoyer l'id au serveur
+    // je prépare les données à envoyer
     const formData = new FormData();
     formData.append("horse_id", horseId);
 
-    // Requête vers le serveur pour récupérer le prix actuel
+    // j’envoie la requête au serveur
     fetch("/huhu/huhu_linux/controller/get_price.php", {
       method: "POST",
       body: formData
     })
     .then(response => {
-      // Vérifie si la réponse HTTP est correcte
+
+      // je vérifie la réponse
       if (!response.ok) throw new Error("HTTP " + response.status);
+
       return response.json();
     })
     .then(data => {
 
-      // Affiche les données reçues dans la console (debug)
+      // j’affiche les données pour debug
       console.log("DATA:", data); 
 
-      // Si le serveur renvoie une erreur
+      // si erreur côté serveur
       if (!data.success) {
         msg.textContent = data.error || "Erreur";
         console.error("Erreur PHP :", data);
         return;
       }
 
-      // Convertit le prix en nombre
+      // je convertis le prix
       const price = Number(data.price);
 
-      // Vérifie que le prix est valide
+      // si prix invalide j’arrête
       if (isNaN(price)) {
         console.error("Prix invalide :", data.price);
         return;
       }
 
-      // Vérifie si l'utilisateur est actuellement le meilleur enchérisseur
+      // si je suis en tête
       if (data.current_user && data.last_bidder == data.current_user) {
         msg.textContent = "Vous êtes en tête";
         btn.disabled = true;
       } 
-      // L'utilisateur a déjà enchéri mais a été dépassé
+      // si j’ai été dépassé
       else if (data.has_bid) {
         msg.textContent = "Dépassé !";
         btn.disabled = false;
       } 
-      // L'utilisateur n'a pas encore enchéri
+      // sinon j’ai pas encore enchéri
       else {
         msg.textContent = "Faites une offre";
         btn.disabled = false;
       }
 
-      // Met à jour le prix affiché
+      // je mets à jour le prix affiché
       priceEl.textContent = price + " €";
 
-      // Sauvegarde le prix dans le localStorage
+      // je sauvegarde le prix
       localStorage.setItem(key, price);
     })
     .catch((err) => {
-      // Gestion des erreurs de connexion
+
+      // erreur réseau
       console.error("Fetch error :", err);
+
       msg.textContent = "Erreur connexion";
     });
   }
 
-  // Met à jour le prix toutes les 3 secondes
+  // je mets à jour toutes les 3 secondes
   setInterval(update, 3000);
 
-  // Lance une première mise à jour immédiatement
+  // je lance une première mise à jour
   update();
 });

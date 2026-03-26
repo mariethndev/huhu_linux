@@ -22,6 +22,7 @@ if ($horseId <= 0) {
 
 try {
 
+    // je sélectionne l'enchère du cheval donné avec ses informations principales
     $stmtAuction = $pdo->prepare("
         SELECT id_auction, auction_status, auction_end_date, auction_starting_price
         FROM auctions
@@ -42,6 +43,8 @@ try {
 
     $auctionId = (int)$auction['id_auction'];
 
+    // je récupère la meilleure enchère (montant le plus élevé) pour une enchère,
+    // en triant les offres de la plus élevée à la plus faible
     $stmtLastBid = $pdo->prepare("
         SELECT id_bid, user_id_fk, bid_amount
         FROM bids
@@ -70,10 +73,13 @@ try {
         exit;
     }
 
+    // j'insère une nouvelle enchère (utilisateur, montant, date actuelle, enchère liée)
+    // NOW() ajoute automatiquement la date et l’heure actuelles
     $stmtInsert = $pdo->prepare("
         INSERT INTO bids (user_id_fk, bid_amount, bid_date, auction_id_fk)
         VALUES (?, ?, NOW(), ?)
     ");
+
     $stmtInsert->execute([
         $userId,
         $bidAmount,
@@ -82,6 +88,7 @@ try {
 
     if ($previousUser && $previousUser !== $userId && $previousBidId) {
 
+    // Je compte le nombre de fois où un utilisateur a été dépassé pour une enchère donnée
         $stmtCheck = $pdo->prepare("
             SELECT COUNT(*) 
             FROM outbid 
@@ -91,6 +98,10 @@ try {
 
         if ($stmtCheck->fetchColumn() == 0) {
 
+    // J'enregistre qu'un utilisateur a été dépassé sur une enchère (notification non vue)
+    // bid_id_fk c'est l’enchère concernée
+    // user_id_fk c'est l’utilisateur dépassé
+    // seen = 0 c'est notification non vue
             $stmtOutbid = $pdo->prepare("
                 INSERT INTO outbid (bid_id_fk, user_id_fk, seen)
                 VALUES (?, ?, 0)
@@ -102,16 +113,17 @@ try {
         }
     }
 
+    //  je marque comme vues toutes les notifications de dépassement pour un utilisateur
+    // sur les enchères liées à une auction donnée
     $stmtClean = $pdo->prepare("
         UPDATE outbid
         SET seen = 1
         WHERE user_id_fk = ?
-        AND bid_id_fk IN (
-            SELECT id_bid FROM bids WHERE auction_id_fk = ?
-        )
+        AND bid_id_fk IN (SELECT id_bid FROM bids WHERE auction_id_fk = ?)
     ");
     $stmtClean->execute([$userId, $auctionId]);
 
+    // et à jour le prix final d'une enchère avec le montant final enregistré
     $stmtUpdate = $pdo->prepare("
         UPDATE auctions
         SET auction_final_price = ?

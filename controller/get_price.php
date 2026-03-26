@@ -2,11 +2,13 @@
 session_start();
 require_once "../model/config.php";
 
+// J'indique que le format est du JSON
 header('Content-Type: application/json');
 
-// Récupère uniquement depuis FormData (POST)
+// je écupère uniquement depuis FormData (POST)
 $horseId = isset($_POST['horse_id']) ? (int)$_POST['horse_id'] : 0;
 
+//je vérifie si l’ID du cheval est valide et renvoie une réponse JSON
 if ($horseId <= 0) {
     echo json_encode([
         "success" => false,
@@ -17,7 +19,7 @@ if ($horseId <= 0) {
 
 try {
 
-    // Récupère la meilleure enchère actuelle
+    // je récupère la meilleure enchère actuelle
     $stmt = $pdo->prepare("
         SELECT bids.bid_amount, bids.user_id_fk
         FROM bids
@@ -33,7 +35,7 @@ try {
         $price = (float)$bid['bid_amount'];
         $last = (int)$bid['user_id_fk'];
     } else {
-        // Si aucune enchère → prix de départ
+        // Si aucune enchère j'affiche le prix de départ
         $stmt = $pdo->prepare("
             SELECT auction_starting_price 
             FROM auctions 
@@ -44,13 +46,13 @@ try {
         $last = null;
     }
 
-    // Utilisateur connecté
+    // Utilisateur connecté en session 
     $user = $_SESSION['user_id'] ?? null;
 
     $hasBid = false;
 
     if ($user) {
-        // Vérifie si l'utilisateur a déjà enchéri
+        // je vérifie si l'utilisateur a déjà enchéri
         $stmt = $pdo->prepare("
             SELECT COUNT(*) 
             FROM bids
@@ -61,16 +63,18 @@ try {
         $hasBid = $stmt->fetchColumn() > 0;
     }
 
-    echo json_encode([
-        "success" => true,
-        "price" => $price,
-        "last_bidder" => $last,
-        "current_user" => $user,
-        "has_bid" => $hasBid
-    ]);
+// j'envoie une réponse JSON au JavaScript avec les informations de l'enchère
+echo json_encode([
+    "success" => true,           // Indique que la requête s'est bien passée
+    "price" => $price,           // Prix actuel de l'enchère
+    "last_bidder" => $last,      // ID du meilleur enchérisseur
+    "current_user" => $user,     // ID de l'utilisateur connecté
+    "has_bid" => $hasBid         // Indique si l'utilisateur a déjà enchéri
+]);
 
 } catch (Exception $e) {
 
+    // En cas d'erreur serveur, on renvoie une réponse JSON avec une erreur
     echo json_encode([
         "success" => false,
         "error" => "server_error"
