@@ -9,7 +9,6 @@ $userLogged = $userLogged ?? false;
 $auction['is_active'] = $auction['is_active'] ?? false;
 $auction['is_last_user'] = $auction['is_last_user'] ?? false;
 
-// ✅ chemin image FIX
 $imagePath = !empty($horse['horse_image'])
     ? "/huhu/huhu_linux/uploads/horses/" . $horse['horse_image']
     : "/huhu/huhu_linux/uploads/horses/horse_default.png";
@@ -123,6 +122,7 @@ $imagePath = !empty($horse['horse_image'])
                     </strong>
                 </p>
 
+                <!-- Le ?? s’appelle l’opérateur de coalescence nulle sinon j'affiche 0 -->
                 <p class="voters-info btn btn-secondary p-2">
                     <?= $auction['participants'] ?? 0 ?> participant(s)
                 </p>

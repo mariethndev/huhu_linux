@@ -74,21 +74,17 @@ try {
             $stmtPrice->execute([$auctionId]);
             $lastBid = $stmtPrice->fetchColumn();
 
-            // je détermine le prix actuel avec if / elseif / else
+            // je détermine le prix actuel 
             if ($lastBid > 0) {
                 // il y a une enchère
                 $currentPrice = $lastBid;
 
             } elseif (!empty($auction['auction_starting_price'])) {
-                // pas d'enchère → prix de départ
+                // pas d'enchère je prends le prix de départ
                 $currentPrice = $auction['auction_starting_price'];
 
-            } else {
-                // sécurité (cas improbable)
-                $currentPrice = 0;
-            }
-
-            // je récupère MA dernière enchère
+            }  
+            // je récupère la dernière enchère
             $stmtMyBid = $pdo->prepare("
                 SELECT MAX(bid_amount)
                 FROM bids

@@ -3,7 +3,6 @@ session_start();
 require_once "../model/config.php";
 
 header('Content-Type: application/json');
-
 // je récupère l'id cheval
 $horseId = isset($_POST['horse_id']) ? (int)$_POST['horse_id'] : 0;
 
@@ -11,14 +10,13 @@ if ($horseId <= 0) {
     echo json_encode(["success" => false, "error" => "invalid_id"]);
     exit;
 }
-
 // je vérifie que l'utilisateur est connecté
 if (empty($_SESSION['user_id'])) {
     echo json_encode(["success" => false, "error" => "not_logged"]);
     exit;
 }
 
-// 👉 JE récupère l'utilisateur
+// Je récupère l'utilisateur
 $user = $_SESSION['user_id'];
 
 try {
