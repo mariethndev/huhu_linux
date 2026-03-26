@@ -53,7 +53,6 @@ $hasAuctions =
                         <th>Mon enchère</th>
                         <th>Statut</th>
                         <th>Participants</th>
-                        <th>Fin</th>
                         <th>Dernier enchérisseur</th>
                         <th>Action</th>
                     </tr>
@@ -117,8 +116,7 @@ $hasAuctions =
                         <td><?= number_format((float)$auctionItem['last_price'], 0, ',', ' ') ?> €</td>
                         <td><?= number_format((float)$auctionItem['my_last_bid'], 0, ',', ' ') ?> €</td>
                         <td><?= (int)$auctionItem['participants'] ?></td>
-                        <td><?= !empty($auctionItem['auction_end_date']) ? date('d/m/Y', strtotime($auctionItem['auction_end_date'])) : '—' ?></td>
-                        <td><?= $auctionItem['last_bidder'] ?? 'Aucun' ?></td>
+                         <td><?= $auctionItem['last_bidder'] ?? 'Aucun' ?></td>
                         <td><a href="horse_info.php?id=<?= (int)$auctionItem['id_horse'] ?>">Voir</a></td>
                     </tr>
                 <?php endforeach; ?>
