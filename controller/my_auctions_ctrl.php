@@ -1,8 +1,5 @@
 <?php
-//  je  démarre la session
-session_start();
-
-//  je  charge la config bdd
+// je charge la config bdd
 require_once "../model/config.php";
 
 // si pas connecté → retour login
@@ -11,10 +8,10 @@ if (empty($_SESSION['user_id'])) {
     exit;
 }
 
-//  je  récupère l'id user
+// je récupère l'id user
 $userId = $_SESSION['user_id'];
 
-//  je  prépare les groupes d'enchères
+// je prépare les groupes d'enchères
 $groupedAuctions = [
     "en_cours" => [],
     "annulees" => [],
@@ -24,7 +21,7 @@ $groupedAuctions = [
 
 try {
 
-    //  je  récupère les enchères où l'utilisateur s'est fait dépasser (non vues)
+    // je récupère les enchères où l'utilisateur s'est fait dépasser (non vues)
     $stmtOutbidList = $pdo->prepare("
         SELECT DISTINCT auctions.horse_id_fk, horses.horse_name
         FROM outbid
@@ -36,10 +33,10 @@ try {
     $stmtOutbidList->execute([$userId]);
     $outbids = $stmtOutbidList->fetchAll(PDO::FETCH_ASSOC);
 
-    // nombre d'alertes "dépassé"
+    // je compte les alertes
     $outbidCount = count($outbids);
 
-    //  je  récupère toutes les enchères où le user a participé
+    // je récupère les enchères du user
     $stmt = $pdo->prepare("
         SELECT DISTINCT auctions.horse_id_fk, auctions.id_auction
         FROM bids
@@ -49,25 +46,24 @@ try {
     $stmt->execute([$userId]);
     $bids = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    //  je  boucle sur chaque enchère
+    // je boucle sur chaque enchère
     foreach ($bids as $bid) {
 
         $horseId = (int)$bid['horse_id_fk'];
         $auctionId = (int)$bid['id_auction'];
 
-        //  je  récupère le nom du cheval
+        // je récupère le cheval + IMAGE (FIX)
         $stmtHorse = $pdo->prepare("
-            SELECT horse_name
+            SELECT horse_name, horse_image
             FROM horses
             WHERE id_horse = ?
         ");
         $stmtHorse->execute([$horseId]);
         $horse = $stmtHorse->fetch(PDO::FETCH_ASSOC);
 
-        // si pas trouvé → skip
         if (!$horse) continue;
 
-        //  je  récupère les infos de l'enchère
+        // je récupère l'enchère
         $stmtAuction = $pdo->prepare("
             SELECT id_auction, auction_status, auction_end_date, auction_starting_price
             FROM auctions
@@ -76,10 +72,9 @@ try {
         $stmtAuction->execute([$auctionId]);
         $auction = $stmtAuction->fetch(PDO::FETCH_ASSOC);
 
-        // si pas trouvé → skip
         if (!$auction) continue;
 
-        //  je  récupère le prix actuel (plus grosse enchère)
+        // je récupère le prix actuel
         $stmtPrice = $pdo->prepare("
             SELECT MAX(bid_amount)
             FROM bids
@@ -88,10 +83,9 @@ try {
         $stmtPrice->execute([$auctionId]);
         $lastBid = $stmtPrice->fetchColumn();
 
-        // fallback prix de départ
         $currentPrice = $lastBid ?: $auction['auction_starting_price'];
 
-        //  je  récupère la dernière enchère du user
+        // je récupère ma dernière enchère
         $stmtMyBid = $pdo->prepare("
             SELECT MAX(bid_amount)
             FROM bids
@@ -100,7 +94,7 @@ try {
         $stmtMyBid->execute([$auctionId, $userId]);
         $myLastBid = $stmtMyBid->fetchColumn();
 
-        //  je  récupère l'id de sa meilleure enchère
+        // je récupère l'id de mon meilleur bid
         $stmtMyBidId = $pdo->prepare("
             SELECT id_bid
             FROM bids
@@ -111,7 +105,7 @@ try {
         $stmtMyBidId->execute([$auctionId, $userId]);
         $myBidId = $stmtMyBidId->fetchColumn();
 
-        //  je  check si l'utilisateur s'est fait dépasser
+        // je check si je suis dépassé
         $isOutbid = false;
         if ($myBidId) {
             $stmtOutbidCheck = $pdo->prepare("
@@ -125,7 +119,7 @@ try {
             $isOutbid = $stmtOutbidCheck->fetchColumn() > 0;
         }
 
-        // nombre de participants
+        // je compte les participants
         $stmtCount = $pdo->prepare("
             SELECT COUNT(DISTINCT user_id_fk)
             FROM bids
@@ -134,7 +128,7 @@ try {
         $stmtCount->execute([$auctionId]);
         $participants = (int)$stmtCount->fetchColumn();
 
-        //  je  récupère le gagnant (plus grosse enchère)
+        // je récupère le gagnant
         $stmtWinner = $pdo->prepare("
             SELECT users.user_name, users.id_user
             FROM bids
@@ -149,10 +143,11 @@ try {
         $lastBidder = $winnerData['user_name'] ?? 'Aucun';
         $winnerId   = $winnerData['id_user'] ?? null;
 
-        //  je  prépare les données à afficher
+        // je prépare les données (FIX IMAGE)
         $data = [
             "id_horse" => $horseId,
             "horse_name" => $horse['horse_name'],
+            "horse_image" => $horse['horse_image'] ?? 'horse_default.png',
             "auction_end_date" => $auction['auction_end_date'],
             "last_price" => $currentPrice,
             "my_last_bid" => $myLastBid,
@@ -161,10 +156,10 @@ try {
             "last_bidder" => $lastBidder,
         ];
 
-        //  je  normalise le statut
+        // je normalise le statut
         $status = strtolower(trim($auction['auction_status']));
 
-        //  je  range dans le bon groupe
+        // je classe
         if ($status === 'disponible') {
             $groupedAuctions["en_cours"][] = $data;
 
@@ -173,7 +168,6 @@ try {
 
         } elseif ($status === 'terminé' || $status === 'termine') {
 
-            // si c'est lui le gagnant
             if ($winnerId == $userId) {
                 $groupedAuctions["remportees"][] = $data;
             } else {
@@ -184,10 +178,8 @@ try {
 
 } catch (PDOException $e) {
 
-    // erreur bdd
     echo $e->getMessage();
 
-    // fallback propre
     $groupedAuctions = [
         "en_cours" => [],
         "annulees" => [],

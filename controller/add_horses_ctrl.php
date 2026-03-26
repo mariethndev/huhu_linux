@@ -5,7 +5,7 @@ session_start();
 // je charge la config bdd
 require_once "../model/config.php";
 
-// je vérifie que je suis connecté et organisateur
+// je vérifie que l'utilisateur est organisateur
 if (
     empty($_SESSION['user_id']) ||
     ($_SESSION['role'] ?? '') !== 'organisateur'
@@ -14,104 +14,90 @@ if (
     exit;
 }
 
-// j’accepte uniquement le POST
+// je vérifie que la requête est en POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/add_horses_form.php");
     exit;
 }
 
-// je récupère les champs du formulaire
+// je récupère les données du formulaire
 $horse_name      = trim($_POST['horse_name'] ?? '');
 $horse_breed     = trim($_POST['horse_breed'] ?? '');
 $horse_sex       = $_POST['horse_sex'] ?? '';
 $horse_birthdate = $_POST['horse_birthdate'] ?? '';
 $horse_status    = $_POST['horse_status'] ?? 'disponible';
 
-$horse_discipline = trim($_POST['horse_discipline'] ?? '');
-$horse_coat       = trim($_POST['horse_coat'] ?? '');
+$horse_height = (int)($_POST['horse_height'] ?? 0);
+$horse_weight = (int)($_POST['horse_weight'] ?? 0);
 
-// j’ai des champs optionnels
-$horse_height = !empty($_POST['horse_height']) ? (int)$_POST['horse_height'] : null;
-$horse_weight = !empty($_POST['horse_weight']) ? (int)$_POST['horse_weight'] : null;
-
-$horse_father     = trim($_POST['horse_father'] ?? '');
-$horse_mother     = trim($_POST['horse_mother'] ?? '');
-$horse_id_number  = trim($_POST['horse_id_number'] ?? '');
-$horse_nb_ueln    = trim($_POST['horse_nb_ueln'] ?? '');
 $horse_description = trim($_POST['horse_description'] ?? '');
-
-// je définis le prix de départ (1000 par défaut)
-$auction_price = !empty($_POST['auction_starting_price'])
-    ? (float)$_POST['auction_starting_price']
-    : 1000;
-
-// je récupère mon id user
 $user_id = $_SESSION['user_id'];
 
-// j’ai une image par défaut
-$imageName = "horse_default.png";
-$uploadDir = __DIR__ . "/../uploads/horses/";
+$auction_price = (float)($_POST['auction_starting_price'] ?? 1000);
 
-// je crée le dossier si il existe pas
+// je définis le dossier d’upload
+$uploadDir = __DIR__ . "/../uploads/horses/";
+$imageName = "horse_default.png";
+
+// je crée le dossier si besoin
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
 }
 
-// je vérifie que le dossier est writable
-if (!is_writable($uploadDir)) {
-    error_log("Dossier non writable: " . $uploadDir);
-    header("Location: ../views/add_horses_form.php?status=error_upload");
-    exit;
-}
+// je prépare la destination
+$destination = null;
 
 // je gère l’upload de l’image
-if (
-    isset($_FILES['horse_image']) &&
-    $_FILES['horse_image']['error'] === 0
-) {
+if (isset($_FILES['horse_image']) && $_FILES['horse_image']['error'] !== UPLOAD_ERR_NO_FILE) {
 
-    // j’autorise certains formats
-    $allowedTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/webp',
-        'image/avif'
-    ];
-
-    // je récupère le vrai type mime
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mime = finfo_file($finfo, $_FILES['horse_image']['tmp_name']);
-
-    // si le format est interdit j’arrête
-    if (!in_array($mime, $allowedTypes)) {
-        header("Location: ../views/add_horses_form.php?status=invalid_format");
+    if ($_FILES['horse_image']['error'] === UPLOAD_ERR_INI_SIZE) {
+        header("Location: ../views/add_horses_form.php?status=danger&message=fichier trop gros");
         exit;
     }
 
-    // je vérifie que le fichier vient bien d’un upload
-    if (!is_uploaded_file($_FILES['horse_image']['tmp_name'])) {
-        header("Location: ../views/add_horses_form.php?status=invalid_upload");
+    if ($_FILES['horse_image']['error'] !== UPLOAD_ERR_OK) {
+        header("Location: ../views/add_horses_form.php?status=danger&message=upload error");
         exit;
     }
 
-    // je détermine l’extension
-    $extension = match ($mime) {
+    if ($_FILES['horse_image']['size'] > 5 * 1024 * 1024) {
+        header("Location: ../views/add_horses_form.php?status=danger&message=fichier trop gros");
+        exit;
+    }
+
+    // je vérifie le type MIME
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($_FILES['horse_image']['tmp_name']);
+
+    $allowed = [
         'image/jpeg' => 'jpg',
         'image/png'  => 'png',
         'image/webp' => 'webp',
-        'image/avif' => 'avif',
-        default => 'jpg'
-    };
+        'image/avif' => 'avif'
+    ];
+
+    if (!isset($allowed[$mime])) {
+        header("Location: ../views/add_horses_form.php?status=danger&message=format invalide");
+        exit;
+    }
 
     // je génère un nom unique
-    $imageName = uniqid("horse_") . "." . $extension;
+    $ext = $allowed[$mime];
+    $imageName = uniqid("horse_", true) . "." . $ext;
     $destination = $uploadDir . $imageName;
 
     // je déplace le fichier
-    if (!move_uploaded_file($_FILES['horse_image']['tmp_name'], $destination)) {
-        error_log("Erreur upload vers : " . $destination);
-        header("Location: ../views/add_horses_form.php?status=upload_failed");
-        exit;
+    $uploadSuccess = false;
+
+    if (@move_uploaded_file($_FILES['horse_image']['tmp_name'], $destination)) {
+        $uploadSuccess = true;
+    } elseif (@copy($_FILES['horse_image']['tmp_name'], $destination)) {
+        $uploadSuccess = true;
+    }
+
+    // si échec → image par défaut
+    if (!$uploadSuccess) {
+        $imageName = "horse_default.png";
     }
 }
 
@@ -122,18 +108,7 @@ if (
     empty($horse_sex) ||
     empty($horse_birthdate)
 ) {
-    header("Location: ../views/add_horses_form.php?status=danger");
-    exit;
-}
-
-// je vérifie que le numéro est unique
-$stmt = $pdo->prepare("
-    SELECT id_horse FROM horses WHERE horse_id_number = ?
-");
-$stmt->execute([$horse_id_number]);
-
-if ($stmt->fetch()) {
-    header("Location: ../views/add_horses_form.php?status=danger&message=Numéro déjà utilisé");
+    header("Location: ../views/add_horses_form.php?status=danger&message=champs manquants");
     exit;
 }
 
@@ -143,13 +118,10 @@ try {
     $stmt = $pdo->prepare("
         INSERT INTO horses (
             horse_name, horse_breed, horse_sex, horse_birthdate,
-            horse_status, horse_discipline, horse_coat,
-            horse_height, horse_weight,
-            horse_father, horse_mother,
-            horse_id_number, horse_nb_ueln,
+            horse_status, horse_height, horse_weight,
             horse_description, user_id_fk, horse_image
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     $stmt->execute([
@@ -158,26 +130,17 @@ try {
         $horse_sex,
         $horse_birthdate,
         $horse_status,
-        $horse_discipline,
-        $horse_coat,
         $horse_height,
         $horse_weight,
-        $horse_father,
-        $horse_mother,
-        $horse_id_number,
-        $horse_nb_ueln,
         $horse_description,
         $user_id,
         $imageName
     ]);
 
-    // je récupère l’id du cheval
-    $horse_id = $pdo->lastInsertId();
-
-    // si le cheval est dispo je crée une enchère
+    // je crée une enchère si dispo
     if ($horse_status === 'disponible') {
 
-        $stmtAuction = $pdo->prepare("
+        $stmt = $pdo->prepare("
             INSERT INTO auctions (
                 auction_starting_price,
                 auction_start_date,
@@ -188,20 +151,18 @@ try {
             VALUES (?, NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY), ?, ?)
         ");
 
-        $stmtAuction->execute([
+        $stmt->execute([
             $auction_price,
-            $horse_id,
+            $pdo->lastInsertId(),
             'disponible'
         ]);
     }
 
-    // redirection en cas de succès
     header("Location: ../views/add_horses_form.php?status=success");
     exit;
 
 } catch (PDOException $e) {
 
-    echo $e->getMessage();
-    header("Location: ../views/add_horses_form.php?status=error_db");
+    header("Location: ../views/add_horses_form.php?status=danger&message=" . $e->getMessage());
     exit;
 }

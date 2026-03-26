@@ -134,8 +134,7 @@ $imagePath = !empty($horse['horse_image'])
                     </select>
                 </div>
 
-                <!-- ✅ FIX PRIX -->
-                <div class="af-field">
+                 <div class="af-field">
                     <label>Prix</label>
                     <input type="number" name="auction_starting_price">
                 </div>

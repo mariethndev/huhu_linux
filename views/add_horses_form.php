@@ -9,6 +9,11 @@ if (
     exit;
 }
 
+// je génère un token CSRF si pas encore existant
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 require_once '../head.php';
 ?>
 
@@ -21,15 +26,15 @@ require_once '../head.php';
         </p>
     </div>
 
-    <?php if (isset($_GET['status']) && $_GET['status'] == 'success') { ?>
+    <?php if (!empty($_GET['status']) && $_GET['status'] === 'success') { ?>
         <div class="af-alert af-alert--success">
             Cheval ajouté avec succès.
         </div>
     <?php } ?>
 
-    <?php if (isset($_GET['status']) && $_GET['status'] == 'danger') { ?>
+    <?php if (!empty($_GET['status']) && $_GET['status'] === 'danger') { ?>
         <div class="af-alert af-alert--danger">
-            Veuillez remplir tous les champs obligatoires ou fichier invalide.
+            <?= $_GET['message'] ?? 'Veuillez remplir tous les champs obligatoires ou fichier invalide.' ?>
         </div>
     <?php } ?>
 
@@ -39,10 +44,13 @@ require_once '../head.php';
               method="post"
               enctype="multipart/form-data">
 
+            <!-- CSRF -->
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
             <div class="af-grid-2">
 
-                 <div class="af-field af-field--full">
-
+                <!-- IMAGE -->
+                <div class="af-field af-field--full">
                     <label class="af-label">Photo du cheval</label>
 
                     <div style="margin-bottom:10px">
@@ -57,16 +65,17 @@ require_once '../head.php';
                         type="file"
                         name="horse_image"
                         id="horseImageInput"
-                        accept=".jpg,.jpeg,.png,.webp"
+                        accept=".jpg,.jpeg,.png,.webp,.avif"
                     >
-
                 </div>
 
-                 <div class="af-field">
+                <!-- NOM -->
+                <div class="af-field">
                     <label>Nom *</label>
                     <input type="text" name="horse_name" required>
                 </div>
 
+                <!-- SEXE -->
                 <div class="af-field">
                     <label>Sexe *</label>
                     <select name="horse_sex" required>
@@ -76,16 +85,19 @@ require_once '../head.php';
                     </select>
                 </div>
 
+                <!-- DATE -->
                 <div class="af-field">
                     <label>Date de naissance *</label>
-                <input type="date" name="horse_birthdate" required max="<?= date('Y-m-d') ?>">         
+                    <input type="date" name="horse_birthdate" required max="<?= date('Y-m-d') ?>">
                 </div>
 
+                <!-- RACE -->
                 <div class="af-field">
                     <label>Race *</label>
                     <input type="text" name="horse_breed" required>
                 </div>
 
+                <!-- DISCIPLINE -->
                 <div class="af-field">
                     <label>Discipline</label>
                     <select name="horse_discipline">
@@ -97,26 +109,31 @@ require_once '../head.php';
                     </select>
                 </div>
 
+                <!-- ROBE -->
                 <div class="af-field">
                     <label>Robe</label>
                     <input type="text" name="horse_coat">
                 </div>
 
+                <!-- TAILLE -->
                 <div class="af-field">
                     <label>Taille (cm)</label>
-                    <input type="number" name="horse_height">
+                    <input type="number" name="horse_height" min="0">
                 </div>
 
+                <!-- POIDS -->
                 <div class="af-field">
                     <label>Poids (kg)</label>
-                    <input type="number" name="horse_weight">
+                    <input type="number" name="horse_weight" min="0">
                 </div>
 
+                <!-- LIEU -->
                 <div class="af-field af-field--full">
                     <label>Lieu</label>
                     <input type="text" name="horse_location">
                 </div>
 
+                <!-- PARENTS -->
                 <div class="af-field">
                     <label>Père</label>
                     <input type="text" name="horse_father">
@@ -127,6 +144,7 @@ require_once '../head.php';
                     <input type="text" name="horse_mother">
                 </div>
 
+                <!-- NUMERO -->
                 <div class="af-field">
                     <label>Numéro d'identification</label>
                     <input type="text" name="horse_id_number">
@@ -137,7 +155,8 @@ require_once '../head.php';
                     <input type="text" name="horse_nb_ueln">
                 </div>
 
-                 <div class="af-field">
+                <!-- STATUT -->
+                <div class="af-field">
                     <label>Statut</label>
                     <select name="horse_status">
                         <option value="disponible">Disponible</option>
@@ -145,11 +164,13 @@ require_once '../head.php';
                     </select>
                 </div>
 
+                <!-- PRIX -->
                 <div class="af-field">
                     <label>Prix de départ (€)</label>
                     <input type="number" name="auction_starting_price" min="0" step="1">
                 </div>
 
+                <!-- DESCRIPTION -->
                 <div class="af-field af-field--full">
                     <label>Description</label>
                     <textarea name="horse_description" rows="4"></textarea>

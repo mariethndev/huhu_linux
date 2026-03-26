@@ -2,24 +2,28 @@
 session_start();
 require_once "../model/config.php";
 
-// J'indique que le format est du JSON
 header('Content-Type: application/json');
 
-// je écupère uniquement depuis FormData (POST)
+// je récupère l'id cheval
 $horseId = isset($_POST['horse_id']) ? (int)$_POST['horse_id'] : 0;
 
-//je vérifie si l’ID du cheval est valide et renvoie une réponse JSON
 if ($horseId <= 0) {
-    echo json_encode([
-        "success" => false,
-        "error" => "invalid_id"
-    ]);
+    echo json_encode(["success" => false, "error" => "invalid_id"]);
     exit;
 }
 
+// je vérifie que l'utilisateur est connecté
+if (empty($_SESSION['user_id'])) {
+    echo json_encode(["success" => false, "error" => "not_logged"]);
+    exit;
+}
+
+// 👉 JE récupère l'utilisateur
+$user = $_SESSION['user_id'];
+
 try {
 
-    // je récupère la meilleure enchère actuelle
+    // meilleure enchère
     $stmt = $pdo->prepare("
         SELECT bids.bid_amount, bids.user_id_fk
         FROM bids
@@ -33,48 +37,35 @@ try {
 
     if ($bid) {
         $price = (float)$bid['bid_amount'];
-        $last = (int)$bid['user_id_fk'];
+        $last  = (int)$bid['user_id_fk'];
     } else {
-        // Si aucune enchère j'affiche le prix de départ
-        $stmt = $pdo->prepare("
-            SELECT auction_starting_price 
-            FROM auctions 
-            WHERE horse_id_fk = ?
-        ");
+        // prix de départ
+        $stmt = $pdo->prepare("SELECT auction_starting_price FROM auctions WHERE horse_id_fk = ?");
         $stmt->execute([$horseId]);
         $price = (float)($stmt->fetchColumn() ?? 0);
         $last = null;
     }
 
-    // Utilisateur connecté en session 
-    $user = $_SESSION['user_id'] ?? null;
+    // je vérifie si l'utilisateur a déjà enchéri
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM bids
+        JOIN auctions ON bids.auction_id_fk = auctions.id_auction
+        WHERE auctions.horse_id_fk = ? AND bids.user_id_fk = ?
+    ");
+    $stmt->execute([$horseId, $user]);
+    $hasBid = $stmt->fetchColumn() > 0;
 
-    $hasBid = false;
-
-    if ($user) {
-        // je vérifie si l'utilisateur a déjà enchéri
-        $stmt = $pdo->prepare("
-            SELECT COUNT(*) 
-            FROM bids
-            JOIN auctions ON bids.auction_id_fk = auctions.id_auction
-            WHERE auctions.horse_id_fk = ? AND bids.user_id_fk = ?
-        ");
-        $stmt->execute([$horseId, $user]);
-        $hasBid = $stmt->fetchColumn() > 0;
-    }
-
-// j'envoie une réponse JSON au JavaScript avec les informations de l'enchère
-echo json_encode([
-    "success" => true,           // Indique que la requête s'est bien passée
-    "price" => $price,           // Prix actuel de l'enchère
-    "last_bidder" => $last,      // ID du meilleur enchérisseur
-    "current_user" => $user,     // ID de l'utilisateur connecté
-    "has_bid" => $hasBid         // Indique si l'utilisateur a déjà enchéri
-]);
+    // réponse JSON
+    echo json_encode([
+        "success" => true,
+        "price" => $price,
+        "last_bidder" => $last,
+        "current_user" => $user,
+        "has_bid" => $hasBid
+    ]);
 
 } catch (Exception $e) {
-
-    // En cas d'erreur serveur, on renvoie une réponse JSON avec une erreur
     echo json_encode([
         "success" => false,
         "error" => "server_error"

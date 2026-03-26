@@ -10,6 +10,7 @@ require_once '../controller/update_auction.php';
 require_once '../head.php';
 ?>
 
+
 <div class="af-page">
 
     <div class="af-page-header">
@@ -35,22 +36,33 @@ require_once '../head.php';
 
             <input type="hidden" name="auction_id" value="<?= (int)$auction['id_auction'] ?>">
 
-             <div class="af-field">
+            <!-- PRIX -->
+            <div class="af-field">
+                <label class="af-label">Prix de départ</label>
+                <input
+                    type="number"
+                    name="auction_starting_price"
+                    class="af-input"
+                    value="<?= htmlentities($auction['auction_starting_price'] ?? 0) ?>"
+                    min="0"
+                >
+            </div>
 
+            <!-- DATE FIN -->
+            <div class="af-field">
                 <label class="af-label">Date de fin</label>
 
                 <input
-                    type="date"
+                    type="datetime-local"
                     name="auction_end_date"
                     class="af-input"
-                    value="<?= htmlentities($dateValue) ?>"
+                    value="<?= !empty($auction['auction_end_date']) ? htmlentities(date('Y-m-d\TH:i', strtotime($auction['auction_end_date']))) : '' ?>"
                     required
                 >
-
             </div>
 
-             <div class="af-field">
-
+            <!-- STATUT -->
+            <div class="af-field">
                 <label class="af-label">Statut</label>
 
                 <select name="auction_status" class="af-select">
@@ -71,7 +83,6 @@ require_once '../head.php';
                     </option>
 
                 </select>
-
             </div>
 
             <div class="af-footer">
@@ -84,7 +95,7 @@ require_once '../head.php';
 
         <div class="af-divider"></div>
 
-         <form method="POST" action="../controller/close_auction.php">
+        <form method="POST" action="../controller/close_auction.php">
 
             <input type="hidden" name="auction_id" value="<?= (int)$auction['id_auction'] ?>">
 

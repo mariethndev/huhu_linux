@@ -9,6 +9,7 @@ $userLogged = $userLogged ?? false;
 $auction['is_active'] = $auction['is_active'] ?? false;
 $auction['is_last_user'] = $auction['is_last_user'] ?? false;
 
+// ✅ chemin image FIX
 $imagePath = !empty($horse['horse_image'])
     ? "/huhu/huhu_linux/uploads/horses/" . $horse['horse_image']
     : "/huhu/huhu_linux/uploads/horses/horse_default.png";
@@ -19,9 +20,11 @@ $imagePath = !empty($horse['horse_image'])
         <h1 class="horse-title">
             Fiche de <?= htmlentities($horse['horse_name'] ?? '—') ?>
         </h1>
+
         <div class="image-horse-info">
             <img src="<?= $imagePath ?>" alt="Photo du cheval">
         </div>
+
         <div class="horse-details-scontainer">
             <a href="/huhu/huhu_linux/views/buy_a_horse.php" class="back-horse-info">
                 RETOUR
@@ -31,9 +34,11 @@ $imagePath = !empty($horse['horse_image'])
 
     <div class="right-card-horse">
         <div class="infos">
+
             <div class="card-info">
                 <h3>DÉTAILS</h3>
                 <p>Numéro : <?= htmlentities($horse['horse_id_number'] ?? '—') ?></p>
+
                 <p>Naissance :
                     <?= !empty($horse['horse_birthdate'])
                         ? date('d/m/Y', strtotime($horse['horse_birthdate']))
@@ -45,6 +50,7 @@ $imagePath = !empty($horse['horse_image'])
                 </p>
 
                 <p>Lieu : <?= htmlentities($horse['horse_location'] ?? '—') ?></p>
+
                 <p>Date d'enregistrement :
                     <?= !empty($horse['horse_register_date'])
                         ? date('d/m/Y', strtotime($horse['horse_register_date']))
@@ -55,34 +61,35 @@ $imagePath = !empty($horse['horse_image'])
             <div class="card-info">
                 <h3>MORPHOLOGIE</h3>
                 <p>Robe : <?= htmlentities($horse['horse_coat'] ?? '—') ?></p>
+
                 <p>Taille :
                     <?= !empty($horse['horse_height'])
                         ? $horse['horse_height'] . ' cm'
                         : 'NC' ?>
                 </p>
+
                 <p>Poids :
                     <?= !empty($horse['horse_weight'])
                         ? $horse['horse_weight'] . ' kg'
                         : 'NC' ?>
                 </p>
+
                 <p>Sexe : <?= htmlentities($horse['horse_sex'] ?? '—') ?></p>
             </div>
 
             <div class="card-info">
                 <h3>RACE</h3>
-
                 <p><?= htmlentities($horse['horse_breed'] ?? '—') ?></p>
                 <p>Numéro UELN : <?= htmlentities($horse['horse_nb_ueln'] ?? '—') ?></p>
             </div>
 
             <div class="card-info">
                 <h3>PARENTS</h3>
-
                 <p>Mère : <?= htmlentities($horse['horse_mother'] ?? '—') ?></p>
                 <p>Père : <?= htmlentities($horse['horse_father'] ?? '—') ?></p>
             </div>
 
-             <div class="card-info">
+            <div class="card-info">
                 <h3>DESCRIPTION</h3>
                 <p>
                     <?php
@@ -97,19 +104,21 @@ $imagePath = !empty($horse['horse_image'])
                 </p>
             </div>
 
-             <div class="card-info">
+            <div class="card-info">
                 <h3>ENCHÈRE</h3>
+
                 <p>
                     Statut :
                     <span class="badge <?= htmlentities($auction['badge_class'] ?? '') ?>">
                         <?= htmlentities($auction['status_label'] ?? '—') ?>
                     </span>
                 </p>
+
                 <p>
                     Prix actuel :
                     <strong>
                         <span class="live-price" data-id="<?= $horse['id_horse'] ?? 0 ?>">
-                            <?= number_format($auction['current_price'] ?? $auction['starting_price'] ?? 0, 0, ',', ' ') ?> €
+                            <?= number_format($auction['current_price'] ?? 0, 0, ',', ' ') ?> €
                         </span>
                     </strong>
                 </p>
@@ -118,12 +127,10 @@ $imagePath = !empty($horse['horse_image'])
                     <?= $auction['participants'] ?? 0 ?> participant(s)
                 </p>
 
-                <?php if ($userLogged && $auction['is_active']): ?>
-                 <?php endif; ?>
             </div>
         </div>
 
-         <div class="cta-horse-info">
+        <div class="cta-horse-info">
             <?php if (!$userLogged): ?>
 
                 <p>Inscription requise pour participer.</p>
@@ -137,15 +144,8 @@ $imagePath = !empty($horse['horse_image'])
                    data-is-last-user="<?= $auction['is_last_user'] ? '1' : '0' ?>">
                 </p>
 
-                <!-- 
-                    Bouton d'enchère dynamique :
-                    - Affiche "Faire une offre" pour un cheval en vente
-                    - Stocke les informations nécessaires dans des attributs data-* pour JS
-                    - Permet de récupérer facilement les données côté front (prix, utilisateur, cheval...)
-                    - Se désactive automatiquement si l'enchère n'est plus active
-                --> 
                 <button type="button" class="btn-bid"
-                    data-price="<?= $auction['current_price'] ?? $auction['starting_price'] ?? 0 ?>"
+                    data-price="<?= $auction['current_price'] ?? 0 ?>"
                     data-user-bid="<?= $auction['my_last_bid'] ?? 0 ?>"
                     data-horse-name="<?= htmlentities($horse['horse_name'] ?? '') ?>"
                     data-horse-id="<?= $horse['id_horse'] ?? 0 ?>"
@@ -155,12 +155,11 @@ $imagePath = !empty($horse['horse_image'])
                 </button>
 
             <?php endif; ?>
-
         </div>
     </div>
 </div>
 
-<!-- Modal pour enchérir -->
+<!-- MODAL -->
 <div id="bidModal" class="custom-modal hidden">
     <div class="modal-card">
 
@@ -171,6 +170,7 @@ $imagePath = !empty($horse['horse_image'])
 
         <div class="modal-body">
             <h2 id="modalHorseName"></h2>
+
             <p class="modal-price">
                 Prix actuel : <strong id="modalCurrentPrice"></strong>
             </p>

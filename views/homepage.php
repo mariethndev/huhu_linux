@@ -32,12 +32,17 @@ $count = $count ?? count($horses);
             <?php foreach ($horses as $horse): ?>
 
                 <?php
-                if (!empty($horse['horse_image'])) {
-                    $image = htmlentities($horse['horse_image']);
-                } else {
+                // je récupère l'image depuis la BDD ou défaut
+                $image = $horse['horse_image'] ?? 'horse_default.png';
+
+                // je vérifie si le fichier existe vraiment
+                $filePath = __DIR__ . "/../uploads/horses/" . $image;
+
+                if (!file_exists($filePath)) {
                     $image = "horse_default.png";
                 }
 
+                // je construis le chemin web
                 $imagePath = "/huhu/huhu_linux/uploads/horses/" . $image;
                 ?>
 

@@ -7,10 +7,7 @@ require_once '../model/config.php';
 require_once '../controller/horses_list_ctrl.php';
 require_once '../head.php';
 
-function escapeHtml($value) {
-    return htmlentities($value ?? '', ENT_QUOTES, 'UTF-8');
-}
-
+// je génère le token csrf
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -92,6 +89,17 @@ $auction_status = $_GET['auction_status'] ?? '';
                             $badgeClass = 'hl-badge--indisponible';
                             $label = 'Indisponible';
                     }
+
+                    // je gère l'image avec fallback
+                    $image = $horse['horse_image'] ?? 'horse_default.png';
+
+                    $filePath = __DIR__ . "/../uploads/horses/" . $image;
+
+                    if (!file_exists($filePath)) {
+                        $image = "horse_default.png";
+                    }
+
+                    $imagePath = "/huhu/huhu_linux/uploads/horses/" . $image;
                     ?>
 
                 <tr>
@@ -100,14 +108,14 @@ $auction_status = $_GET['auction_status'] ?? '';
                         <div class="hl-horse-cell">
 
                             <img
-                                src="/huhu/huhu_linux/uploads/horses/<?= escapeHtml($horse['horse_image'] ?? 'horse_default.png') ?>"
+                                src="<?= $imagePath ?>"
                                 class="hl-horse-avatar"
                                 width="38"
                                 height="38"
                             >
 
                             <span class="hl-horse-name">
-                                <?= escapeHtml($horse['horse_name'] ?? '—') ?>
+                                <?= $horse['horse_name'] ?? '—' ?>
                             </span>
 
                         </div>
@@ -117,13 +125,13 @@ $auction_status = $_GET['auction_status'] ?? '';
                         <?= ($horse['horse_sex'] ?? '') === 'M' ? 'Mâle' : 'Femelle' ?>
                     </td>
 
-                    <td><?= escapeHtml($horse['horse_breed'] ?? '—') ?></td>
-                    <td><?= escapeHtml($horse['horse_coat'] ?? '—') ?></td>
-                    <td><?= escapeHtml($horse['horse_discipline'] ?? '—') ?></td>
+                    <td><?= $horse['horse_breed'] ?? '—' ?></td>
+                    <td><?= $horse['horse_coat'] ?? '—' ?></td>
+                    <td><?= $horse['horse_discipline'] ?? '—' ?></td>
 
                     <td>
                         <span class="hl-badge <?= $badgeClass ?>">
-                            <?= escapeHtml($label) ?>
+                            <?= $label ?>
                         </span>
                     </td>
 
@@ -132,7 +140,7 @@ $auction_status = $_GET['auction_status'] ?? '';
 
                             <?php if (!empty($horse['winner_name']) && $horse['winner_name'] !== '—'): ?>
                                 <span class="hl-winner">
-                                    🏆 <?= escapeHtml($horse['winner_name']) ?>
+                                    🏆 <?= $horse['winner_name'] ?>
                                 </span>
                             <?php else: ?>
                                 <span class="hl-no-data">Aucune mise</span>
@@ -158,7 +166,7 @@ $auction_status = $_GET['auction_status'] ?? '';
                                 type="button"
                                 class="hl-action-btn hl-action-btn--danger btn-delete-horse"
                                 data-id="<?= (int)$horse['id_horse'] ?>"
-                                data-name="<?= escapeHtml($horse['horse_name'] ?? '') ?>"
+                                data-name="<?= $horse['horse_name'] ?? '' ?>"
                             >
                                 🗑
                             </button>
@@ -192,7 +200,7 @@ $auction_status = $_GET['auction_status'] ?? '';
 
                 <input type="hidden"
                        name="csrf_token"
-                       value="<?= escapeHtml($_SESSION['csrf_token']) ?>">
+                       value="<?= $_SESSION['csrf_token'] ?>">
 
                 <button type="button" class="btn btn-secondary btn-cancel-delete">
                     Annuler

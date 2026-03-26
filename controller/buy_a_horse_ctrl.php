@@ -14,7 +14,7 @@ $price_min  = $_GET['price_min'] ?? '';
 $price_max  = $_GET['price_max'] ?? '';
 
 // je récupère l'id de l'utilisateur connecté (ou null)
-$userId = $_SESSION['user_id'] ?? null;
+$userId = $_SESSION['user_id'] ?? '';
 
 try {
 
@@ -31,13 +31,27 @@ try {
         $stmt->execute([$auction['horse_id_fk']]);
         $horse = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // je vérifie que le cheval existe avant de continuer
+        // je vérifie que le cheval existe
         if ($horse) {
 
-            // je récupère le prix (enchère ou prix de départ)
+            // je corrige l'image
+            $image = $horse['horse_image'] ?? 'horse_default.png';
+            $filePath = __DIR__ . "/../uploads/horses/" . $image;
+
+            if (!file_exists($filePath)) {
+                $image = "horse_default.png";
+            }
+
+            $horse['horse_image'] = $image;
+
+            // je récupère le prix
             $stmt = $pdo->prepare("SELECT MAX(bid_amount) FROM bids WHERE auction_id_fk = ?");
             $stmt->execute([$auction['id_auction']]);
-            $price = $stmt->fetchColumn() ?: $auction['auction_starting_price'];
+            $price = $stmt->fetchColumn();
+
+            if (!$price) {
+                $price = $auction['auction_starting_price'];
+            }
 
             // je récupère le leader
             $stmt = $pdo->prepare("
@@ -59,11 +73,14 @@ try {
                 ? (new DateTime())->diff(new DateTime($horse['horse_birthdate']))->y
                 : null;
 
-            // je vérifie tous les filtres
+            // 🔥 FIX DISCIPLINE + filtres
             $matchesFilters =
                 (!$search || stripos($horse['horse_name'], $search) !== false) &&
                 (!$breed || stripos($horse['horse_breed'], $breed) !== false) &&
-                (!$discipline || stripos($horse['horse_discipline'], $discipline) !== false) &&
+                (
+                    !$discipline ||
+                    strtolower(trim($horse['horse_discipline'] ?? '')) === strtolower(trim($discipline))
+                ) &&
                 (
                     !$sex ||
                     ($sex === 'male' && ($horse['horse_sex'] ?? '') === 'M') ||
@@ -82,8 +99,7 @@ try {
                 ($price_min === '' || $price >= (float)$price_min) &&
                 ($price_max === '' || $price <= (float)$price_max);
 
-            // si le cheval respecte tous les filtres sélectionnés (nom, race, prix, âge, etc.)
-            // alors je l’ajoute au tableau des résultats à afficher
+            // si OK → j'ajoute
             if ($matchesFilters) {
                 $horses[] = $horse;
             }
@@ -92,7 +108,6 @@ try {
 
 } catch (PDOException $e) {
 
-    // en cas d’erreur, j’affiche le message et je vide le tableau
     echo $e->getMessage();
     $horses = [];
 }

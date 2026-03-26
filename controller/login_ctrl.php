@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // sinon la requête est refusée et l'utilisateur est redirigé.
 
 if (
-    // je verifie que la requete vient bien du formulaire 
+    // je vérifie que la requête vient bien du formulaire 
     empty($_POST['csrf_token']) ||
     empty($_SESSION['csrf_token']) ||
     $_POST['csrf_token'] !== $_SESSION['csrf_token']
@@ -44,36 +44,27 @@ try {
     // je récupère l'utilisateur via son email
     $stmt = $pdo->prepare("SELECT * FROM users WHERE user_email = ?");
 
-    // j'executee avec email en minuscule
+    // j'exécute avec email en minuscule
     $stmt->execute([strtolower($email)]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // je vérifie si user existe pas OU mot de passe faux 
+    // je vérifie si user n'existe pas OU mot de passe faux 
     if (!$user || !password_verify($password, $user['user_password'])) {
         header("Location: ../views/login_form.php");
         exit;
     }
 
-    // si le compte de l'utilisateur est désactivé donc ne corrspoond pas à 1 on refuse l'accès 
+    // si le compte est désactivé → accès refusé
     if ($user['user_is_active'] != 1) {
         header("Location: ../views/login_form.php");
         exit;
     }
 
-    // je régénère l'id de session
-    // je régénère l'id de session pour empêcher les attaques de fixation de session
-    // (un attaquant ne peut pas réutiliser un ancien ID pour usurper la session de l'utilisateur)
-    // true supprime l'ancien id
-    session_regenerate_id(true);
-
     // je stocke les infos utiles en session
     $_SESSION['user_id'] = $user['id_user'];
     $_SESSION['role']    = $user['user_role'];
 
-    // je supprime le token csrf (usage unique)
-    unset($_SESSION['csrf_token']);
-
-    // Si l'user n'a pas le role "organisateur"  il y a redirection selon le rôle sur différentes pages d'affichage
+    // redirection selon le rôle
     if ($user['user_role'] === 'organisateur') {
         header("Location: ../views/organisateur_dashboard.php");
     } else {
