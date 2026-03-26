@@ -745,8 +745,8 @@ background:var(--white);
   width: 30px;
   height: 30px;
 
-  background: black;
-  color: white;
+  background: var(--black);
+  color: var(--white);
 
   border-radius: 50%;
   display: flex;
@@ -779,7 +779,7 @@ background:var(--white);
 .bid-input button {
   width: 40px;
   border: none;
-  background: #eee;
+  background: var(--gray-200);
 }
 
 

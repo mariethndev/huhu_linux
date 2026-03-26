@@ -144,6 +144,13 @@ $imagePath = !empty($horse['horse_image'])
                    data-is-last-user="<?= $auction['is_last_user'] ? '1' : '0' ?>">
                 </p>
 
+                <!-- Bouton pour faire une enchère
+                    J’utilise des attributs data-* pour stocker les informations nécessaires (prix, cheval, image…)
+                    Ces données sont ensuite récupérées en JavaScript pour alimenter dynamiquement la modale.
+                    
+                    Le bouton est automatiquement désactivé si l’enchère n’est plus active,
+                    ce qui empêche l’utilisateur d’enchérir sur une vente terminée.
+                -->
                 <button type="button" class="btn-bid"
                     data-price="<?= $auction['current_price'] ?? 0 ?>"
                     data-user-bid="<?= $auction['my_last_bid'] ?? 0 ?>"
@@ -163,39 +170,29 @@ $imagePath = !empty($horse['horse_image'])
 <div id="bidModal" class="custom-modal hidden">
 
     <div class="modal-card">
-
-        <!-- IMAGE -->
         <div class="modal-image">
             <img id="modalImage" src="" alt="Cheval">
             <span class="modal-close">&times;</span>
         </div>
 
-        <!-- CONTENU -->
         <div class="modal-body">
-
             <h2 id="modalHorseName"></h2>
-
             <p class="modal-price">
                 Prix actuel : <strong id="modalCurrentPrice"></strong>
             </p>
 
-            <!-- FORM -->
             <form action="/huhu/huhu_linux/controller/bid_ctrl.php" method="POST" class="bid-form">
 
                 <input type="hidden" name="horse_id" id="modalHorseId">
-
                 <div class="bid-input">
                     <button type="button" id="bidMinus">−</button>
 
                     <input type="number" name="bid_amount" id="bidAmount" min="0">
-
                     <button type="button" id="bidPlus">+</button>
                 </div>
-
                 <button class="btn-bid" type="submit">
                     Enchérir
                 </button>
-
             </form>
 
         </div>
