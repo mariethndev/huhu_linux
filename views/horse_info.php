@@ -20,14 +20,13 @@ $imagePath = !empty($horse['horse_image'])
             Fiche de <?= htmlentities($horse['horse_name'] ?? '—') ?>
         </h1>
 
-        <div class="image-horse-info">
-            <img src="<?= $imagePath ?>" alt="Photo du cheval">
-        </div>
-
         <div class="horse-details-scontainer">
-            <a href="/huhu/huhu_linux/views/buy_a_horse.php" class="back-horse-info">
-                RETOUR
-            </a>
+            <div class="horse-details-scontainer">
+
+            <div class="image-horse-info">
+                <img src="<?= $imagePath ?>" alt="Photo du cheval">
+            </div>
+
         </div>
     </div>
 
@@ -43,13 +42,10 @@ $imagePath = !empty($horse['horse_image'])
                         ? date('d/m/Y', strtotime($horse['horse_birthdate']))
                         : '—' ?>
                 </p>
-
                 <p>Discipline :
                     <strong><?= htmlentities($horse['horse_discipline'] ?? '—') ?></strong>
                 </p>
-
                 <p>Lieu : <?= htmlentities($horse['horse_location'] ?? '—') ?></p>
-
                 <p>Date d'enregistrement :
                     <?= !empty($horse['horse_register_date'])
                         ? date('d/m/Y', strtotime($horse['horse_register_date']))
@@ -60,19 +56,16 @@ $imagePath = !empty($horse['horse_image'])
             <div class="card-info">
                 <h3>MORPHOLOGIE</h3>
                 <p>Robe : <?= htmlentities($horse['horse_coat'] ?? '—') ?></p>
-
                 <p>Taille :
                     <?= !empty($horse['horse_height'])
                         ? $horse['horse_height'] . ' cm'
                         : 'NC' ?>
                 </p>
-
                 <p>Poids :
                     <?= !empty($horse['horse_weight'])
                         ? $horse['horse_weight'] . ' kg'
                         : 'NC' ?>
                 </p>
-
                 <p>Sexe : <?= htmlentities($horse['horse_sex'] ?? '—') ?></p>
             </div>
 
@@ -106,14 +99,14 @@ $imagePath = !empty($horse['horse_image'])
             <div class="card-info">
                 <h3>ENCHÈRE</h3>
 
-                <p>
+                <p class="auction-status">
                     Statut :
-                    <span class="badge <?= htmlentities($auction['badge_class'] ?? '') ?>">
+                    <span class="status <?= htmlentities($auction['badge_class'] ?? '') ?>">
                         <?= htmlentities($auction['status_label'] ?? '—') ?>
                     </span>
                 </p>
 
-                <p>
+                <p class="auction-price">
                     Prix actuel :
                     <strong>
                         <span class="live-price" data-id="<?= $horse['id_horse'] ?? 0 ?>">
